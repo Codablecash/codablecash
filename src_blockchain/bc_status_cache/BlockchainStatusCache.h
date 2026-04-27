@@ -67,7 +67,6 @@ public:
 
 	void setPowManager(PoWManager* pow) noexcept;
 	void report2PowManager(CodablecashBlockchain* blockchain, ZoneStatusCache* cache) noexcept;
-	void report2Finelizer(uint16_t zone, CodablecashBlockchain* blockchain, ZoneStatusCache* cache, const Block *block) noexcept;
 	void reportFinalizing(uint16_t zone, const Block *block, CodablecashBlockchain *chain) const noexcept;
 
 	void reportHeaderFinalizing(uint16_t zone, const BlockHeader *header, CodablecashBlockchain *chain) const noexcept;
@@ -109,7 +108,10 @@ public:
 	Block* fetchScheduledBlock(uint16_t zone);
 	Block* getScheduledBlock(uint16_t zone);
 
+	void requestPosVote(uint16_t zone, uint64_t calculatedNonceHeight, CodablecashBlockchain* blockchain);
+
 	bool registerBlockHeader4Limit(uint16_t zone, const BlockHeader* header, const CodablecashSystemParam* param);
+	SystemTimestamp* getPosVoteLimit(uint16_t zone, uint64_t lastHeight);
 
 	LockinManager* getLockInManager(uint16_t zone) const noexcept;
 

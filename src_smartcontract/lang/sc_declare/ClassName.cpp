@@ -19,6 +19,10 @@ ClassName::ClassName() : CodeElement(CodeElement::CLASS_NAME) {
 	this->fqn = nullptr;
 }
 
+ClassName::ClassName(const wchar_t *fqn) : CodeElement(CodeElement::CLASS_NAME) {
+	this->fqn = new UnicodeString(fqn);
+}
+
 ClassName::~ClassName() {
 	delete this->fqn;
 }
@@ -49,16 +53,22 @@ int ClassName::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += stringSize(this->fqn);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void ClassName::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::CLASS_NAME);
 	putString(out, this->fqn);
+
+	positionToBinary(out);
 }
 
 void ClassName::fromBinary(ByteBuffer* in) {
 	this->fqn = getString(in);
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

@@ -12,8 +12,16 @@
 #include "base/StackRelease.h"
 #include "base/Integer.h"
 
+#include "base_io/ByteBuffer.h"
+
 
 namespace codablecash {
+
+SoftwareVersion::SoftwareVersion(const SoftwareVersion &inst) {
+	this->major = inst.major;
+	this->minor = inst.minor;
+	this->patch = inst.patch;
+}
 
 SoftwareVersion::SoftwareVersion(int major, int minor, int patch) {
 	this->major = major;
@@ -74,6 +82,24 @@ SoftwareVersion* SoftwareVersion::parseString(const UnicodeString *str) {
 	}
 
 	return new SoftwareVersion(major, minor, patch);
+}
+
+int SoftwareVersion::binarySize() const {
+	return sizeof(uint8_t) * 3;
+}
+
+void SoftwareVersion::toBinary(ByteBuffer *out) const {
+	out->put(this->major);
+	out->put(this->minor);
+	out->put(this->patch);
+}
+
+SoftwareVersion* SoftwareVersion::createFromBinary(ByteBuffer *in) {
+	uint8_t major = in->get();
+	uint8_t minor = in->get();
+	uint8_t pathch = in->get();
+
+	return new SoftwareVersion(major, minor, pathch);
 }
 
 } /* namespace codablecash */

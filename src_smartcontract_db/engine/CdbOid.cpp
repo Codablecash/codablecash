@@ -100,8 +100,7 @@ int CdbOid::ValueCompare::operator ()(const CdbOid* const _this, const CdbOid* c
 		return diff;
 	}
 
-	int64_t diff64 = _this->oid - object->oid;
-	return diff64 == 0 ? 0 : (diff64 > 0 ? 1 : -1);
+	return _this->oid == object->oid ? 0 : (_this->oid > object->oid ? 1 : -1);
 }
 
 } /* namespace codablecash */

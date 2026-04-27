@@ -86,7 +86,7 @@ void PoWCalculatorThread::process() noexcept {
 		if(!isSuspend() && bid != nullptr){
 			UnicodeString dmsg(L"Calclating....");
 			dmsg.append(L"At height ");
-			dmsg.append((int)height);
+			dmsg.append((int64_t)height);
 			this->logger->debugLog(ISystemLogger::DEBUG_POW_CALC_THREAD, &dmsg, __FILE__, __LINE__);
 
 			doCalc(height, 10, bid, tdiff, merkleRoot, tm);
@@ -124,7 +124,7 @@ void PoWCalculatorThread::checkAndReportNonce(uint64_t height, const BlockHeader
 
 			UnicodeString dmsg(L"Reset calc lastBlockId.");
 			dmsg.append(L"At height ");
-			dmsg.append((int)height);
+			dmsg.append((int64_t)height);
 			this->logger->debugLog(ISystemLogger::DEBUG_POW_CALC_THREAD,&dmsg, __FILE__, __LINE__);
 		}
 	}
@@ -132,7 +132,7 @@ void PoWCalculatorThread::checkAndReportNonce(uint64_t height, const BlockHeader
 	if(isCalculated){
 		UnicodeString dmsg(L"onNonceCalculated.");
 		dmsg.append(L"At height ");
-		dmsg.append((int)height);
+		dmsg.append((int64_t)height);
 
 		this->logger->debugLog(ISystemLogger::DEBUG_POW_CALC_THREAD,&dmsg, __FILE__, __LINE__);
 		this->powManager->onNonceCalculated(height, bid, nonce);
@@ -160,7 +160,7 @@ void PoWCalculatorThread::request(uint64_t lastBlockHeight, const BlockHeaderId 
 	{
 		UnicodeString* strId = lastBlockId->toString(); __STP(strId);
 
-		message.append((int)lastBlockHeight);
+		message.append((int64_t)lastBlockHeight);
 		message.append(L" Last Block Id: ").append(strId);
 	}
 

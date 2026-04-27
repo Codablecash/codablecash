@@ -1,0 +1,20 @@
+{
+	"libraryName" : "module_01",
+	"sourceFolders" : ["src/"],
+	"version" : "1.0.0",
+	
+	"instance" : {
+		"mainPackage": "modsample",
+		"mainClass" : "Module01",
+		"initializer" : {
+			"method" : "main",
+			"args" : []
+		},
+		"libExport" : ["modsample.export.IExportMethods"],
+		"directAccess" : ["modsample.export.IDirectAccess"]
+	},
+	
+	"exportClasses" : ["modsample.Result"],
+	
+	"dependencies": []
+}

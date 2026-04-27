@@ -58,10 +58,18 @@ public:
 	static const constexpr uint32_t TYPE_CONSENSUS_REPORT_NONCE_CALCULATED{350};
 	static const constexpr uint32_t TYPE_CONSENSUS_SEND_VOTE_TRANSACTION{351};
 
-
 	// Client Notify Commands
 	static const constexpr uint32_t TYPE_CLIENT_NOTIFY_NEW_TRANSACTION{401};
 	static const constexpr uint32_t TYPE_CLIENT_NOTIFY_BLOCK_MINED{402};
+
+	// Mining Pool
+	static const constexpr uint32_t TYPE_POW_POOL_NOTIFY_DATA_CHANGED{500};
+
+	// Mining Pool Client Request
+	static const constexpr uint32_t TYPE_POW_POOL_CLIENT_STATUS{550};
+	static const constexpr uint32_t TYPE_POW_POOL_CLIENT_CHECK_DATA{551};
+	static const constexpr uint32_t TYPE_POW_POOL_CLIENT_NONCE_CALCULATED{552};
+
 
 	AbstractPubSubCommand(const AbstractPubSubCommand& inst);
 	explicit AbstractPubSubCommand(uint32_t type);

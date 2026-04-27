@@ -22,7 +22,7 @@ public:
 	static constexpr uint8_t INST_DOM_ARRAY{6};
 
 	static constexpr uint8_t INST_EXCEPTION{10};
-	static constexpr uint8_t INST_BIG_INT{11};
+	static constexpr uint8_t INST_EXCEPTION_STACK_TRACE{11};
 
 	static constexpr uint8_t REF_ROOT{100};
 	static constexpr uint8_t REF_OBJ{101};

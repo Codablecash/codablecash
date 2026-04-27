@@ -59,6 +59,8 @@ int AlterModifyCommand::binarySize() const {
 
 	total += this->columnDescriptor->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -67,6 +69,8 @@ void AlterModifyCommand::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_ALTER_MODIFY);
 	this->columnDescriptor->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void AlterModifyCommand::fromBinary(ByteBuffer* in) {
@@ -74,6 +78,8 @@ void AlterModifyCommand::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::DDL_COLMUN_DESC);
 
 	this->columnDescriptor = dynamic_cast<DdlColumnDescriptor*>(element);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterModifyCommand::getCommandLog(VirtualMachine* vm) {

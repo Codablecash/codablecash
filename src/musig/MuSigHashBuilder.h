@@ -27,9 +27,9 @@ public:
 	MuSigHashBuilder();
 	virtual ~MuSigHashBuilder();
 
-	void add(const BigInteger* bi);
+	void addBigInteger(const BigInteger* bi);
 	void add(const Secp256k1Point* pt);
-	void add(const char *data, int length);
+	void addArray(const char *data, int length);
 
 	void buildHash();
 

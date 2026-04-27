@@ -1,0 +1,22 @@
+package sample;
+
+import sample.ISampleDirect;
+
+class Sample01 implements ISampleDirect {
+	public Sample01() {
+		this.count = 3 * 2;
+		stcount++;
+	}
+	
+	public int main(){
+
+	}
+	
+	public int setCount(int count) {
+		this.count = count;
+		return this.count;
+	}
+	
+	private int count = 0;
+	public static int stcount = 10;
+}

@@ -9,17 +9,22 @@
 
 #include "instance/VmClassInstance.h"
 #include "instance/VmInstanceTypesConst.h"
+#include "instance/AbstractVmInstance.h"
+
 #include "instance/instance_gc/GcManager.h"
 
 #include "instance/instance_string/VmStringInstance.h"
 
+#include "instance/reserved_classes/AbstractVmReservedInstance.h"
+
 #include "ext_binary/ExtStringClass.h"
 #include "ext_binary/ExtNullPtrObject.h"
 
-#include "instance/AbstractVmInstance.h"
+#include "engine/sc_analyze/AnalyzedType.h"
+
 namespace alinous {
 
-ObjectReference::ObjectReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint8_t instanceType) : AbstractReference(owner, type) {
+ObjectReference::ObjectReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint8_t instanceType, uint64_t serial) : AbstractReference(owner, type, serial) {
 	this->instance = nullptr;
 	this->instanceType = instanceType;
 }
@@ -29,18 +34,26 @@ ObjectReference::~ObjectReference() {
 }
 
 ObjectReference* ObjectReference::createObjectReference(IAbstractVmInstanceSubstance* owner, VmClassInstance* clazzInst, VirtualMachine* vm) {
-	ObjectReference* ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE);
+	ObjectReference* ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE, vm->publishInstanceSerial());
 	ref->setInstance(clazzInst);
 
 	return ref;
 }
 
 ObjectReference* ObjectReference::createStringReference(IAbstractVmInstanceSubstance* owner, VmStringInstance* clazzInst, VirtualMachine* vm) {
-	ObjectReference* ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE);
+	ObjectReference* ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE, vm->publishInstanceSerial());
 	ref->setInstance(clazzInst);
 
 	return ref;
 }
+
+ObjectReference* ObjectReference::createReservedClassObjectReference(IAbstractVmInstanceSubstance *owner, AbstractVmReservedInstance *clazzInst, VirtualMachine *vm) {
+	ObjectReference* ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE, vm->publishInstanceSerial());
+	ref->setInstance(clazzInst);
+
+	return ref;
+}
+
 
 bool ObjectReference::isPrimitive() const noexcept {
 	return false;
@@ -94,9 +107,9 @@ AbstractExtObject* ObjectReference::createNullObject(const UnicodeString* name, 
 	//	return new ExtStringClass(name);
 	//}
 
-	uint8_t type = this->instanceType == ObjectReference::STRING_INSTANCE ? VmInstanceTypesConst::INST_STRING : VmInstanceTypesConst::INST_OBJ;
+	uint8_t atype = this->instanceType == ObjectReference::STRING_INSTANCE ? AnalyzedType::TYPE_STRING : AnalyzedType::TYPE_OBJECT;
 
-	return new ExtNullPtrObject(name, type);
+	return new ExtNullPtrObject(name, atype);
 }
 
 bool ObjectReference::isNull() const noexcept {

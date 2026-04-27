@@ -104,7 +104,7 @@ UnicodeString* ClientSyncHeaderHeightData::toString() const noexcept {
 		}
 
 		ret->append(L"Height : ");
-		ret->append((int)height);
+		ret->append((int64_t)height);
 		ret->append(L"[");
 		{
 			UnicodeString* str = id->toString(); __STP(str);

@@ -9,7 +9,11 @@
 #include "json_object/AbstractJsonValue.h"
 #include "json_object/AbstractJsonObject.h"
 
+#include "bc_base/BinaryUtils.h"
 
+#include "base_io/ByteBuffer.h"
+
+#include "base/StackRelease.h"
 namespace codablecash {
 
 JsonValuePair::JsonValuePair(const JsonValuePair& inst) {
@@ -50,6 +54,37 @@ bool JsonValuePair::equals(const AbstractJsonObject *other) const noexcept {
 	}
 
 	return bl;
+}
+
+int JsonValuePair::binarySize() const {
+	BinaryUtils::checkNotNull(this->key);
+	BinaryUtils::checkNotNull(this->value);
+
+	int total = sizeof(uint8_t);
+
+	total += this->key->binarySize();
+	total += this->value->binarySize();
+
+	return total;
+}
+
+void JsonValuePair::toBinary(ByteBuffer *out) const {
+	out->put(getType());
+
+	this->key->toBinary(out);
+	this->value->toBinary(out);
+}
+
+void JsonValuePair::fromBinary(ByteBuffer *in) {
+	{
+		AbstractJsonObject* object = createFromBinary(in); __STP(object);
+		this->key = dynamic_cast<AbstractJsonValue*>(object);
+		BinaryUtils::checkNotNull(this->key);
+		__STP_MV(object);
+	}
+
+	this->value = createFromBinary(in);
+	BinaryUtils::checkNotNull(this->value);
 }
 
 } /* namespace codablecash */

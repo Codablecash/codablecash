@@ -43,7 +43,7 @@ BigInteger SimpleMuSigSigner::gets(const BigInteger *HXRm, const BigInteger *L) 
 	BigInteger HLXi(0L);
 	{
 		MuSigHashBuilder hashBuilder;
-		hashBuilder.add(L);
+		hashBuilder.addBigInteger(L);
 		hashBuilder.add(&Xi);
 		hashBuilder.buildHash();
 

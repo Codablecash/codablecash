@@ -30,6 +30,19 @@
 
 namespace alinous {
 
+MethodDeclare::MethodDeclare(short kind) : CodeElement(kind) {
+	this->_static = false;
+	this->name = nullptr;
+	this->ctrl = nullptr;
+	this->type = nullptr;
+	this->args = nullptr;
+	this->block = nullptr;
+	this->atype = nullptr;
+	this->callSig = nullptr;
+	this->fqn = nullptr;
+	this->strName = nullptr;
+}
+
 MethodDeclare::MethodDeclare() : CodeElement(CodeElement::METHOD_DECLARE) {
 	this->_static = false;
 	this->name = nullptr;
@@ -63,6 +76,12 @@ void MethodDeclare::preAnalyze(AnalyzeContext* actx) {
 	this->args->setParent(this);
 	this->args->preAnalyze(actx);
 
+	if(this->type != nullptr){
+		this->type->preAnalyze(actx);
+		this->type->setParent(this);
+		actx->detectGenericsType(this->type);
+	}
+
 	if(this->block != nullptr){
 		this->block->setParent(this);
 		this->block->preAnalyze(actx);
@@ -71,30 +90,12 @@ void MethodDeclare::preAnalyze(AnalyzeContext* actx) {
 			this->block->adjustDecalutConstructorCall(actx);
 		}
 	}
-
-	if(this->type != nullptr){
-		this->type->preAnalyze(actx);
-		this->type->setParent(this);
-		actx->detectGenericsType(this->type);
-	}
 }
 
 void MethodDeclare::analyzeTypeRef(AnalyzeContext* actx) {
 	TypeResolver* typeResolver = actx->getTypeResolver();
 
-	if(!isConstructor()){
-		if(this->type == nullptr){
-			actx->addValidationError(ValidationError::CODE_NO_RETURN_METHOD_VALUE, this, L"Return type of method '{0}()' does not exists.", {this->name});
-		}
-		else {
-			this->atype = typeResolver->resolveType(this, this->type);
-			if(this->atype == nullptr){
-				actx->addValidationError(ValidationError::CODE_WRONG_TYPE_NAME, this, L"The type '{0}' does not exists.", {this->type->toString()});
-			}
-		}
-	}
-
-	this->args->analyzeTypeRef(actx);
+	analyzeTypeRefBody(actx, typeResolver);
 
 	if(this->block != nullptr){
 		// set this pointer on analysis phase
@@ -103,9 +104,29 @@ void MethodDeclare::analyzeTypeRef(AnalyzeContext* actx) {
 
 		this->block->analyzeTypeRef(actx);
 	}
+}
+
+void MethodDeclare::analyzeTypeRefBody(AnalyzeContext *actx, TypeResolver* typeResolver) {
+	if(!isConstructor()){
+		if(this->type == nullptr){
+			actx->addValidationError(ValidationError::CODE_NO_RETURN_METHOD_VALUE, this, L"Return type of method '{0}()' does not exists.", {this->name});
+		}
+		else {
+			analyzeReturnedValue(actx, typeResolver);
+		}
+	}
+
+	this->args->analyzeTypeRef(actx);
 
 	if(this->type != nullptr){
 		this->type->analyzeTypeRef(actx);
+	}
+}
+
+void MethodDeclare::analyzeReturnedValue(AnalyzeContext *actx, TypeResolver *typeResolver) {
+	this->atype = typeResolver->resolveType(this, this->type);
+	if(this->atype == nullptr){
+		actx->addValidationError(ValidationError::CODE_WRONG_TYPE_NAME, this, L"The type '{0}' does not exists.", {this->type->toString()});
 	}
 }
 
@@ -115,12 +136,12 @@ void MethodDeclare::analyze(AnalyzeContext* actx) {
 	AnalyzedClass* aclass = actx->getAnalyzedClass(this);
 	AnalyzedThisClassStackPopper thisStack(actx, aclass);
 
-	if(this->block != nullptr){
-		this->block->analyze(actx);
-	}
-
 	if(this->type != nullptr){
 		this->type->analyze(actx);
+	}
+
+	if(this->block != nullptr){
+		this->block->analyze(actx);
 	}
 }
 
@@ -129,22 +150,27 @@ void MethodDeclare::setStatic(bool s) noexcept {
 }
 
 void MethodDeclare::setAccessControl(AccessControlDeclare* ctrl) noexcept {
+	delete this->ctrl;
 	this->ctrl = ctrl;
 }
 
 void MethodDeclare::setType(AbstractType* type) noexcept {
+	delete this->type;
 	this->type = type;
 }
 
 void MethodDeclare::setName(UnicodeString* name) noexcept {
+	delete this->name;
 	this->name = name;
 }
 
 void MethodDeclare::setArguments(ArgumentsListDeclare* args) noexcept {
+	delete this->args;
 	this->args = args;
 }
 
 void MethodDeclare::setBlock(StatementBlock* block) noexcept {
+	delete this->block;
 	this->block = block;
 }
 
@@ -196,14 +222,18 @@ AnalyzedType* MethodDeclare::getReturnedType() const noexcept {
 int MethodDeclare::binarySize() const {
 	checkNotNull(this->name);
 	checkNotNull(this->ctrl);
-	checkNotNull(this->type);
 	checkNotNull(this->args);
 
 	int total = sizeof(uint16_t);
 	total += sizeof(char);
 	total += stringSize(this->name);
 	total += this->ctrl->binarySize();
-	total += this->type->binarySize();
+
+	total += sizeof(uint8_t);
+	if(this->type != nullptr){
+		total += this->type->binarySize();
+	}
+
 	total += this->args->binarySize();
 
 	total += sizeof(uint8_t);
@@ -211,13 +241,14 @@ int MethodDeclare::binarySize() const {
 		total += this->block->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void MethodDeclare::toBinary(ByteBuffer* out) const {
 	checkNotNull(this->name);
 	checkNotNull(this->ctrl);
-	checkNotNull(this->type);
 	checkNotNull(this->args);
 
 	out->putShort(CodeElement::METHOD_DECLARE);
@@ -225,7 +256,13 @@ void MethodDeclare::toBinary(ByteBuffer* out) const {
 	out->put(this->_static ? (char)1 : (char)0);
 	putString(out, this->name);
 	this->ctrl->toBinary(out);
-	this->type->toBinary(out);
+
+	uint8_t bl = (this->type != nullptr) ? 1 : 0;
+	out->put(bl);
+	if(bl > 0){
+		this->type->toBinary(out);
+	}
+
 	this->args->toBinary(out);
 
 	out->put(this->block != nullptr ? (uint8_t)1 : (uint8_t)0);
@@ -233,6 +270,7 @@ void MethodDeclare::toBinary(ByteBuffer* out) const {
 		this->block->toBinary(out);
 	}
 
+	positionToBinary(out);
 }
 
 void MethodDeclare::fromBinary(ByteBuffer* in) {
@@ -245,9 +283,12 @@ void MethodDeclare::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::ACCESS_CONTROL_DECLARE);
 	this->ctrl = dynamic_cast<AccessControlDeclare*>(element);
 
-	element = createFromBinary(in);
-	checkIsType(element);
-	this->type = dynamic_cast<AbstractType*>(element);
+	bl = in->get();
+	if(bl > 0){
+		element = createFromBinary(in);
+		checkIsType(element);
+		this->type = dynamic_cast<AbstractType*>(element);
+	}
 
 	element = createFromBinary(in);
 	checkKind(element, CodeElement::ARGUMENTS_LIST_DECLARE);
@@ -259,6 +300,8 @@ void MethodDeclare::fromBinary(ByteBuffer* in) {
 		checkKind(element, CodeElement::STMT_BLOCK);
 		this->block = dynamic_cast<StatementBlock*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void MethodDeclare::init(VirtualMachine* vm) {
@@ -272,6 +315,8 @@ void MethodDeclare::interpret(FunctionArguments* args, VirtualMachine* vm) {
 
 	MethodArgumentSetupper argSetup(args, vm);
 	//vm->setFunctionArguments(args);
+
+	vm->markStackbyMethod(this);
 
 	block->interpret(vm);
 }

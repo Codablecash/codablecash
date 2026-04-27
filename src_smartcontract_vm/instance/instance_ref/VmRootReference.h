@@ -16,7 +16,7 @@
 namespace alinous {
 
 class VirtualMachine;
-class StaticInstanceHolder;
+class StaticConstInstanceHolder;
 class StaticClassReferenceHolder;
 class PrimitiveReference;
 class VmClassInstance;
@@ -53,11 +53,16 @@ public:
 	StaticClassReferenceHolder* getStaticClassReferenceHolder() const noexcept;
 
 	virtual int valueCompare(const IAbstractVmInstanceSubstance* right) const noexcept;
+
+	uint64_t publishInstanceSerial() noexcept;
+
 private:
 	VirtualMachine* vm;
 	AbstractReference* mainInst;
-	StaticInstanceHolder* staticHolder;
+	StaticConstInstanceHolder* staticHolder;
 	StaticClassReferenceHolder* classStaticHolder;
+
+	uint64_t instanceSerial;
 
 };
 

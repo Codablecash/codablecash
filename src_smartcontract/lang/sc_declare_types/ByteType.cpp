@@ -25,16 +25,22 @@ int ByteType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void ByteType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_BYTE);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ByteType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* ByteType::toString() noexcept {

@@ -22,6 +22,11 @@ class ScPrivateKey {
 public:
 	static const BigInteger p; // = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
 
+	/**
+	 * solt must not be 0
+	 * @param seed
+	 * @param solt
+	 */
 	ScPrivateKey(const BigInteger* seed, uint64_t solt);
 	ScPrivateKey();
 	virtual ~ScPrivateKey();
@@ -31,6 +36,8 @@ public:
 	const BigInteger getKeyvalue() const noexcept {
 		return keyvalue;
 	}
+
+	int compareTo(const ScPrivateKey* other) const;
 
 private:
 	BigInteger keyvalue;

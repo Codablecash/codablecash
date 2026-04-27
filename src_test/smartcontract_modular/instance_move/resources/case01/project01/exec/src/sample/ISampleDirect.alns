@@ -1,0 +1,6 @@
+package sample;
+
+interface ISampleDirect {
+	public int setCount(int count);
+}
+

@@ -238,6 +238,8 @@ int CreateTableStatement::binarySize() const {
 		total += stringSize(key);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -261,6 +263,8 @@ void CreateTableStatement::toBinary(ByteBuffer* out) const {
 		UnicodeString* key = this->primaryKeys->get(i);
 		putString(out, key);
 	}
+
+	positionToBinary(out);
 }
 
 void CreateTableStatement::fromBinary(ByteBuffer* in) {
@@ -279,6 +283,8 @@ void CreateTableStatement::fromBinary(ByteBuffer* in) {
 		UnicodeString* key = getString(in);
 		this->primaryKeys->addElement(key);
 	}
+
+	positionFromBinary(in);
 }
 
 void CreateTableStatement::addColumn(DdlColumnDescriptor* col) noexcept {

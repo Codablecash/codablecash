@@ -183,7 +183,7 @@ void TestCase::exportJUnitXML(Writer* writer) const {
 		writer->write(L"      <failure>\n");
 
 		UnicodeString failure(L"");
-		failure.append(this->file).append(L" at ").append(this->line).append(L"\n");
+		failure.append(this->file).append(L" at ").append((int64_t)this->line).append(L"\n");
 		writer->write(L"        ");
 		writer->write(&failure);
 

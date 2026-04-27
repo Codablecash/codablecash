@@ -69,7 +69,7 @@ WalletDriver::~WalletDriver() {
 void WalletDriver::init(int numWallets) {
 	for(int i = 0; i != numWallets; ++i){
 		UnicodeString seg(L"");
-		seg.append(i);
+		seg.append((int64_t)i);
 
 		File* f = this->baseDir->get(&seg); __STP(f);
 		HdWallet* wallet = newWallet(f);

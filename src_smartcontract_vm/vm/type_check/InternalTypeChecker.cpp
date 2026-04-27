@@ -16,7 +16,7 @@
 namespace alinous {
 
 
-int InternalTypeChecker::analyzeCompatibility(AnalyzedType* leftType, AnalyzedType* rightType) {
+int InternalTypeChecker::analyzeCompatibility(AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly) {
 	uint8_t leftTypeCode = leftType->getType();
 	int dim = leftType->getDim();
 
@@ -44,7 +44,7 @@ int InternalTypeChecker::analyzeCompatibility(AnalyzedType* leftType, AnalyzedTy
 		retcode = checkString(leftType, rightType);
 		break;
 	case AnalyzedType::TYPE_OBJECT:
-		retcode = checkObject(leftType, rightType);
+		retcode = checkObject(leftType, rightType, downCastOnly);
 		break;
 	case AnalyzedType::TYPE_DOM:
 		retcode = checkDomObject(leftType, rightType);
@@ -102,7 +102,7 @@ int InternalTypeChecker::checkBool(AnalyzedType* leftType, AnalyzedType* rightTy
 	return INCOMPATIBLE;
 }
 
-int InternalTypeChecker::checkObject(AnalyzedType* leftType, AnalyzedType* rightType) {
+int InternalTypeChecker::checkObject(AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly) {
 	uint8_t rightTypeCode = rightType->getType();
 	if(rightTypeCode != AnalyzedType::TYPE_OBJECT){
 		return INCOMPATIBLE;
@@ -111,7 +111,8 @@ int InternalTypeChecker::checkObject(AnalyzedType* leftType, AnalyzedType* right
 	AnalyzedClass* leftClass = leftType->getAnalyzedClass();
 	AnalyzedClass* rightClass = rightType->getAnalyzedClass();
 
-	bool result = rightClass->hasBaseClass(leftClass);
+	bool result = downCastOnly ? rightClass->hasBaseClass(leftClass)
+			: leftClass->hasBaseClass(rightClass) || rightClass->hasBaseClass(leftClass);
 	if(!result){
 		return INCOMPATIBLE;
 	}

@@ -43,7 +43,7 @@ TEST(TestNullPointerExceptionGroup, case01) {
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(exname->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestNullPointerExceptionGroup, case02) {
@@ -62,5 +62,5 @@ TEST(TestNullPointerExceptionGroup, case02) {
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(exname->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }

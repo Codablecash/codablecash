@@ -49,6 +49,8 @@ int NegateExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -57,12 +59,16 @@ void NegateExpression::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::EXP_NEGATE);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void NegateExpression::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType NegateExpression::getType(AnalyzeContext* actx) {

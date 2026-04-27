@@ -37,6 +37,8 @@ public:
 
 	virtual IBlockObject* copyData() const noexcept;
 
+	int compareTo(const Secp256k1CompressedPoint* other);
+
 private:
 	uint8_t prefix;
 	BigInteger x;

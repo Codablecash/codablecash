@@ -30,10 +30,12 @@ public:
 	static const BigInteger* getMaxBigInt() noexcept;
 	static const PoWNonce MAX_NONCE;
 
+	PoWNonce(const PoWNonce& inst);
 	explicit PoWNonce(const BigInteger* nonce);
 	virtual ~PoWNonce();
 
 	static PoWNonce* createRandomNonce() noexcept;
+	static PoWNonce* createRandomNonce(const BigInteger* solt) noexcept;
 
 	PoWNonceResult* calcResult(const BlockHeaderId* lastHeaderId, const BlockMerkleRoot* merkleRoot, const SystemTimestamp* tm) const;
 
@@ -50,6 +52,10 @@ public:
 	virtual IBlockObject* copyData() const noexcept;
 
 	int compareTo(const PoWNonce* other) const noexcept;
+
+	const BigInteger* getValue() const noexcept {
+		return this->value;
+	}
 
 protected:
 	BigInteger* value;

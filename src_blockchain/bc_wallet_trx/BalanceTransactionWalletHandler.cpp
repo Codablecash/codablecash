@@ -121,7 +121,7 @@ void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction
 
 		// add exchange address
 		if(totalIn.compareTo(&required) > 0){
-			if(trx->getUtxoSize() == 1){
+			if(trx->getUtxoSize() == 1){ // FIXME utxo size
 				// add
 				ChangeAddressStore* changeAddresses = this->account->getChangeAddresses();
 				AddressDescriptor* changeDesc = changeAddresses->getNextChangeAddress(encoder); __STP(changeDesc);

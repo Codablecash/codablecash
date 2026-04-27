@@ -1,0 +1,16 @@
+
+package test.fw;
+
+import lang.List;
+
+class SmartContract {
+	public SmartContract() {
+		this.list = new List<SampleObject>();
+	}
+	
+	public int main(){
+	
+	}
+	
+	private List<SampleObject> list;
+}

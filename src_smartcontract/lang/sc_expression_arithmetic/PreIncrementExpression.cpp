@@ -54,6 +54,8 @@ int PreIncrementExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -62,12 +64,16 @@ void PreIncrementExpression::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::EXP_PRE_INC);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void PreIncrementExpression::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType PreIncrementExpression::getType(AnalyzeContext* actx) {

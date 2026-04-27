@@ -164,7 +164,7 @@ AbstractVmInstance* MemberVariableAccess::interpretDomType(VirtualMachine* vm, A
 
 	AnalyzedType at = inst->getRuntimeType();
 	if(at.getType() == AnalyzedType::TYPE_DOM_ARRAY){
-		return interpretDomArrayType(vm, lastInst);
+		return interpretDomArrayType(vm, lastInst); // domArray.length
 	}
 
 	DomVariableInstance* dom = dynamic_cast<DomVariableInstance*>(inst);

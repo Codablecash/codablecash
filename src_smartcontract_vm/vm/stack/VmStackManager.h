@@ -13,11 +13,16 @@
 namespace alinous {
 
 class VmStack;
+class AbstractExpression;
+class MethodDeclare;
 
 class VmStackManager {
 public:
 	VmStackManager();
 	virtual ~VmStackManager();
+
+	void markStackbyMethod(MethodDeclare* method);
+	void markStackEntryPoint(AbstractExpression* exp);
 
 	void addStack(VmStack* stack) noexcept;
 	void popStack() noexcept;
@@ -28,6 +33,9 @@ public:
 
 private:
 	ArrayList<VmStack> list;
+
+	MethodDeclare* currentMethod;
+	AbstractExpression* entryPoint;
 };
 
 } /* namespace alinous */

@@ -71,6 +71,8 @@ int SQLColumnIdentifier::binarySize() const {
 
 	total += stringSize(this->columnName);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -90,6 +92,8 @@ void SQLColumnIdentifier::toBinary(ByteBuffer* out) const {
 	}
 
 	putString(out, this->columnName);
+
+	positionToBinary(out);
 }
 
 void SQLColumnIdentifier::fromBinary(ByteBuffer* in) {
@@ -102,6 +106,8 @@ void SQLColumnIdentifier::fromBinary(ByteBuffer* in) {
 		this->tableName = getString(in);
 	}
 	this->columnName = getString(in);
+
+	positionFromBinary(in);
 }
 
 void SQLColumnIdentifier::preAnalyze(AnalyzeContext* actx) {

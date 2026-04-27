@@ -65,12 +65,12 @@ ZoneStatusCache::ZoneStatusCache(const File* baseDir, uint16_t zone, bool header
 	this->finalizedCache = new FinalizedDataCache(this->baseDir);
 	this->lockinManager = new LockinManager(this->baseDir);
 
-	this->voteManager = new VoteManager(this->baseDir);
+	this->voteManager = new VoteManager(this->baseDir, config);
 
 	this->ticketPrice = config->getTicketPriceDefault(1L);
 }
 
-ZoneStatusCache::ZoneStatusCache(const File *baseDir, ISystemLogger* logger, bool headerOnly) {
+ZoneStatusCache::ZoneStatusCache(const File *baseDir, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config) {
 	this->zone = 0;
 	this->headerOnly = headerOnly;
 	this->finalizedHeight = 0;
@@ -84,7 +84,7 @@ ZoneStatusCache::ZoneStatusCache(const File *baseDir, ISystemLogger* logger, boo
 
 	this->finalizedCache = new FinalizedDataCache(this->baseDir);
 	this->lockinManager = new LockinManager(this->baseDir);
-	this->voteManager = new VoteManager(this->baseDir);
+	this->voteManager = new VoteManager(this->baseDir, config);
 
 	this->ticketPrice = 0;
 }
@@ -357,6 +357,10 @@ Block* ZoneStatusCache::getScheduledBlock() {
 
 bool ZoneStatusCache::registerBlockHeader4Limit(const BlockHeader *header, const CodablecashSystemParam *param) {
 	return this->voteManager->registerBlockHeader(header, param);
+}
+
+SystemTimestamp* ZoneStatusCache::getPosVoteLimit(uint64_t lastHeight) {
+	return this->voteManager->getPosVoteLimit(lastHeight);
 }
 
 } /* namespace codablecash */

@@ -35,6 +35,9 @@
 #include "bc/ExceptionThrower.h"
 
 #include "pubsub/PubsubCommandException.h"
+#include <cstdint>
+
+#include "bc_blockstore_header/BlockHeaderStoreManager.h"
 namespace codablecash {
 
 ClientBlockMinedCommand::ClientBlockMinedCommand(const ClientBlockMinedCommand &inst) : AbstractClientQueueCommand(*this) {
@@ -100,58 +103,83 @@ void ClientBlockMinedCommand::process(NetworkWallet *wallet) const {
 	const BlockHeaderId* headerId = header->getId();
 	uint64_t height = header->getHeight();
 
-//	ArrayList<FetchHeaderTransactionsWorker>* workers = new ArrayList<FetchHeaderTransactionsWorker>(); __STP(workers);
-//	workers->setDeleteOnExit();
+	// check orphan
+	checkOrphan(header, wallet, networkManager, logger);
 
-	int threadindex = 0;
+	BlockHeader* h = processBlock(zone, headerId, height, this->sourceNodeId, networkManager, logger, walletData); __STP(h);
+}
+
+BlockHeader* ClientBlockMinedCommand::processBlock(uint16_t zone, const BlockHeaderId* headerId, uint64_t height, const NodeIdentifier *nodeId, WalletNetworkManager *networkManager, ISystemLogger *logger, NetworkWalletData* walletData) const {
+	BlockHeader* ret = nullptr;
+	UnicodeString str(L"WalletHeaderTransactionSyncWk");
 	bool finalized = false;
-	{
-		UnicodeString str(L"WalletHeaderTransactionSyncWk");
-		str.append(threadindex);
-		threadindex++;
 
-		logger->debugLog(ISystemLogger::DEBUG_TMP_INFO, &str, __FILE__, __LINE__);
+	logger->debugLog(ISystemLogger::DEBUG_TMP_INFO, &str, __FILE__, __LINE__);
 
-		// add a worker
-		FetchHeaderTransactionsWorker* worker = new FetchHeaderTransactionsWorker(zone, headerId, height, this->sourceNodeId, networkManager, logger, &str); __STP(worker);
+	// add a worker
+	FetchHeaderTransactionsWorker* worker = new FetchHeaderTransactionsWorker(zone, headerId, height, this->sourceNodeId, networkManager, logger, &str); __STP(worker);
 
-		worker->start();
-		worker->join();
+	worker->start();
+	worker->join();
 
-		const ClientFetchHeaderTransactionsCommandResponse* res = worker->getResponse();
+	const ClientFetchHeaderTransactionsCommandResponse* res = worker->getResponse();
 
-		if(res != nullptr){
-			const ClientBlockHeaderTransferData* data = res->getTransferData();
+	if(res != nullptr){
+		const ClientBlockHeaderTransferData* data = res->getTransferData();
+		const BlockHeader* header = data->getHeader();
+		ret = dynamic_cast<BlockHeader*>(header->copyData());
 
-			const ArrayList<BlockTransactionTransferData>* list = data->getTransactionsList();
-			ArrayList<AbstractBlockchainTransaction>* trxlist = new ArrayList<AbstractBlockchainTransaction>(); __STP(trxlist);
-			trxlist->setDeleteOnExit();
+		const ArrayList<BlockTransactionTransferData>* list = data->getTransactionsList();
+		ArrayList<AbstractBlockchainTransaction>* trxlist = new ArrayList<AbstractBlockchainTransaction>(); __STP(trxlist);
+		trxlist->setDeleteOnExit();
 
-			int maxLoop = list->size();
-			for(int i = 0; i != maxLoop; ++i){
-				BlockTransactionTransferData* data = list->get(i);
-				const AbstractBlockchainTransaction* trx = data->getTransaction();
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			BlockTransactionTransferData* data = list->get(i);
+			const AbstractBlockchainTransaction* trx = data->getTransaction();
 
-				AbstractBlockchainTransaction* t = dynamic_cast<AbstractBlockchainTransaction*>(trx->copyData());
-				trxlist->addElement(t);
-			}
-
-			uint64_t lastFinalizedHeight = walletData->getFinalizedHeight();
-			uint64_t startHeight = lastFinalizedHeight > 0 ? lastFinalizedHeight : 1;
-
-			walletData->addHeader(header, trxlist);
-			walletData->updateHeadDetection();
-			finalized = walletData->checkAndFinalizing();
-
-			// update
-			if(finalized){
-				walletData->updateHeadDetection();
-			}
-
-			walletData->buildManagementAccount(finalized, startHeight);
+			AbstractBlockchainTransaction* t = dynamic_cast<AbstractBlockchainTransaction*>(trx->copyData());
+			trxlist->addElement(t);
 		}
+
+		uint64_t lastFinalizedHeight = walletData->getFinalizedHeight();
+		uint64_t startHeight = lastFinalizedHeight > 0 ? lastFinalizedHeight : 1;
+
+		walletData->addHeader(header, trxlist);
+		walletData->updateHeadDetection();
+		finalized = walletData->checkAndFinalizing();
+
+		// update
+		if(finalized){
+			walletData->updateHeadDetection();
+		}
+
+		walletData->buildManagementAccount(finalized, startHeight);
 	}
 
+	return ret;
+}
+
+void ClientBlockMinedCommand::checkOrphan(const BlockHeader *header, NetworkWallet *wallet, WalletNetworkManager *networkManager, ISystemLogger *logger) const {
+	NetworkWalletData* walletData = wallet->getWalletData();
+
+	uint16_t zone = header->getZone();
+	BlockHeaderStoreManager* manager = walletData->getHeaderManager(zone);
+
+	const BlockHeaderId* headerId = header->getLastHeaderId();
+	uint64_t height = header->getHeight() - 1;
+
+	BlockHeader* lastHeader = manager->getHeader(headerId, height);
+	while(lastHeader == nullptr){
+		delete lastHeader;
+
+		lastHeader = processBlock(zone, headerId, height, this->sourceNodeId, networkManager, logger, walletData);
+
+		headerId = lastHeader->getLastHeaderId();
+		height = lastHeader->getHeight() - 1;
+		lastHeader = manager->getHeader(headerId, height);
+	}
+	__STP(lastHeader);
 }
 
 
@@ -164,5 +192,7 @@ void ClientBlockMinedCommand::setSourceNodeId(const NodeIdentifier *nodeId) {
 	delete this->sourceNodeId;
 	this->sourceNodeId = dynamic_cast<NodeIdentifier*>(nodeId->copyData());
 }
+
+
 
 } /* namespace codablecash */

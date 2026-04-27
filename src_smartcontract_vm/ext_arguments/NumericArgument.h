@@ -15,15 +15,22 @@ namespace alinous {
 
 class NumericArgument : public AbstractFunctionExtArguments {
 public:
+	NumericArgument();
 	NumericArgument(int64_t value, uint8_t atype);
 	virtual ~NumericArgument();
 
-	virtual AnalyzedType getType() const noexcept;
+	virtual ArgumentType* getType() const noexcept;
 	virtual AbstractVmInstance* interpret(VirtualMachine* vm);
+
+	virtual AbstractFunctionExtArguments* copy() const;
+
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	virtual void fromBinary(ByteBuffer* in);
 
 private:
 	int64_t data;
-	AnalyzedType* atype;
+	ArgumentType* atype;
 };
 
 } /* namespace alinous */

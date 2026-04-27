@@ -62,12 +62,12 @@ static void setUpdate(Btree& btree, RawArrayPrimitive<uint64_t> &answers){
 		answers.addElement(6);
 		answers.addElement(7);
 		answers.addElement(8);
-		answers.addElement(9);
+		answers.addElement(9); // 5
 		answers.addElement(10);
 		answers.addElement(11);
 		answers.addElement(12);
 		answers.addElement(13);
-		answers.addElement(14);
+		answers.addElement(14); // 10
 		answers.addElement(50);
 		answers.addElement(100);
 	}
@@ -179,6 +179,31 @@ TEST(TestBTreeReverseScanGroup, case02){
 	}
 
 	{
+		ULongKey lkey(10);
+		BtreeReverseScanner* scanner = btree.getReverseScanner();
+		StackRelease<BtreeReverseScanner> __st_scanner(scanner);
+
+		scanner->begin(&lkey);
+		int i = 6;
+		while(scanner->hasPrevious()){
+			const AbstractBtreeKey* k = scanner->previousKey();
+			const IBlockObject* obj = scanner->previous();
+
+
+			const TempValue* tmp = dynamic_cast<const TempValue*>(obj);
+			uint64_t v = tmp->getValue();
+
+			const ULongKey* lk = dynamic_cast<const ULongKey*>(k);
+			uint64_t kv = lk->getValue();
+
+			uint64_t a = answers.get(i--);
+			CHECK(v == a)
+			CHECK(kv == a)
+		}
+		CHECK(i == -1);
+	}
+
+	{
 		ULongKey lkey(1);
 
 		BtreeReverseScanner* scanner = btree.getReverseScanner();
@@ -192,6 +217,7 @@ TEST(TestBTreeReverseScanGroup, case02){
 	btree.close();
 }
 
+// blank
 TEST(TestBTreeReverseScanGroup, case03){
 	File projectFolder = this->env->testCaseDir();
 	_ST(File, baseDir, projectFolder.get(L"store"))

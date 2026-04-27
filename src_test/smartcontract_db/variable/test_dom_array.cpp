@@ -136,7 +136,7 @@ TEST(TestDomArrayGroup, case04_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(name->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case05_err){
@@ -158,7 +158,7 @@ TEST(TestDomArrayGroup, case05_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(name->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case06){
@@ -226,7 +226,7 @@ TEST(TestDomArrayGroup, case08_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case09_err){
@@ -248,7 +248,7 @@ TEST(TestDomArrayGroup, case09_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case10_err){
@@ -270,7 +270,7 @@ TEST(TestDomArrayGroup, case10_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(name->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case11_err){
@@ -292,7 +292,7 @@ TEST(TestDomArrayGroup, case11_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(TypeCastExceptionClassDeclare::NAME));
+	CHECK(name->equals(TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayGroup, case12_err){
@@ -314,7 +314,7 @@ TEST(TestDomArrayGroup, case12_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(TypeCastExceptionClassDeclare::NAME));
+	CHECK(name->equals(TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 

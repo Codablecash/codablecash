@@ -10,8 +10,11 @@
 
 #include "instance/VmInstanceTypesConst.h"
 
+#include "instance/instance_dom/DomVariableInstance.h"
+
 #include "base/UnicodeString.h"
 #include "base/StackRelease.h"
+
 
 namespace alinous {
 
@@ -84,6 +87,25 @@ const UnicodeString* ExtDomObject::toString() const noexcept {
 	this->str->append(L"}");
 
 	return this->str;
+}
+
+AbstractVmInstance* ExtDomObject::toVmInstance(VirtualMachine *vm) {
+	DomVariableInstance* vmInstance = new(vm) DomVariableInstance(vm); __STP(vmInstance);
+
+	Iterator<UnicodeString>* it = this->properties->keySet()->iterator(); __STP(it);
+	while(it->hasNext()){
+		const UnicodeString* key = it->next();
+		AbstractExtObject* exobj  = this->properties->get(key);
+
+		AbstractVmInstance* inst = exobj->toVmInstance(vm);
+		IAbstractVmInstanceSubstance* substance = inst->getInstance();
+
+		VmStringInstance* vmString = new(vm) VmStringInstance(vm, key); __STP(vmString);
+		vmInstance->putProperty(vm, vmString, substance);
+	}
+
+	return __STP_MV(vmInstance);
+	// FIXME toVmInstance
 }
 
 } /* namespace alinous */

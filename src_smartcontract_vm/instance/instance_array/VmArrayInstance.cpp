@@ -15,12 +15,14 @@
 #include "ext_binary/ExtArrayObject.h"
 
 #include "engine/sc_analyze/AnalyzedType.h"
+#include "engine/sc_analyze/AnalyzedClass.h"
 
 #include "base/UnicodeString.h"
 
+
 namespace alinous {
 
-VmArrayInstance::VmArrayInstance(VirtualMachine* vm, int length, const AnalyzedType& atype) : AbstractVmInstance(VmInstanceTypesConst::INST_ARRAY) {
+VmArrayInstance::VmArrayInstance(VirtualMachine* vm, int length, const AnalyzedType& atype) : AbstractVmInstance(VmInstanceTypesConst::INST_ARRAY, vm->publishInstanceSerial()) {
 	this->array = new(vm) VMemList<AbstractReference>(vm);
 	this->length = length;
 	this->atype = new AnalyzedType(atype);
@@ -69,7 +71,15 @@ const VMemList<AbstractReference>* VmArrayInstance::getReferences() const noexce
 }
 
 AbstractExtObject* VmArrayInstance::toClassExtObject(const UnicodeString* name,	VTableRegistory* reg) {
-	ExtArrayObject* obj = new ExtArrayObject(name, this->length);
+	uint8_t atype = this->atype->getType();
+	int dim = this->atype->getDim();
+	AnalyzedClass* aclazz = this->atype->getAnalyzedClass();
+	const UnicodeString* fqn = nullptr;
+	if(aclazz != nullptr){
+		fqn = aclazz->getFullQualifiedName();
+	}
+
+	ExtArrayObject* obj = new ExtArrayObject(name, this->length, atype, dim, fqn);
 
 	int maxLoop = this->array->size();
 	for(int i = 0; i != maxLoop; ++i){

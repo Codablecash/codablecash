@@ -54,7 +54,7 @@ void ArrayReferenceAccess::analyze(AnalyzeContext* actx, AbstractVariableInstrac
 	dim = previousDim - dim;
 
 	if(at.getType() == AnalyzedType::TYPE_DOM || at.getType() == AnalyzedType::TYPE_DOM_VALUE){
-		analyzeDomArray(actx, lastIinst, element);
+		analyzeDomArray(actx, lastIinst, element); // identifier or TYPE_DOM_VALUE
 		return;
 	}
 

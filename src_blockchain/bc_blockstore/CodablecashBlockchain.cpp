@@ -150,8 +150,8 @@ void CodablecashBlockchain::initZonesStore() {
 }
 
 void CodablecashBlockchain::initZone(uint16_t zone) {
-	char tmp[4];
-	Mem::memset(tmp, 0, 4);
+	char tmp[6];
+	Mem::memset(tmp, 0, 6);
 
 	::sprintf(tmp, "%03d", zone);
 

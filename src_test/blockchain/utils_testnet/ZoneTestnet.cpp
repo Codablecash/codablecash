@@ -19,7 +19,7 @@ ZoneTestnet::ZoneTestnet(uint16_t zone, const File* projectFolder) {
 	this->zone = zone;
 
 	UnicodeString zoneStr(L"");
-	zoneStr.append((int)zone);
+	zoneStr.append((int64_t)zone);
 	this->zoneFolder = projectFolder->get(&zoneStr);
 
 	if(!this->zoneFolder->exists()){

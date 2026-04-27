@@ -38,17 +38,23 @@ int BooleanLiteral::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void BooleanLiteral::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_BOOLEAN_LITERAL);
 	out->put(this->value ? 1 : 0);
+
+	positionToBinary(out);
 }
 
 void BooleanLiteral::fromBinary(ByteBuffer* in) {
 	char val = in->get();
 	this->value = (val == 1);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType BooleanLiteral::getType(AnalyzeContext* actx) {

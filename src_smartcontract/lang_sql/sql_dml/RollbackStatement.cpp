@@ -36,14 +36,19 @@ void RollbackStatement::analyze(AnalyzeContext* actx) {
 int RollbackStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void RollbackStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::DML_STMT_ROLLBACK);
+
+	positionToBinary(out);
 }
 
 void RollbackStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void RollbackStatement::interpret(VirtualMachine* vm) {

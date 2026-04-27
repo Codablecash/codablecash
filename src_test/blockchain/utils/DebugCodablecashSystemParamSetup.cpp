@@ -31,13 +31,14 @@ void DebugCodablecashSystemParamSetup::setupConfig01(CodablecashSystemParam &par
 	param.setTicketVoterFeeBasisPoint(50);
 
 	param.setVoteBeforeNBlocks(1);
-	param.setVoteBlockIncludeAfterNBlocks(3);
+	param.setVoteBlockIncludeAfterNBlocks(1);
 
 	param.setThreadsNodeTransferProcessor(2);
 	param.setThreadsNetworkInfoTransferProcessor(2);
 
-	param.setConsensusTrxMaxHops(4);
-	param.setConsensusTrxAllowedDelayMillis(100 * 1000);
+	param.setConsensusTrxMaxHops(3);
+	param.setConsensusTrxAllowedDelayMillis(10000);
+	param.setConsensusPosVoteLimitMillis(3000);
 }
 
 void DebugCodablecashSystemParamSetup::setupConfig02(CodablecashSystemParam &param) {
@@ -58,7 +59,7 @@ void DebugCodablecashSystemParamSetup::setupConfig02(CodablecashSystemParam &par
 	param.setTicketVoterFeeBasisPoint(50);
 
 	param.setVoteBeforeNBlocks(1);
-	param.setVoteBlockIncludeAfterNBlocks(3);
+	param.setVoteBlockIncludeAfterNBlocks(1);
 
 	param.setThreadsNodeTransferProcessor(2);
 	param.setThreadsNetworkInfoTransferProcessor(2);
@@ -68,8 +69,9 @@ void DebugCodablecashSystemParamSetup::setupConfig02(CodablecashSystemParam &par
 
 	param.setNumInitialSyncNodes(3);
 
-	param.setConsensusTrxMaxHops(4);
-	param.setConsensusTrxAllowedDelayMillis(100 * 1000);
+	param.setConsensusTrxMaxHops(3);
+	param.setConsensusTrxAllowedDelayMillis(5000);
+	param.setConsensusPosVoteLimitMillis(3000);
 }
 
 

@@ -51,6 +51,8 @@ int SQLIsNullExpression::binarySize() const {
 	total += this->exp->binarySize();
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -60,6 +62,8 @@ void SQLIsNullExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_IS_NULL);
 	this->exp->toBinary(out);
 	out->put(this->notnull ? 1 : 0);
+
+	positionToBinary(out);
 }
 
 void SQLIsNullExpression::fromBinary(ByteBuffer* in) {
@@ -69,6 +73,8 @@ void SQLIsNullExpression::fromBinary(ByteBuffer* in) {
 
 	int8_t bl = in->get();
 	this->notnull = (bl == 1);
+
+	positionFromBinary(in);
 }
 
 void SQLIsNullExpression::preAnalyze(AnalyzeContext* actx) {

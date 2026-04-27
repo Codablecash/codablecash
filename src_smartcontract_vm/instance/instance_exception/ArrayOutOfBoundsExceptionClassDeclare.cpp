@@ -26,10 +26,14 @@
 
 namespace alinous {
 
-UnicodeString ArrayOutOfBoundsExceptionClassDeclare::NAME{L"ArrayOutOfBoundsException"};
+const UnicodeString ArrayOutOfBoundsExceptionClassDeclare::NAME{L"ArrayOutOfBoundsException"};
+const UnicodeString ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME{L"lang.ArrayOutOfBoundsException"};
+
 
 ArrayOutOfBoundsExceptionClassDeclare::ArrayOutOfBoundsExceptionClassDeclare() : AbstractExceptionClassDeclare() {
 	addDefaultConstructor(&NAME);
+
+	this->name = new UnicodeString(&NAME);
 
 	this->extends = new ClassExtends();
 	this->extends->setClassName(&ExceptionClassDeclare::NAME);
@@ -46,11 +50,14 @@ void ArrayOutOfBoundsExceptionClassDeclare::throwException(VirtualMachine* vm, c
 	ExecControlManager* ctrl = vm->getCtrl();
 	IVmInstanceFactory* factory = ExceptionInstanceFactory::getInstance();
 
-	AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&NAME);
+	UnicodeString fqn(&AbstractExceptionClassDeclare::PACKAGE_NAME);
+	fqn.append(L".");
+	fqn.append(&NAME);
+
+	AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&fqn);
 
 	VmClassInstance* inst = factory->createInstance(aclass, vm);
 	inst->init(vm);
-
 
 	VmExceptionInstance* exception = dynamic_cast<VmExceptionInstance*>(inst);
 
@@ -59,14 +66,6 @@ void ArrayOutOfBoundsExceptionClassDeclare::throwException(VirtualMachine* vm, c
 
 ArrayOutOfBoundsExceptionClassDeclare::~ArrayOutOfBoundsExceptionClassDeclare() {
 
-}
-
-const UnicodeString* ArrayOutOfBoundsExceptionClassDeclare::getName() const noexcept {
-	return &NAME;
-}
-
-const UnicodeString* ArrayOutOfBoundsExceptionClassDeclare::getFullQualifiedName() noexcept {
-	return &NAME;
 }
 
 ClassDeclare* ArrayOutOfBoundsExceptionClassDeclare::getBaseClass() const noexcept {

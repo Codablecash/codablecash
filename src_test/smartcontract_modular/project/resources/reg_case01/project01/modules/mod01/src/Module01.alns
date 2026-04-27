@@ -1,0 +1,23 @@
+package modsample;
+
+import modsample.export.IExportMethods;
+import modsample.export.IDirectAccess;
+import modsample.Result;
+
+class Module01 implements IExportMethods, IDirectAccess {
+	public Module01() {
+		this.count = 3 * 2;
+	}
+	
+	public int main(){
+		this.res = new Result();
+	}
+	
+	public void doubleup() {
+		int value = this.count * 2;
+		this.count = value;
+	}
+	
+	private int count = 0;
+	private Result res;
+}

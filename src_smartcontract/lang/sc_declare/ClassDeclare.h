@@ -43,6 +43,9 @@ public:
 	virtual bool isGenerics() const noexcept {
 		return false;
 	}
+	virtual bool isReserved() const noexcept {
+		return false;
+	}
 
 	virtual void preAnalyze(AnalyzeContext* actx);
 	virtual void analyzeTypeRef(AnalyzeContext* actx);
@@ -57,16 +60,17 @@ public:
 
 	ClassExtends* getExtends() const noexcept;
 
-	virtual const UnicodeString* getName() const noexcept;
-	virtual const UnicodeString* getFullQualifiedName() noexcept;
 	virtual const UnicodeString* getConstructorName() const noexcept;
 
 	virtual int binarySize() const;
 	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
-	virtual ClassDeclare* generateClassDeclare(HashMap<UnicodeString, AbstractType>* input);
+	virtual ClassDeclare* generateGenericsImplement(HashMap<UnicodeString, AbstractType>* input);
 
+	ClassImplements* getImplements() const noexcept {
+		return this->implements;
+	}
 
 protected:
 	void toBinaryCheck(ByteBuffer* out) const;
@@ -78,6 +82,8 @@ public:
 	int getInheritIndex() const noexcept;
 	void setInheritIndex(int inheritIndex) noexcept;
 
+	virtual const UnicodeString* getName() const noexcept;
+	virtual const UnicodeString* getFullQualifiedName() noexcept;
 
 	virtual ArrayList<MethodDeclare>* getMethods() noexcept;
 	virtual ArrayList<MemberVariableDeclare>* getMemberVariables() noexcept;

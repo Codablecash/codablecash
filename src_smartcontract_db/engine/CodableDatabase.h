@@ -44,7 +44,7 @@ public:
 	void newSession(const CdbDatabaseSessionId* sessionId) noexcept;
 	CdbTransaction* newTransaction();
 
-	void undoSession(CdbDatabaseSessionId* sessionId);
+	void undoSession(const CdbDatabaseSessionId* sessionId);
 
 	CdbStorageManager* getStorageManager() const noexcept;
 	SchemaManager* getSchemaManager() const noexcept;

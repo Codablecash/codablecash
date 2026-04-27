@@ -1,0 +1,9 @@
+package test.fw;
+
+class SampleObject {
+	public SampleObject() {
+
+	}
+	
+	private int count = 0;
+}

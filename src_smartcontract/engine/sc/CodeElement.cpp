@@ -161,12 +161,17 @@
 #include "lang_sql/sql_dml_parts/SQLWhere.h"
 
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
 
 #include "engine/sc/exceptions.h"
 
 #include "lang_sql/sql_expression/SQLDistinctArgument.h"
 
 #include "instance/reserved_classes/AbstractReservedClassDeclare.h"
+#include "instance/reserved_classes/AbstractReservedMethodDeclare.h"
+
+#include "instance/reserved_generics/AbstractReservedGenericsClassDeclare.h"
+#include "instance/reserved_generics/ReservedGeneratedGenericsClassDeclare.h"
 
 
 namespace alinous {
@@ -300,7 +305,15 @@ CodeElement* CodeElement::createFromBinary(ByteBuffer* in) {
 	case RESERVED_CLASS_DECLARE:
 		element = AbstractReservedClassDeclare::createFromBinary(in);
 		break;
-
+	case RESERVED_METHOD_DECLARE:
+		element = AbstractReservedMethodDeclare::createMethodFromBinary(in);
+		break;
+	case RESERVED_GENERICS_CLASS_DECLARE:
+		element = AbstractReservedGenericsClassDeclare::createFromBinary(in);
+		break;
+	case RESERVED_GENERATED_GENERICS_CLASS_DECLARE:
+		element = new ReservedGeneratedGenericsClassDeclare();
+		break;
 
 	case TYPE_BOOL:
 		element = new BoolType();
@@ -716,6 +729,21 @@ void CodeElement::checkKind(CodeElement* element, short kind) {
 	}
 }
 
+void CodeElement::checkKind(CodeElement *element, short *kind, int length) {
+	bool result = false;
+	for(int i = 0; i != length; ++i){
+		if(kind[i] == element->kind){
+			result = true;
+			break;
+		}
+	}
+
+	if(!result){
+		delete element;
+		throw new MulformattedScBinaryException(__FILE__, __LINE__);
+	}
+}
+
 void CodeElement::checkIsType(CodeElement* element) {
 	if(!(element->kind >= TYPE_BOOL && element->kind < STMT_BLOCK)){
 		delete element;
@@ -801,10 +829,21 @@ short CodeElement::getKind() const noexcept {
 }
 
 ClassDeclare* CodeElement::getClassDeclare() const {
+	if(this->kind == CodeElement::CLASS_DECLARE || this->kind == CodeElement::GENERICS_CLASS_DECLARE ||
+			this->kind == CodeElement::RESERVED_CLASS_DECLARE ||
+			this->kind == CodeElement::RESERVED_GENERICS_CLASS_DECLARE ||
+			this->kind == CodeElement::RESERVED_GENERATED_GENERICS_CLASS_DECLARE ||
+			this->kind == CodeElement::GENERICS_GENERATED_CLASS_DECLARE
+			){
+		CodeElement* element = const_cast<CodeElement*>(this);
+		return dynamic_cast<ClassDeclare*>(element);
+	}
+
 	CodeElement* element = this->parent;
 	while(element != nullptr &&
 			(element->kind != CodeElement::CLASS_DECLARE && element->kind != CodeElement::GENERICS_CLASS_DECLARE
 					&& element->kind != CodeElement::RESERVED_CLASS_DECLARE
+					&& element->kind != CodeElement::RESERVED_GENERICS_CLASS_DECLARE
 					&& element->kind != CodeElement::GENERICS_GENERATED_CLASS_DECLARE)){
 		element = element->getParent();
 	}
@@ -833,6 +872,34 @@ void CodeElement::copyCodePositions(const CodeElement *other) noexcept {
 	this->beginColumn = other->beginColumn;
 	this->endLine = other->endLine;
 	this->endColumn = other->endColumn;
+}
+
+int CodeElement::positionBinarySize() const {
+	return sizeof(uint32_t) * 4;
+}
+
+void CodeElement::positionToBinary(ByteBuffer *out) const {
+	out->putInt(this->beginLine);
+	out->putInt(this->beginColumn);
+	out->putInt(this->endLine);
+	out->putInt(this->endColumn);
+}
+
+void CodeElement::positionFromBinary(ByteBuffer *in) {
+	this->beginLine = in->getInt();
+	this->beginColumn = in->getInt();
+	this->endLine = in->getInt();
+	this->endColumn = in->getInt();
+}
+
+CodeElement* CodeElement::binaryCopy() const {
+	int cap = binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	toBinary(buff);
+
+	buff->position(0);
+	CodeElement* element = createFromBinary(buff);
+	return element;
 }
 
 } /* namespace alinous */

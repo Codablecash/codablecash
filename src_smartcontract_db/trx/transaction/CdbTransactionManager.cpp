@@ -96,6 +96,7 @@ void CdbTransactionManager::loadSession(const File *undoDir) {
 void CdbTransactionManager::newSession(const CdbDatabaseSessionId *sessionId) noexcept {
 	UndoIds undoLog;
 
+	// save current session id as last one
 	const CdbDatabaseSessionId* lastSessionId = this->dbsession->getSessionId();
 	undoLog.setLastSessionId(lastSessionId);
 

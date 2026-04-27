@@ -239,9 +239,9 @@ wchar_t JsonTokenizer::getChar() {
 void JsonTokenizer::checkNotEof() {
 	if(this->stream->isEndOfFile()){
 		UnicodeString msg(L"Token format error at line : ");
-		msg.append((int)this->line);
+		msg.append((int64_t)this->line);
 		msg.append(L" column : ");
-		msg.append((int)this->pos);
+		msg.append((int64_t)this->pos);
 
 		throw new JsonTokenizeException(msg.towString(), __FILE__, __LINE__);
 	}

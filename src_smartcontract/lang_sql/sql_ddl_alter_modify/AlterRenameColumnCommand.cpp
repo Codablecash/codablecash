@@ -56,6 +56,8 @@ int AlterRenameColumnCommand::binarySize() const {
 	total += stringSize(this->lastName);
 	total += stringSize(this->newName);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -66,11 +68,15 @@ void AlterRenameColumnCommand::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::DDL_ALTER_RENAME_COLUMN);
 	putString(out, this->lastName);
 	putString(out, this->newName);
+
+	positionToBinary(out);
 }
 
 void AlterRenameColumnCommand::fromBinary(ByteBuffer* in) {
 	this->lastName = getString(in);
 	this->newName = getString(in);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterRenameColumnCommand::getCommandLog(VirtualMachine* vm) {

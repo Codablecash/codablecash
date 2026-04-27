@@ -59,6 +59,8 @@ int SQLJoin::binarySize() const {
 		total += part->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -75,6 +77,8 @@ void SQLJoin::toBinary(ByteBuffer* out) const {
 		SQLJoinPart* part = this->list.get(i);
 		part->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLJoin::fromBinary(ByteBuffer* in) {
@@ -90,6 +94,8 @@ void SQLJoin::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(part);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLJoin::preAnalyze(AnalyzeContext* actx) {

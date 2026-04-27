@@ -17,12 +17,14 @@ class MemberVariableDeclare;
 class VirtualMachine;
 class AnalyzedType;
 class IAbstractVmInstanceSubstance;
+class AbstractVmInstance;
 
 class RefereceFactory {
 public:
 	static AbstractReference* createReferenceFromDefinition(IAbstractVmInstanceSubstance* owner, MemberVariableDeclare* dec, VirtualMachine* vm);
 	static PrimitiveReference* createNumericReference(int64_t value, uint8_t type, VirtualMachine* vm);
 	static AbstractReference* createReferenceFromAnalyzedType(IAbstractVmInstanceSubstance* owner, const AnalyzedType* atype, VirtualMachine* vm);
+
 private:
 	static AbstractReference* createObjectReferenceFromDefinition(IAbstractVmInstanceSubstance* owner, MemberVariableDeclare* dec, VirtualMachine* vm);
 	static AbstractReference* createArrayReferenceFromAnalyzedType(IAbstractVmInstanceSubstance* owner,const AnalyzedType* atype, VirtualMachine* vm);

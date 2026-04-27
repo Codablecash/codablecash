@@ -41,7 +41,7 @@ private:
 	IAbstractVmInstanceSubstance* instance;
 
 	ArrayList<const IAbstractVmInstanceSubstance> ownerList;
-	ArrayList<const IAbstractVmInstanceSubstance> terminalOwnerList;
+	ArrayList<const IAbstractVmInstanceSubstance> terminalOwnerList; // references from root and stack to make cyclic removel fast
 
 };
 

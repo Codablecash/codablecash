@@ -56,6 +56,8 @@ int ConstructorArray::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -73,6 +75,8 @@ void ConstructorArray::toBinary(ByteBuffer* out) const {
 		AbstractExpression* exp = this->dims.get(i);
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ConstructorArray::fromBinary(ByteBuffer* in) {
@@ -90,6 +94,8 @@ void ConstructorArray::fromBinary(ByteBuffer* in) {
 		AbstractExpression* exp = dynamic_cast<AbstractExpression*>(element);
 		this->dims.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 void ConstructorArray::preAnalyze(AnalyzeContext* actx) {

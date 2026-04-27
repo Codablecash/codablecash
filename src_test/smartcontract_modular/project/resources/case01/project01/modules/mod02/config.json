@@ -10,8 +10,11 @@
 			"method" : "main",
 			"args" : []
 		},
-		"exportMethods" : []
+		"libExport" : ["sample.IExport"],
+		"directAccess" : ["net.IAccess"]
 	},
+	
+	"exportClasses" : [],
 	
 	"dependencies": []
 }

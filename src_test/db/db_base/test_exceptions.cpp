@@ -31,4 +31,5 @@ TEST(ExceptionsTestGroup, ex){
 TEST(ExceptionsTestGroup, test01){
 	testException<NumberFormatException>();
 	testException<IllegalArgumentException>();
+	testException<UnsupportedFunctionException>();
 }

@@ -42,6 +42,7 @@ public:
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
 
 private:
 	uint8_t data[8];

@@ -69,6 +69,8 @@ int SQLColumnsList::binarySize() const {
 		total += colId->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -86,6 +88,8 @@ void SQLColumnsList::toBinary(ByteBuffer* out) const {
 		SQLColumnIdentifier* colId = this->list.get(i);
 		colId->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLColumnsList::fromBinary(ByteBuffer* in) {
@@ -97,6 +101,8 @@ void SQLColumnsList::fromBinary(ByteBuffer* in) {
 		SQLColumnIdentifier* colId = dynamic_cast<SQLColumnIdentifier*>(element);
 		this->list.addElement(colId);
 	}
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

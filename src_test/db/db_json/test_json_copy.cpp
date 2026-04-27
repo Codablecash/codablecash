@@ -18,6 +18,7 @@
 
 #include "base/StackRelease.h"
 
+#include "base_io/ByteBuffer.h"
 using namespace codablecash;
 
 
@@ -36,6 +37,20 @@ TEST(TestJsonCopyGroup, case01) {
 
 	bool eq = bl.equals(bl2);
 	CHECK(eq);
+
+	int cap = bl2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	bl2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case02) {
@@ -44,6 +59,20 @@ TEST(TestJsonCopyGroup, case02) {
 
 	bool eq = value.equals(value2);
 	CHECK(eq);
+
+	int cap = value2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	value2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case03) {
@@ -52,6 +81,20 @@ TEST(TestJsonCopyGroup, case03) {
 
 	bool eq = value.equals(value2);
 	CHECK(eq);
+
+	int cap = value2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	value2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case04) {
@@ -63,6 +106,20 @@ TEST(TestJsonCopyGroup, case04) {
 
 	bool eq = value.equals(value2);
 	CHECK(eq);
+
+	int cap = value2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	value2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 
@@ -80,6 +137,20 @@ TEST(TestJsonCopyGroup, case05) {
 
 	bool eq = value->equals(value2);
 	CHECK(eq);
+
+	int cap = value2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	value2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case06){
@@ -96,6 +167,20 @@ TEST(TestJsonCopyGroup, case06){
 
 	bool eq = value->equals(value2);
 	CHECK(eq);
+
+	int cap = value2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	value2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case07){
@@ -115,6 +200,20 @@ TEST(TestJsonCopyGroup, case07){
 
 	bool bl = object->equals(object2);
 	CHECK(!bl);
+
+	int cap = object2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	object2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }
 
 TEST(TestJsonCopyGroup, case08){
@@ -134,4 +233,18 @@ TEST(TestJsonCopyGroup, case08){
 
 	bool bl = object->equals(object2);
 	CHECK(!bl);
+
+	int cap = object2->binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true); __STP(buff);
+	object2->toBinary(buff);
+
+	buff->position(0);
+	AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(buff); __STP(obj);
+
+	ByteBuffer* buff2 = ByteBuffer::allocateWithEndian(cap, true); __STP(buff2);
+	obj->toBinary(buff2);
+	buff2->position(0);
+
+	int cmp = buff->binaryCmp(buff2);
+	CHECK(cmp == 0);
 }

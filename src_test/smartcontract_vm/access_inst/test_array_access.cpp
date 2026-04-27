@@ -103,7 +103,7 @@ TEST(TestArrayAccessGroup, case05){
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(exname->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestArrayAccessGroup, case06){
@@ -122,7 +122,7 @@ TEST(TestArrayAccessGroup, case06){
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(exname->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestArrayAccessGroup, case07){
@@ -141,6 +141,6 @@ TEST(TestArrayAccessGroup, case07){
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(exname->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 

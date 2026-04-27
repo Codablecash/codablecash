@@ -46,11 +46,15 @@ public:
 	void registerHandshake(P2pHandshake* handshake);
 	void removeDisabledHandshake() noexcept;
 
+	P2pHandshake* getP2pHandshake(const PubSubId *pubsubId) const noexcept;
+
 	bool handShakeExists(const PubSubId *pubsubId) const noexcept;
 
 	void setExpireSec(uint64_t expireSec) noexcept {
 		this->expireSec = expireSec;
 	}
+
+	ArrayList<PubSubId>* getHandshakeIdList() const noexcept;
 
 	void addConnectionListener(IPubsubConnectionListener* listner) noexcept;
 

@@ -9,12 +9,13 @@
 			"method" : "main",
 			"args" : []
 		},
-		"exportMethods" : []
+		"libExport" : [],
+		"directAccess" : []
 	},
 	
 	"dependencies": [
-	 	{"name" : "module_01", "version" : "^1.0.0"},
-	 	{"name" : "module_02", "version" : "^1.0.0"}
+	 	{"name" : "module_01", "localloc": "mod01", "version" : "^1.0.0"},
+	 	{"name" : "module_02", "localloc": "mod02", "version" : "^1.0.0"}
   	]
 }
 

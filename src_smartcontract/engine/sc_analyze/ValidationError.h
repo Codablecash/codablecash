@@ -26,6 +26,7 @@ public:
 	static constexpr int CODE_WRONG_TYPE_NAME = 4;
 	static constexpr int CODE_NO_RETURN_METHOD_VALUE = 5;
 	static constexpr int CODE_CYCRIC_TYPE_REFERENCE = 6;
+	static constexpr int CODE_INTERFACE_CANNOT_IMPLEMENTS = 7;
 
 	static constexpr int CODE_VIRTUAL_FUNC_WITH_DIFFERENT_RETURN = 10;
 	static constexpr int CODE_VIRTUAL_FUNC_WITH_DIFFERENT_STATIC = 11;
@@ -42,6 +43,7 @@ public:
 	static constexpr int CODE_CLASS_MEMBER_AND_STACK_VARIABLE_DO_NOT_EXISTS = 32;
 	static constexpr int CODE_CLASS_MEMBER_VOID = 33;
 	static constexpr int CODE_CLASS_DOES_NOT_IMPLEMENET_METHOD = 34;
+	static constexpr int CODE_CLASS_IMPLEMENTS_NOT_INTERFACE_CLASS = 35;
 
 
 	static constexpr int CODE_ALLOCATION_TYPE_DOES_NOT_EXISTS = 40;

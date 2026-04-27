@@ -20,11 +20,15 @@ class ISystemLogger {
 public:
 	static const constexpr int DEBUG_CHAIN_HEAD_DETECT{1};
 	static const constexpr int DEBUG_NODE_TRANSFER_RESPONSE{2};
+
 	static const constexpr int DEBUG_POW_CALC_THREAD{3};
 	static const constexpr int DEBUG_UTXO_ID{4};
 
 
 	static const constexpr int DEBUG_TMP_INFO{100};
+
+	static const constexpr int DEBUG_DBSESSION_INFO{101};
+	static const constexpr int DEBUG_POOL_TRANSFER_RESPONSE{102};
 
 	ISystemLogger();
 	virtual ~ISystemLogger();

@@ -31,14 +31,19 @@ void NullLiteral::analyze(AnalyzeContext* actx) {
 int NullLiteral::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void NullLiteral::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_NULL_LITERAL);
+
+	positionToBinary(out);
 }
 
 void NullLiteral::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 AnalyzedType NullLiteral::getType(AnalyzeContext* actx) {

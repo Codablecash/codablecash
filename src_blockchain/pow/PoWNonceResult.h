@@ -14,8 +14,11 @@ namespace codablecash {
 
 class PoWNonceResult : public PoWNonce {
 public:
+	PoWNonceResult(const PoWNonceResult& inst);
 	explicit PoWNonceResult(const BigInteger* nonce);
 	virtual ~PoWNonceResult();
+
+	static PoWNonceResult* nonce2Result(const PoWNonce* nonce);
 };
 
 } /* namespace codablecash */

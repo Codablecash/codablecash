@@ -35,6 +35,8 @@ UnicodeString ZeroDivisionExceptionClassDeclare::NAME{L"ZeroDivisionException"};
 ZeroDivisionExceptionClassDeclare::ZeroDivisionExceptionClassDeclare() : AbstractExceptionClassDeclare() {
 	addDefaultConstructor(&NAME);
 
+	this->name = new UnicodeString(&NAME);
+
 	this->extends = new ClassExtends();
 	this->extends->setClassName(&ExceptionClassDeclare::NAME);
 }
@@ -50,7 +52,11 @@ void ZeroDivisionExceptionClassDeclare::throwException(VirtualMachine* vm, const
 	ExecControlManager* ctrl = vm->getCtrl();
 	IVmInstanceFactory* factory = ExceptionInstanceFactory::getInstance();
 
-	AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&NAME);
+	UnicodeString fqn(&AbstractExceptionClassDeclare::PACKAGE_NAME);
+	fqn.append(L".");
+	fqn.append(&NAME);
+
+	AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&fqn);
 
 	VmClassInstance* inst = factory->createInstance(aclass, vm);
 	inst->init(vm);
@@ -63,14 +69,6 @@ void ZeroDivisionExceptionClassDeclare::throwException(VirtualMachine* vm, const
 
 ZeroDivisionExceptionClassDeclare::~ZeroDivisionExceptionClassDeclare() {
 
-}
-
-const UnicodeString* ZeroDivisionExceptionClassDeclare::getName() const noexcept {
-	return &NAME;
-}
-
-const UnicodeString* ZeroDivisionExceptionClassDeclare::getFullQualifiedName() noexcept {
-	return &NAME;
 }
 
 ClassDeclare* ZeroDivisionExceptionClassDeclare::getBaseClass() const noexcept {

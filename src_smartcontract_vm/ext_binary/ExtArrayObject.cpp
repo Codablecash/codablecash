@@ -9,16 +9,37 @@
 
 #include "instance/VmInstanceTypesConst.h"
 
+#include "instance/instance_array/VmArrayInstance.h"
+
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
+
+#include "engine/sc_analyze/AnalyzedType.h"
+#include "engine/sc_analyze/TypeResolver.h"
+#include "engine/sc_analyze/AnalyzeContext.h"
+#include "engine/sc_analyze/PackageSpace.h"
+
+#include "engine/sc/SmartContract.h"
+
+#include "bc/ExceptionThrower.h"
+
+#include "vm/exceptions.h"
+
+
+using namespace codablecash;
 
 namespace alinous {
 
-ExtArrayObject::ExtArrayObject(const UnicodeString* name, int length) : AbstractExtObject(name, VmInstanceTypesConst::INST_ARRAY) {
+ExtArrayObject::ExtArrayObject(const UnicodeString* name, int length, uint8_t atype, int dim, const UnicodeString* fqn) : AbstractExtObject(name, VmInstanceTypesConst::INST_ARRAY) {
 	this->length = length;
+	this->atype = atype;
+	this->dim = dim;
+	this->fqn = fqn != nullptr ? new UnicodeString(fqn) : nullptr;
 }
 
 ExtArrayObject::~ExtArrayObject() {
 	this->array.deleteElements();
+	delete this->fqn;
 }
 
 void ExtArrayObject::addInnerElement(AbstractExtObject* obj) noexcept {
@@ -34,7 +55,7 @@ AbstractExtObject* ExtArrayObject::get(int i) const noexcept {
 }
 
 AbstractExtObject* ExtArrayObject::copy() const noexcept {
-	ExtArrayObject* newObj = new ExtArrayObject(getName(), this->length);
+	ExtArrayObject* newObj = new ExtArrayObject(getName(), this->length, this->atype, this->dim, this->fqn);
 
 	int maxLoop = this->array.size();
 	for(int i = 0; i != maxLoop; ++i){
@@ -64,6 +85,42 @@ const UnicodeString* ExtArrayObject::toString() const noexcept {
 
 	this->str->append(L"]");
 	return this->str;
+}
+
+AbstractVmInstance* ExtArrayObject::toVmInstance(VirtualMachine *vm) {
+	SmartContract* contract = vm->getSmartContract();
+	AnalyzeContext* actx = contract->getAnalyzeContext();
+
+	AnalyzedType* atype = new AnalyzedType(this->atype); __STP(atype);
+	atype->setDim(this->dim);
+
+	if(this->fqn != nullptr){
+		UnicodeString* packageName = TypeResolver::getPackageName(this->fqn); __STP(packageName);
+		PackageSpace* space = actx->getPackegeSpace(packageName);
+		ExceptionThrower<VmClassNotFoundException>::throwExceptionIfCondition(space == nullptr, L"The package was not found.", __FILE__, __LINE__);
+
+		UnicodeString* className = TypeResolver::getClassName(this->fqn); __STP(className);
+		AnalyzedClass* aclass = space->getClass(className);
+		ExceptionThrower<VmClassNotFoundException>::throwExceptionIfCondition(aclass == nullptr, L"The class was not found.", __FILE__, __LINE__);
+
+		atype->setAnalyzedClass(aclass);
+	}
+
+	VmArrayInstance* inst = new(vm) VmArrayInstance(vm, this->length, *atype); __STP(inst);
+
+	int maxLoop = this->array.size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractExtObject* exObject = this->array.get(i);
+
+		AbstractVmInstance* vmValue = exObject->toVmInstance(vm);
+		IAbstractVmInstanceSubstance* substance = vmValue->getInstance();
+
+		AbstractReference* ref = substance->wrap(inst, vm);
+		inst->setReference(vm, i, ref);
+	}
+
+	return __STP_MV(inst);
+	// FIXME toVmInstance
 }
 
 } /* namespace alinous */

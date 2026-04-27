@@ -24,15 +24,18 @@ class FunctionArguments;
 class VirtualMachine;
 class AbstractVmInstance;
 class AbstractType;
+class TypeResolver;
+
 
 class MethodDeclare : public CodeElement {
 public:
+	explicit MethodDeclare(short kind);
 	MethodDeclare();
 	virtual ~MethodDeclare();
 
-	void preAnalyze(AnalyzeContext* actx);
-	void analyzeTypeRef(AnalyzeContext* actx);
-	void analyze(AnalyzeContext* actx);
+	virtual void preAnalyze(AnalyzeContext* actx);
+	virtual void analyzeTypeRef(AnalyzeContext* actx);
+	virtual void analyze(AnalyzeContext* actx);
 
 	void setAccessControl(AccessControlDeclare* ctrl) noexcept;
 	void setType(AbstractType* type) noexcept;
@@ -40,6 +43,13 @@ public:
 	void setName(UnicodeString* name) noexcept;
 	void setArguments(ArgumentsListDeclare* args) noexcept;
 	void setBlock(StatementBlock* block) noexcept;
+
+	AccessControlDeclare* getAccessControlDeclare() const noexcept {
+		return this->ctrl;
+	}
+	AbstractType* getType() const noexcept {
+		return this->type;
+	}
 
 	StatementBlock* getBlock() const noexcept;
 
@@ -55,14 +65,18 @@ public:
 	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
-	void init(VirtualMachine* vm);
-	void interpret(FunctionArguments* args, VirtualMachine* vm);
+	virtual void init(VirtualMachine* vm);
+	virtual void interpret(FunctionArguments* args, VirtualMachine* vm);
 
-	const UnicodeString* toString();
+	virtual const UnicodeString* toString();
 
-	MethodDeclare* generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const;
+	virtual MethodDeclare* generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const;
 
-private:
+protected:
+	void analyzeTypeRefBody(AnalyzeContext* actx, TypeResolver* typeResolver);
+	void analyzeReturnedValue(AnalyzeContext *actx, TypeResolver* typeResolver);
+
+protected:
 	AccessControlDeclare* ctrl;
 	AbstractType* type;
 	UnicodeString* name;

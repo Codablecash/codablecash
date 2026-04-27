@@ -5,6 +5,7 @@ set(__src
 	IClientSocket.cpp
 	IpV4ClientConnection.cpp
 	IpV6ClientConnection.cpp
+	IpV4ServerConnection.cpp
 	IpV6ServerConnection.cpp
 	IServerSocket.cpp
 	StackConnectionCloser.cpp

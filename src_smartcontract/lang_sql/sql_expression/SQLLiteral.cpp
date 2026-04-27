@@ -58,6 +58,8 @@ int SQLLiteral::binarySize() const {
 	total += stringSize(this->value);
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -67,11 +69,15 @@ void SQLLiteral::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_LITERAL);
 	putString(out, this->value);
 	out->put(this->type);
+
+	positionToBinary(out);
 }
 
 void SQLLiteral::fromBinary(ByteBuffer* in) {
 	this->value = getString(in);
 	this->type = in->get();
+
+	positionFromBinary(in);
 }
 
 void SQLLiteral::preAnalyze(AnalyzeContext* actx) {

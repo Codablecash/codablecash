@@ -60,6 +60,7 @@ void AbstractWalletTransactionHandler::__importTransaction(const AbstractBlockch
 		AbstractUtxo* utxo = __trx->getUtxo(i);
 
 		const AddressDescriptor* addressDesc = utxo->getAddress();
+
 		if(this->account->hasAddress(addressDesc)){
 			trxRepo->importUtxo(utxo);
 			imported = true;

@@ -131,7 +131,7 @@ TEST(TestTryCatchGroup, case04){
 
 	CHECK(codeElement->getKind() == CodeElement::STMT_THROW)
 	const UnicodeString* exname = exception->getClassName();
-	CHECK(exname->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(exname->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	CHECK(exobj == nullptr)
@@ -160,7 +160,7 @@ TEST(TestTryCatchGroup, case05){
 
 	CHECK(codeElement->getKind() == CodeElement::STMT_THROW)
 	const UnicodeString* exname = exception->getClassName();
-	CHECK(exname->equals(ExceptionClassDeclare::NAME));
+	CHECK(exname->equals(ExceptionClassDeclare::FULL_QUALIFIED_NAME));
 
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	CHECK(exobj == nullptr)
@@ -189,7 +189,7 @@ TEST(TestTryCatchGroup, case06){
 
 	CHECK(codeElement->getKind() == CodeElement::STMT_THROW)
 	const UnicodeString* exname = exception->getClassName();
-	CHECK(exname->equals(ExceptionClassDeclare::NAME));
+	CHECK(exname->equals(ExceptionClassDeclare::FULL_QUALIFIED_NAME));
 
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	CHECK(exobj == nullptr)

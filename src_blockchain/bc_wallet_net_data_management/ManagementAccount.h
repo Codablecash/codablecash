@@ -14,6 +14,11 @@
 
 using namespace alinous;
 
+namespace alinous {
+class SysMutex;
+
+}  // namespace alinous
+
 namespace codablecash {
 
 class ManagementTransactionsHistory;
@@ -43,12 +48,16 @@ public:
 
 	void importHdWalletAccount();
 
-
+	SysMutex* getMutex() const noexcept {
+		return this->mutex;
+	}
 private:
 	ManagementTransactionsHistory* trxHistory;
 	ManagedUtxoCache* utxoCache;
 
-	int storeType;
+	int storeType; // FINALIZED, UNFINALIZED, or MEMPOOL
+
+	SysMutex* mutex;
 };
 
 } /* namespace codablecash */

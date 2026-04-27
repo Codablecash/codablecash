@@ -70,7 +70,7 @@ void UndoIds::toBinary(ByteBuffer *out) const {
 }
 
 void UndoIds::fromBinary(ByteBuffer *in) {
-	this->lastSessionId = CdbDatabaseSessionId::fromBinary(in);
+	this->lastSessionId = CdbDatabaseSessionId::createFromBinary(in);
 	BinaryUtils::checkNotNull(this->lastSessionId);
 
 	this->maxTransactionId = in->getLong();

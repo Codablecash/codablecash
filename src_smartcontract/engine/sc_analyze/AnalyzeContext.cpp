@@ -90,6 +90,11 @@ PackageSpace* AnalyzeContext::getPackegeSpace(const UnicodeString* spaceName) no
 	}
 
 	return space;
+}void AnalyzeContext::addValidationError(bool condition, int errorCode, CodeElement *element, const wchar_t *msg,
+		std::initializer_list<const UnicodeString*> params) noexcept {
+	if(condition){
+		addValidationError(errorCode, element, msg, params);
+	}
 }
 
 void AnalyzeContext::addValidationError(int errorCode, CodeElement* element, const UnicodeString* msg, std::initializer_list<const UnicodeString*> params) noexcept {
@@ -153,6 +158,7 @@ void AnalyzeContext::popThisClass() noexcept {
 }
 
 void AnalyzeContext::analyzeClassInheritance() {
+	// super classes
 	Iterator<UnicodeString>* it = this->packageSpaces->keySet()->iterator();
 	while(it->hasNext()){
 		const UnicodeString* packageName = it->next();

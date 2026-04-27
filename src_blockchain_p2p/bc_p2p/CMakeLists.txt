@@ -8,6 +8,7 @@ set(__src
 	ClientNodeHandshake.cpp
 	P2pZone.cpp
 	StackHandshakeReleaser.cpp
+	StackRawHandshakeReleaser.cpp
 )
 handle_sub(codablecashlib "${__src}" blockchain_p2p bc_p2p)
 

@@ -117,6 +117,8 @@ int SQLGroupBy::binarySize() const {
 		total += this->having->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -130,6 +132,8 @@ void SQLGroupBy::toBinary(ByteBuffer* out) const {
 	if(this->having != nullptr){
 		this->having->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLGroupBy::fromBinary(ByteBuffer* in) {
@@ -143,6 +147,8 @@ void SQLGroupBy::fromBinary(ByteBuffer* in) {
 		checkKind(element, CodeElement::SQL_PART_HAVING);
 		this->having = dynamic_cast<SQLHaving*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

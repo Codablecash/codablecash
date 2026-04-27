@@ -10,6 +10,7 @@
 #include "lang/sc_declare_types/AbstractType.h"
 
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
 
 
 namespace alinous {
@@ -62,9 +63,10 @@ int PackageNameDeclare::binarySize() const {
 	int maxLoop = this->list.size();
 	for(int i = 0; i != maxLoop; ++i){
 		UnicodeString* str = this->list.get(i);
-		total += sizeof(uint32_t);
-		total += str->length() * sizeof(uint16_t);
+		total += stringSize(str);
 	}
+
+	total += positionBinarySize();
 
 	return total;
 }
@@ -79,6 +81,8 @@ void PackageNameDeclare::toBinary(ByteBuffer* out) const {
 		UnicodeString* str = this->list.get(i);
 		putString(out, str);
 	}
+
+	positionToBinary(out);
 }
 
 void PackageNameDeclare::fromBinary(ByteBuffer* in) {
@@ -87,10 +91,26 @@ void PackageNameDeclare::fromBinary(ByteBuffer* in) {
 		UnicodeString* str = getString(in);
 		this->list.addElement(str);
 	}
+
+	positionFromBinary(in);
 }
 
 PackageNameDeclare* PackageNameDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {
 	return new PackageNameDeclare(*this);
+}
+
+PackageNameDeclare* PackageNameDeclare::makeFromString(const UnicodeString *str) {
+	UnicodeString pattern(L"\\.");
+	ArrayList<UnicodeString>* list = str->split(&pattern); __STP(list);
+
+	PackageNameDeclare* dec = new PackageNameDeclare();
+	int maxLoop = list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		UnicodeString* seg = list->get(i);
+		dec->addSegment(seg);
+	}
+
+	return dec;
 }
 
 } /* namespace alinous */

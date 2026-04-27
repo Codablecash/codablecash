@@ -62,6 +62,8 @@ int SQLEqualityExpression::binarySize() const {
 	total += this->right->binarySize();
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -73,6 +75,8 @@ void SQLEqualityExpression::toBinary(ByteBuffer* out) const {
 	this->left->toBinary(out);
 	this->right->toBinary(out);
 	out->put(this->op);
+
+	positionToBinary(out);
 }
 
 void SQLEqualityExpression::fromBinary(ByteBuffer* in) {
@@ -85,6 +89,8 @@ void SQLEqualityExpression::fromBinary(ByteBuffer* in) {
 	this->right = dynamic_cast<AbstractSQLExpression*>(element);
 
 	this->op = in->get();
+
+	positionFromBinary(in);
 }
 
 void SQLEqualityExpression::preAnalyze(AnalyzeContext* actx) {

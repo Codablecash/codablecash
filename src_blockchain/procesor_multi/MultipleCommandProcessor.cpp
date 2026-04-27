@@ -26,7 +26,7 @@ MultipleCommandProcessor::MultipleCommandProcessor(ICommandParameter* param, int
 
 	for(int i = 0; i != size; ++i){
 		UnicodeString name(prefix);
-		name.append(i);
+		name.append((int64_t)i);
 
 		CommandProcessUnit* unit = new CommandProcessUnit(this, this->logger, &name);
 		this->list->addElement(unit);

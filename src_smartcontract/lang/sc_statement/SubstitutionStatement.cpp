@@ -56,7 +56,7 @@ void SubstitutionStatement::analyze(AnalyzeContext* actx) {
 	this->exp->analyze(actx);
 
 	if(!actx->hasError()){
-		bool result = typeChecker.checkCompatibility(actx, this->variable, this->exp);
+		bool result = typeChecker.checkCompatibility(actx, this->variable, this->exp, true);
 	}
 
 	this->bctrl = this->variable->throwsException() || this->exp->throwsException();
@@ -79,6 +79,8 @@ int SubstitutionStatement::binarySize() const {
 	total += this->variable->binarySize();
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -89,16 +91,23 @@ void SubstitutionStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_SUBSTITUTION);
 	this->variable->toBinary(out);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SubstitutionStatement::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
-	checkKind(element, CodeElement::EXP_VARIABLE_ID);
-	this->variable = dynamic_cast<VariableIdentifier*>(element);
+
+	short KINDS[2] = {CodeElement::EXP_MEMBER_REF, CodeElement::EXP_VARIABLE_ID};
+	checkKind(element, KINDS, 2);
+
+	this->variable = dynamic_cast<AbstractExpression*>(element);
 
 	element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void SubstitutionStatement::init(VirtualMachine* vm) {

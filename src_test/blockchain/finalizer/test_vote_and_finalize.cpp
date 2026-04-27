@@ -110,7 +110,7 @@ TEST(TestVoteAndFinalizeTicketGroup, case01){
 		CHECK(valid == false);
 	}
 
-	uint64_t wheight = 9;
+	uint64_t wheight = 5;
 	driver.waitUntilFinalizedHeight(wheight);
 	driver.suspendMiner();
 

@@ -22,6 +22,7 @@ public:
 	static const constexpr char PROTECTED{2};
 	static const constexpr char PRIVATE{3};
 
+	explicit AccessControlDeclare(char accessCtrl);
 	AccessControlDeclare();
 	virtual ~AccessControlDeclare();
 

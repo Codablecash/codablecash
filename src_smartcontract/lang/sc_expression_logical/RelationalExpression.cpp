@@ -77,6 +77,8 @@ int RelationalExpression::binarySize() const {
 	total += this->right->binarySize();
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -88,6 +90,8 @@ void RelationalExpression::toBinary(ByteBuffer* out) const {
 	this->left->toBinary(out);
 	this->right->toBinary(out);
 	out->put(this->op);
+
+	positionToBinary(out);
 }
 
 void RelationalExpression::fromBinary(ByteBuffer* in) {
@@ -100,6 +104,8 @@ void RelationalExpression::fromBinary(ByteBuffer* in) {
 	this->right = dynamic_cast<AbstractExpression*>(element);
 
 	this->op = in->get();
+
+	positionFromBinary(in);
 }
 
 AnalyzedType RelationalExpression::getType(AnalyzeContext* actx) {

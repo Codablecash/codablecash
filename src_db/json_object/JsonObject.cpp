@@ -12,7 +12,11 @@
 
 #include "base/UnicodeString.h"
 
+#include "base_io/ByteBuffer.h"
 
+#include "bc_base/BinaryUtils.h"
+
+#include "base/StackRelease.h"
 using namespace alinous;
 
 namespace codablecash {
@@ -67,6 +71,12 @@ const JsonValuePair* JsonObject::get(const wchar_t *name) const noexcept {
 	return ret;
 }
 
+
+bool JsonObject::hasNamedPair(const wchar_t *name) const noexcept {
+	const JsonValuePair* p = get(name);
+	return p != nullptr;
+}
+
 AbstractJsonObject* JsonObject::copy() const noexcept {
 	return new JsonObject(*this);
 }
@@ -94,6 +104,44 @@ bool JsonObject::equals(const AbstractJsonObject *other) const noexcept {
 
 int JsonObject::size() const noexcept {
 	return this->list->size();
+}
+
+int JsonObject::binarySize() const {
+	int total = sizeof(uint8_t);
+
+	int maxLoop = this->list->size();
+	total += sizeof(uint16_t);
+
+	for(int i = 0; i != maxLoop; ++i){
+		JsonValuePair* obj = this->list->get(i);
+		total += obj->binarySize();
+	}
+
+	return total;
+}
+
+void JsonObject::toBinary(ByteBuffer *out) const {
+	out->put(getType());
+
+	int maxLoop = this->list->size();
+	out->putShort(maxLoop);
+
+	for(int i = 0; i != maxLoop; ++i){
+		JsonValuePair* obj = this->list->get(i);
+		obj->toBinary(out);
+	}
+}
+
+void JsonObject::fromBinary(ByteBuffer *in) {
+	int maxLoop = in->getShort();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(in); __STP(obj);
+		JsonValuePair* pair = dynamic_cast<JsonValuePair*>(obj);
+		BinaryUtils::checkNotNull(pair);
+
+		this->list->addElement(pair);
+		__STP_MV(obj);
+	}
 }
 
 } /* namespace codablecash */

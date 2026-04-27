@@ -47,7 +47,7 @@ CdbSwapCacheFactory::~CdbSwapCacheFactory() {
 UnicodeString* CdbSwapCacheFactory::getName() noexcept {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_SINGLE_KEY);
 
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	return name;
 }
@@ -65,7 +65,7 @@ SingleKeyOidCache* CdbSwapCacheFactory::createSingleKeyOidCache(int swappiness) 
 
 OidKeyRecordCache* CdbSwapCacheFactory::createOidKeyRecordCache(int swappiness) {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_OID_KEY); __STP(name);
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	OidKeyRecordCache* cache = new OidKeyRecordCache(this->baseDir, name, dynamic_cast<CdbKeyFactory*>(this->keyFactory),
 			dynamic_cast<CdbDataFactory*>(this->dataFactory), this->diskCache);
@@ -77,7 +77,7 @@ OidKeyRecordCache* CdbSwapCacheFactory::createOidKeyRecordCache(int swappiness) 
 
 GroupRecordCache* CdbSwapCacheFactory::createGroupRecordCache(int swappiness) {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_GROUP_KEY); __STP(name);
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	GroupRecordCache* cache = new GroupRecordCache(this->baseDir, name, dynamic_cast<CdbKeyFactory*>(this->keyFactory),
 			dynamic_cast<CdbDataFactory*>(this->dataFactory), this->diskCache);
@@ -90,7 +90,7 @@ GroupRecordCache* CdbSwapCacheFactory::createGroupRecordCache(int swappiness) {
 
 OidArrayCache* CdbSwapCacheFactory::createOidArrayCache(int swappiness) {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_OID_ARRAY_KEY); __STP(name);
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	OidArrayCache* cache = new OidArrayCache();
 	UnicodeString* dir = this->baseDir->getAbsolutePath(); __STP(dir);
@@ -102,7 +102,7 @@ OidArrayCache* CdbSwapCacheFactory::createOidArrayCache(int swappiness) {
 
 CountSQLFunctionCache* CdbSwapCacheFactory::createCountSQLFunctionCache(int swappiness) {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_COUNT_SQL_FUNCTION_KEY); __STP(name);
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	CountSQLFunctionCache* cache = new CountSQLFunctionCache(this->baseDir, name, dynamic_cast<CdbKeyFactory*>(this->keyFactory),
 			dynamic_cast<CdbDataFactory*>(this->dataFactory), this->diskCache);
@@ -115,7 +115,7 @@ CountSQLFunctionCache* CdbSwapCacheFactory::createCountSQLFunctionCache(int swap
 
 RecordScanIdentityCache* CdbSwapCacheFactory::createRecordScanIdentityCache(int swappiness) {
 	UnicodeString* name = new UnicodeString(CdbSwapCacheFactory::PREFIX_RECORD_SCAN_IDENTITY_KEY); __STP(name);
-	name->append((int)this->serial++);
+	name->append((int64_t)this->serial++);
 
 	RecordScanIdentityCache* cache = new RecordScanIdentityCache(this->baseDir, name, dynamic_cast<CdbKeyFactory*>(this->keyFactory),
 			dynamic_cast<CdbDataFactory*>(this->dataFactory), this->diskCache);

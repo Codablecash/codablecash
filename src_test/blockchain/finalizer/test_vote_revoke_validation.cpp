@@ -105,7 +105,7 @@ TEST(TestVoteRevokeTicketValidationGroup, case01){
 	driver.resumeMiner();
 
 
-	uint64_t wheight = 6;
+	uint64_t wheight = 5;
 	driver.waitUntilFinalizedHeight(wheight);
 	driver.suspendMiner();
 

@@ -37,13 +37,14 @@
 
 namespace alinous {
 
+
 VmClassInstance::VmClassInstance(AnalyzedClass* clazz, VirtualMachine* vm) :
-		AbstractVmInstance(VmInstanceTypesConst::INST_OBJ), clazz(clazz), members(vm) {
+		AbstractVmInstance(VmInstanceTypesConst::INST_OBJ, vm->publishInstanceSerial()), clazz(clazz), members(vm) {
 
 }
 
 VmClassInstance::VmClassInstance(uint8_t type, AnalyzedClass* clazz, VirtualMachine* vm) :
-		AbstractVmInstance(type), clazz(clazz), members(vm) {
+		AbstractVmInstance(type, vm->publishInstanceSerial()), clazz(clazz), members(vm) {
 }
 
 VmClassInstance::~VmClassInstance() {
@@ -165,9 +166,8 @@ void VmClassInstance::init(VirtualMachine* vm) {
 
 		AbstractReference* ref = RefereceFactory::createReferenceFromDefinition(this, dec, vm);
 		ref->setOwner(this);
-		this->members.addElement(ref);
 
-		gc->registerObject(ref);
+		addMember(gc, ref);
 	}
 
 	for(int i = 0; i != maxLoop; ++i){
@@ -176,7 +176,11 @@ void VmClassInstance::init(VirtualMachine* vm) {
 
 		dec->onAllocate(vm, ref);
 	}
+}
 
+void VmClassInstance::addMember(GcManager* gc, AbstractReference *ref) {
+	this->members.addElement(ref);
+	gc->registerObject(ref);
 }
 
 const VMemList<AbstractReference>* VmClassInstance::getReferences() const noexcept {
@@ -192,9 +196,10 @@ AnalyzedType VmClassInstance::getRuntimeType() const noexcept {
 }
 
 AbstractExtObject* VmClassInstance::toClassExtObject(const UnicodeString* name, VTableRegistory* reg) {
-	ExtClassObject* extObj = new ExtClassObject(name);
-
 	const UnicodeString* fqn = this->clazz->getFullQualifiedName();
+
+	ExtClassObject* extObj = new ExtClassObject(name, fqn);
+
 	VTableClassEntry* classEntry = reg->getClassEntry(fqn, this->clazz);
 	MemberVariableTable* table = classEntry->getMemberVariableTable();
 

@@ -10,12 +10,20 @@
 
 #include "json_object/AbstractJsonObject.h"
 
+namespace alinous {
+class AbstractFunctionExtArguments;
+
+
+}  // namespace alinous
+
 namespace codablecash {
 
 class AbstractJsonValue : public AbstractJsonObject {
 public:
 	AbstractJsonValue();
 	virtual ~AbstractJsonValue();
+
+	virtual AbstractFunctionExtArguments* toFunctionExtArgument() const = 0;
 };
 
 } /* namespace codablecash */

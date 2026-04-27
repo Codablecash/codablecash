@@ -146,7 +146,7 @@ void TestDbSchemaBase::initSmartcontract() {
 	this->vm->analyze();
 
 	setMain(L"test.fw", L"SmartContract", L"main");
-	this->vm->createScInstance();
+	this->vm->createScInstance(nullptr);
 }
 
 void TestDbSchemaBase::setMain(const wchar_t* pkg, const wchar_t* clazz, const wchar_t* method) noexcept {

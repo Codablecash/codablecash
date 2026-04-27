@@ -145,7 +145,7 @@ void NetworkWalletSync::syncHeader(uint16_t zone, ArrayList<NodeIdentifier>* nod
 		const NodeIdentifier* nodeId = sel.next();
 
 		UnicodeString str(L"WalletHeaderSyncWk");
-		str.append(threadindex);
+		str.append((int64_t)threadindex);
 		threadindex++;
 
 		this->logger->debugLog(ISystemLogger::DEBUG_TMP_INFO, &str, __FILE__, __LINE__);
@@ -178,7 +178,7 @@ void NetworkWalletSync::initHeadersRepo() {
 	uint16_t zone = this->walletData->getDefaultZone();
 
 	UnicodeString zoneStr(L"zonedata_");
-	zoneStr.append((int)zone);
+	zoneStr.append((int64_t)zone);
 
 	File* zoneDir = this->tmpSyncDir->get(&zoneStr); __STP(zoneDir);
 	zoneDir->mkdirs();

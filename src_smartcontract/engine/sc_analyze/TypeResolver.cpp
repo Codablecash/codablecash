@@ -26,7 +26,9 @@
 #include "base/StackRelease.h"
 #include "base/ArrayList.h"
 
+#include "instance/reserved_classes/object/ObjectClassDeclare.h"
 
+#include "instance/reserved_classes_string/StringClassDeclare.h"
 namespace alinous {
 
 const UnicodeString TypeResolver::DOT(L".");
@@ -82,7 +84,13 @@ AnalyzedType* TypeResolver::resolveType(CodeElement* element, AbstractType* type
 		result = new AnalyzedType(AnalyzedType::TYPE_LONG);
 		break;
 	case CodeElement::TYPE_STRING:
-		result = new AnalyzedType(AnalyzedType::TYPE_STRING);
+		{
+			result = new AnalyzedType(AnalyzedType::TYPE_STRING);
+
+			PackageSpace* space = this->ctx->getPackegeSpace(nullptr);
+			AnalyzedClass* clazz = space->getClass(&StringClassDeclare::NAME);
+			result->setAnalyzedClass(clazz);
+		}
 		break;
 	case CodeElement::TYPE_VOID:
 		result = new AnalyzedType(AnalyzedType::TYPE_VOID);
@@ -110,7 +118,7 @@ AnalyzedType* TypeResolver::resolveType(CodeElement* element, AbstractType* type
 }
 
 AnalyzedType* TypeResolver::resolveClassType(CodeElement* element, ObjectType* type) const {
-	PackageNameDeclare* pkg = type->getPackageName();
+	PackageNameDeclare* pkg = type->getPackageNameDeclare();
 	const UnicodeString* name = type->getClassName();
 
 	// generics type
@@ -162,6 +170,10 @@ AnalyzedType* TypeResolver::findBasicType(const UnicodeString* name) const {
 	}
 	else if(name->equals(STRING)){
 		result = new AnalyzedType(AnalyzedType::TYPE_STRING);
+
+		PackageSpace* space = this->ctx->getPackegeSpace(nullptr);
+		AnalyzedClass* clazz = space->getClass(&StringClassDeclare::NAME);
+		result->setAnalyzedClass(clazz);
 	}
 
 	return result;
@@ -201,6 +213,15 @@ AnalyzedType* TypeResolver::findClassType(const CodeElement* element, const Unic
 		// find same package
 		const UnicodeString* packageName = unit->getPackageName();
 		AnalyzedType* atype = findClassType(packageName, name);
+		if(atype != nullptr){
+			return atype;
+		}
+
+		// find "lang" package
+		if(name->equals(&ObjectClassDeclare::NAME)){
+			return findClassType(&ObjectClassDeclare::PACKAGE, &ObjectClassDeclare::NAME);
+		}
+		atype = findClassType(&ObjectClassDeclare::PACKAGE, name);
 		if(atype != nullptr){
 			return atype;
 		}

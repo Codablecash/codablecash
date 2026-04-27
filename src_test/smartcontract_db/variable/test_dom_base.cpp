@@ -130,7 +130,7 @@ TEST(TestDomBaseGroup, case05){
 }
 
 TEST(TestDomBaseGroup, case06){
-	VirtualMachine* vm = new VirtualMachine(1024 * 10); __STP(vm);
+	VirtualMachine* vm = new VirtualMachine(1024 * 20); __STP(vm);
 	GcManager* gc = vm->getGc();
 
 	{

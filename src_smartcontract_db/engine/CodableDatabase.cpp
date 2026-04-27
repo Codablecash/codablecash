@@ -149,7 +149,7 @@ void CodableDatabase::newSession(const CdbDatabaseSessionId *sessionId) noexcept
 	this->trxManager->newSession(sessionId);
 }
 
-void CodableDatabase::undoSession(CdbDatabaseSessionId *sessionId) {
+void CodableDatabase::undoSession(const CdbDatabaseSessionId *sessionId) {
 	WriteLockHandle* lockH = databaseWriteLock();
 	StackDbLockUnlocker unlocker(lockH);
 

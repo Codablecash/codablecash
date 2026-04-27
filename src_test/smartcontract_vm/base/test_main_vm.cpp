@@ -45,7 +45,7 @@ TEST(TestVMGroup, clearStack){
 	sc->setMainMethod(nullptr, &mainClass, &mainMethod);
 
 	vm->analyze();
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 
 	vm->newStack();
 	vm->clearStack();
@@ -76,7 +76,7 @@ TEST(TestVMGroup, createInstanceErrorException){
 	vm->analyze();
 
 	errmgr->activatePoint(L"VirtualMachine::interpret", L"VirtualMachine::interpret", 1);
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 
 	delete vm;
 }
@@ -171,7 +171,7 @@ TEST(TestVMGroup, loadAndInitInstance){
 
 	vm->analyze();
 
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 	vm->destroy();
 }
 

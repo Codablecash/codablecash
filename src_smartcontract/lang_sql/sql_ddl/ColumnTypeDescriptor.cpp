@@ -49,6 +49,8 @@ int ColumnTypeDescriptor::binarySize() const {
 		total += this->length->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -65,6 +67,8 @@ void ColumnTypeDescriptor::toBinary(ByteBuffer* out) const {
 	if(bl){
 		this->length->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ColumnTypeDescriptor::fromBinary(ByteBuffer* in) {
@@ -77,6 +81,8 @@ void ColumnTypeDescriptor::fromBinary(ByteBuffer* in) {
 
 		this->length = dynamic_cast<AbstractSQLExpression*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void ColumnTypeDescriptor::analyze(AnalyzeContext* actx) {

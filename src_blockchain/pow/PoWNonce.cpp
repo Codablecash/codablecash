@@ -38,6 +38,10 @@ const BigInteger* PoWNonce::getMaxBigInt() noexcept {
 }
 const PoWNonce PoWNonce::MAX_NONCE(getMaxBigInt());
 
+PoWNonce::PoWNonce(const PoWNonce &inst) {
+	this->value = new BigInteger(*inst.value);
+}
+
 PoWNonce::PoWNonce(const BigInteger* nonce) {
 	this->value = new BigInteger(*nonce);
 }
@@ -48,6 +52,15 @@ PoWNonce::~PoWNonce() {
 PoWNonce* PoWNonce::createRandomNonce() noexcept {
 	const BigInteger* max = getMaxBigInt();
 	BigInteger nonce = BigInteger::ramdom(BigInteger(0L), BigInteger(*max));
+
+	return new PoWNonce(&nonce);
+}
+
+PoWNonce* PoWNonce::createRandomNonce(const BigInteger *solt) noexcept {
+	const BigInteger* max = getMaxBigInt();
+	BigInteger nonce = BigInteger::ramdom(BigInteger(0L), BigInteger(*max));
+
+	nonce = nonce.multiply(*solt).mod(*max);
 
 	return new PoWNonce(&nonce);
 }

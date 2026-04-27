@@ -16,6 +16,7 @@ class UnicodeString;
 
 class Long {
 public:
+	static const constexpr uint64_t MAX_UINT64 = 0xFFFFFFFFFFFFFFFF;
 	Long();
 	virtual ~Long();
 

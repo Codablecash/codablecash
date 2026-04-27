@@ -15,8 +15,13 @@
 #include "json_object/JsonStringValue.h"
 
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
 
 #include "bc/ExceptionThrower.h"
+
+#include "bc_base/BinaryUtils.h"
+
+#include "base_io/ByteBuffer.h"
 
 
 namespace codablecash {
@@ -27,7 +32,8 @@ ModularInstanceConfig::ModularInstanceConfig() {
 	this->initializerMethod = nullptr;
 
 	this->initializerMethodArguments = new ArrayList<AbstractJsonValue>();
-	this->exportMethods = new ArrayList<UnicodeString>();
+	this->libExport = new ArrayList<UnicodeString>();
+	this->directAccess = new ArrayList<UnicodeString>();
 
 }
 
@@ -39,8 +45,11 @@ ModularInstanceConfig::~ModularInstanceConfig() {
 	this->initializerMethodArguments->deleteElements();
 	delete this->initializerMethodArguments;
 
-	this->exportMethods->deleteElements();
-	delete this->exportMethods;
+	this->libExport->deleteElements();
+	delete this->libExport;
+
+	this->directAccess->deleteElements();
+	delete this->directAccess;
 }
 
 void ModularInstanceConfig::load(const JsonObject *instance) {
@@ -60,15 +69,28 @@ void ModularInstanceConfig::load(const JsonObject *instance) {
 		}
 	}
 
-	// exportMethods
+	// libExport
 	{
-		const JsonValuePair* pair = instance->get(EXPORT_METHODS);
+		const JsonValuePair* pair = instance->get(LIB_EXPORT);
 		if(pair != nullptr){
 			AbstractJsonObject* object = pair->getValue();
-			JsonArrayObject* exportMethods = dynamic_cast<JsonArrayObject*>(object);
+			JsonArrayObject* libExport = dynamic_cast<JsonArrayObject*>(object);
 
-			if(exportMethods != nullptr){
-				loadExportMethods(exportMethods);
+			if(libExport != nullptr){
+				loadLibExport(libExport);
+			}
+		}
+	}
+
+	// directAccess
+	{
+		const JsonValuePair* pair = instance->get(DIRECT_ACCESS);
+		if(pair != nullptr){
+			AbstractJsonObject* object = pair->getValue();
+			JsonArrayObject* directAccess = dynamic_cast<JsonArrayObject*>(object);
+
+			if(directAccess != nullptr){
+				loadDirectAccess(directAccess);
 			}
 		}
 	}
@@ -137,16 +159,29 @@ void ModularInstanceConfig::loadInitializer(const JsonObject *initializer) {
 	}
 }
 
-void ModularInstanceConfig::loadExportMethods(const JsonArrayObject *exportMethods) {
-	int maxLoop = exportMethods->size();
+void ModularInstanceConfig::loadLibExport(const JsonArrayObject *libExport) {
+	int maxLoop = libExport->size();
 	for(int i = 0; i != maxLoop; ++i){
-		AbstractJsonObject* jobj = exportMethods->get(i);
+		AbstractJsonObject* jobj = libExport->get(i);
 		JsonStringValue* stringValue = dynamic_cast<JsonStringValue*>(jobj);
 
-		ExceptionThrower<ModularConfigException>::throwExceptionIfCondition(stringValue == nullptr, L"The exportMethods must be string value.", __FILE__, __LINE__);
+		ExceptionThrower<ModularConfigException>::throwExceptionIfCondition(stringValue == nullptr, L"The libExport must be string value.", __FILE__, __LINE__);
 
-		const UnicodeString* method = stringValue->getValue();
-		this->exportMethods->addElement(new UnicodeString(method));
+		const UnicodeString* __interface = stringValue->getValue();
+		this->libExport->addElement(new UnicodeString(__interface));
+	}
+}
+
+void ModularInstanceConfig::loadDirectAccess(const JsonArrayObject *directAccess) {
+	int maxLoop = directAccess->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* jobj = directAccess->get(i);
+		JsonStringValue* stringValue = dynamic_cast<JsonStringValue*>(jobj);
+
+		ExceptionThrower<ModularConfigException>::throwExceptionIfCondition(stringValue == nullptr, L"The directAccess must be string value.", __FILE__, __LINE__);
+
+		const UnicodeString* __interface = stringValue->getValue();
+		this->directAccess->addElement(new UnicodeString(__interface));
 	}
 }
 
@@ -163,6 +198,108 @@ void ModularInstanceConfig::setMainClass(const UnicodeString *value) noexcept {
 void ModularInstanceConfig::setInitializerMethod(const UnicodeString *value) noexcept {
 	delete this->initializerMethod;
 	this->initializerMethod = new UnicodeString(value);
+}
+
+int ModularInstanceConfig::binarySize() const {
+	BinaryUtils::checkNotNull(this->mainPackage);
+	BinaryUtils::checkNotNull(this->mainClass);
+	BinaryUtils::checkNotNull(this->initializerMethod);
+
+	int total = BinaryUtils::stringSize(this->mainPackage);
+	total += BinaryUtils::stringSize(this->mainClass);
+	total += BinaryUtils::stringSize(this->initializerMethod);
+
+	int maxLoop = this->initializerMethodArguments->size();
+	total += sizeof(uint16_t);
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonValue* value = this->initializerMethodArguments->get(i);
+
+		total += value->binarySize();
+	}
+
+	maxLoop = this->libExport->size();
+	total += sizeof(uint16_t);
+	for(int i = 0; i != maxLoop; ++i){
+		const UnicodeString* element = this->libExport->get(i);
+		total += BinaryUtils::stringSize(element);
+	}
+
+	maxLoop = this->directAccess->size();
+	total += sizeof(uint16_t);
+	for(int i = 0; i != maxLoop; ++i){
+		const UnicodeString* element = this->directAccess->get(i);
+		total += BinaryUtils::stringSize(element);
+	}
+
+	return total;
+}
+
+void ModularInstanceConfig::toBinary(ByteBuffer *out) const {
+	BinaryUtils::checkNotNull(this->mainPackage);
+	BinaryUtils::checkNotNull(this->mainClass);
+	BinaryUtils::checkNotNull(this->initializerMethod);
+
+	BinaryUtils::putString(out, this->mainPackage);
+	BinaryUtils::putString(out, this->mainClass);
+	BinaryUtils::putString(out, this->initializerMethod);
+
+	int maxLoop = this->initializerMethodArguments->size();
+	out->putShort(maxLoop);
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonValue* value = this->initializerMethodArguments->get(i);
+
+		value->toBinary(out);
+	}
+
+	maxLoop = this->libExport->size();
+	out->putShort(maxLoop);
+	for(int i = 0; i != maxLoop; ++i){
+		const UnicodeString* element = this->libExport->get(i);
+		BinaryUtils::putString(out, element);
+	}
+
+	maxLoop = this->directAccess->size();
+	out->putShort(maxLoop);
+	for(int i = 0; i != maxLoop; ++i){
+		const UnicodeString* element = this->directAccess->get(i);
+		BinaryUtils::putString(out, element);
+	}
+}
+
+ModularInstanceConfig* ModularInstanceConfig::createFromBinary(ByteBuffer *in) {
+	ModularInstanceConfig* inst = new ModularInstanceConfig(); __STP(inst);
+
+	inst->fromBinary(in);
+
+	return __STP_MV(inst);
+}
+
+void ModularInstanceConfig::fromBinary(ByteBuffer *in) {
+	this->mainPackage = BinaryUtils::getString(in);
+	this->mainClass = BinaryUtils::getString(in);
+	this->initializerMethod = BinaryUtils::getString(in);
+
+	int maxLoop = in->getShort();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(in); __STP(obj);
+		AbstractJsonValue* value = dynamic_cast<AbstractJsonValue*>(obj);
+		BinaryUtils::checkNotNull(value);
+		__STP_MV(obj);
+
+		this->initializerMethodArguments->addElement(value);
+	}
+
+	maxLoop = in->getShort();
+	for(int i = 0; i != maxLoop; ++i){
+		UnicodeString* element = BinaryUtils::getString(in);
+		this->libExport->addElement(element);
+	}
+
+	maxLoop = in->getShort();
+	for(int i = 0; i != maxLoop; ++i){
+		UnicodeString* element = BinaryUtils::getString(in);
+		this->directAccess->addElement(element);
+	}
 }
 
 } /* namespace codablecash */

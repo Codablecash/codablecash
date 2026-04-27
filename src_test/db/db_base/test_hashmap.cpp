@@ -79,10 +79,10 @@ TEST(HashMapTestGroup, keySet){
 
 	for(int i = 0; i != 1000; ++i){
 		UnicodeString key(L"key");
-		key.append(i);
+		key.append((int64_t)i);
 
 		UnicodeString* value = new UnicodeString(L"value");
-		value->append(i);
+		value->append((int64_t)i);
 
 		map->put(&key, value);
 	}
@@ -110,7 +110,7 @@ TEST(HashMapTestGroup, keySet02){
 		Integer key(i);
 
 		UnicodeString* value = new UnicodeString(L"value");
-		value->append(i);
+		value->append((int64_t)i);
 
 		map->put(&key, value);
 	}
@@ -138,7 +138,7 @@ TEST(HashMapTestGroup, keySetWithNull){
 		Integer key(i);
 
 		UnicodeString* value = new UnicodeString(L"value");
-		value->append(i);
+		value->append((int64_t)i);
 
 		map->put(&key, value);
 	}

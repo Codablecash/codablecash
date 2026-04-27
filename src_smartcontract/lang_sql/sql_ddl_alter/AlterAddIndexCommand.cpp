@@ -81,6 +81,8 @@ int AlterAddIndexCommand::binarySize() const {
 		total += stringSize(col);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -98,6 +100,8 @@ void AlterAddIndexCommand::toBinary(ByteBuffer* out) const {
 		UnicodeString* col = this->list.get(i);
 		putString(out, col);
 	}
+
+	positionToBinary(out);
 }
 
 void AlterAddIndexCommand::fromBinary(ByteBuffer* in) {
@@ -111,6 +115,8 @@ void AlterAddIndexCommand::fromBinary(ByteBuffer* in) {
 		UnicodeString* col = getString(in);
 		addColumn(col);
 	}
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterAddIndexCommand::getCommandLog(VirtualMachine* vm) {

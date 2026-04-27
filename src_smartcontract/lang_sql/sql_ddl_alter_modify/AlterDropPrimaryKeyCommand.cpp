@@ -38,14 +38,19 @@ AlterDropPrimaryKeyCommand::~AlterDropPrimaryKeyCommand() {
 int AlterDropPrimaryKeyCommand::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void AlterDropPrimaryKeyCommand::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::DDL_ALTER_DROP_PRIMARY_KEY);
+
+	positionToBinary(out);
 }
 
 void AlterDropPrimaryKeyCommand::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterDropPrimaryKeyCommand::getCommandLog(VirtualMachine* vm) {

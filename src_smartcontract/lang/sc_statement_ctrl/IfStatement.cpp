@@ -161,6 +161,8 @@ int IfStatement::binarySize() const {
 		total += this->elseStmt->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -185,6 +187,8 @@ void IfStatement::toBinary(ByteBuffer* out) const {
 	if(bl){
 		this->elseStmt->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void IfStatement::fromBinary(ByteBuffer* in) {
@@ -211,6 +215,8 @@ void IfStatement::fromBinary(ByteBuffer* in) {
 		checkIsStatement(element);
 		this->elseStmt = dynamic_cast<AbstractStatement*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void IfStatement::init(VirtualMachine* vm) {

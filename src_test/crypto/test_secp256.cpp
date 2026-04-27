@@ -52,6 +52,11 @@ TEST(TestSecp256Group, testDouble){
 	Secp256k1Point pt2 = pt.add(pt);
 	Secp256k1Point pt4 = pt2.add(pt2);
 
+	{
+		UnicodeString* str = pt4.toString(16);
+		delete str;
+	}
+
 
 	Secp256k1Point ptadd4 = pt.add(pt).add(pt).add(pt);
 

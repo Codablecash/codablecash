@@ -105,6 +105,8 @@ int ConstructorCall::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -121,12 +123,15 @@ void ConstructorCall::toBinary(ByteBuffer* out) const {
 		AbstractExpression* exp = this->args.get(i);
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ConstructorCall::fromBinary(ByteBuffer* in) {
-	CodeElement* element = createFromBinary(in);
-	checkIsExp(element);
+	CodeElement* element = createFromBinary(in); __STP(element);
 	this->name = dynamic_cast<AbstractType*>(element);
+	checkNotNull(element);
+	__STP_MV(element);
 
 	int maxLoop = in->getInt();
 	for(int i = 0; i != maxLoop; ++i){
@@ -136,6 +141,8 @@ void ConstructorCall::fromBinary(ByteBuffer* in) {
 
 		this->args.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 void ConstructorCall::preAnalyze(AnalyzeContext* actx) {
@@ -218,6 +225,9 @@ AnalyzedType ConstructorCall::getType(AnalyzeContext* actx) {
 
 AbstractVmInstance* ConstructorCall::interpret(VirtualMachine* vm) {
 	GcManager* gc = vm->getGc();
+
+	// mark stack
+	vm->markStackEntryPoint(this);
 
 	AnalyzedClass* clazz = this->atype->getAnalyzedClass();
 	VmClassInstance* inst = VmClassInstance::createObject(clazz, vm);

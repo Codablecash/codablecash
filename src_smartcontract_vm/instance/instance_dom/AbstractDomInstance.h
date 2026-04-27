@@ -17,7 +17,7 @@ class VirtualMachine;
 
 class AbstractDomInstance : public AbstractVmInstance, public IInstanceContainer {
 public:
-	AbstractDomInstance(VirtualMachine* vm, uint8_t type);
+	AbstractDomInstance(VirtualMachine* vm, uint8_t type, uint64_t serial);
 	virtual ~AbstractDomInstance();
 };
 

@@ -18,6 +18,8 @@ public:
 	virtual ~ExecutableSmartcontractModule();
 
 	virtual void load(const File* modulePath);
+
+	virtual AbstractExecutableModuleInstance* toInstance() const;
 };
 
 } /* namespace codablecash */

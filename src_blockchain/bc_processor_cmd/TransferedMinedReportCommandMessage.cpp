@@ -97,6 +97,13 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 	const BlockHeader* header = this->data->getHeader();
 	uint16_t zone = header->getZone();
 
+	// [consensus]check if the block time is after PoSLimit
+	{
+		uint64_t height = header->getHeight();
+		ctrl->getPosVoteLimit(zone, height);
+	}
+
+
 	bool dataAdded = false;
 	if(zoneSelf == zone){
 		NodeIdentifierSource* networkKey = requestProcessor->getNetworkKey();
@@ -142,6 +149,7 @@ bool TransferedMinedReportCommandMessage::importBlock(MemoryPool* memPool, Block
 	uint16_t zone = header->getZone();
 	uint64_t height = header->getHeight();
 	const BlockHeaderId* headerId = header->getId();
+
 
 	// check if already block exists
 	{

@@ -52,6 +52,8 @@ int AlterDropIndexCommand::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += stringSize(this->name);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -60,10 +62,14 @@ void AlterDropIndexCommand::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_ALTER_DROP_INDEX);
 	putString(out, this->name);
+
+	positionToBinary(out);
 }
 
 void AlterDropIndexCommand::fromBinary(ByteBuffer* in) {
 	this->name = getString(in);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterDropIndexCommand::getCommandLog(VirtualMachine* vm) {

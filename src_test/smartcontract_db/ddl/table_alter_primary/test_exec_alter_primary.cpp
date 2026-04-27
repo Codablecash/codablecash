@@ -33,6 +33,8 @@
 #include "ext_binary/ExtExceptionObject.h"
 
 #include "trx/transaction_exception/DatabaseExceptionClassDeclare.h"
+
+
 TEST_GROUP(TestExecAlterPrimaryGroup) {
 	TEST_SETUP() {
 		env->setup();
@@ -94,7 +96,7 @@ TEST(TestExecAlterPrimaryGroup, dropPrimaryKey01){
 	const ExtExceptionObject* ex = tester.checkUncaughtException();
 	CHECK(ex != nullptr);
 
-	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 /**
@@ -269,7 +271,7 @@ TEST(TestExecAlterPrimaryGroup, addPrimaryKey03_err){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -291,6 +293,6 @@ TEST(TestExecAlterPrimaryGroup, addPrimaryKey04_err){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }

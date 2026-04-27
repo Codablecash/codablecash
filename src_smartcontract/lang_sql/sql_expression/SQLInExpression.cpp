@@ -54,6 +54,8 @@ int SQLInExpression::binarySize() const {
 	total += this->left->binarySize();
 	total += this->list->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -64,6 +66,8 @@ void SQLInExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_IN);
 	this->left->toBinary(out);
 	this->list->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLInExpression::fromBinary(ByteBuffer* in) {
@@ -74,6 +78,8 @@ void SQLInExpression::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkKind(element, CodeElement::SQL_EXP_EXP_LIST);
 	this->list = dynamic_cast<SQLExpressionList*>(element);
+
+	positionFromBinary(in);
 }
 
 void SQLInExpression::preAnalyze(AnalyzeContext* actx) {

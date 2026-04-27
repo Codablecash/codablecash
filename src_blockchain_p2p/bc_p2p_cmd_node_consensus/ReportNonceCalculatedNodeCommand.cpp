@@ -109,13 +109,6 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 	BlochchainP2pManager* p2pManager = inst->getBlochchainP2pManager();
 	BlockchainController* ctrl = inst->getController();
 
-	// validate header status
-	{
-		uint16_t zone = this->header->getZone();
-		uint64_t lastHeight = this->header->getHeight() - 1;
-		const BlockHeaderId *lastHeaderId = this->header->getLastHeaderId();
-	}
-
 	{
 		const PoWNonce* nonce = this->header->getPoWNonce();
 		PoWNonceResult* res = nonce->calcResult(this->header->getLastHeaderId(), this->header->getMerkleRoot(), this->header->getTimestamp()); __STP(res);
@@ -144,17 +137,42 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 				, L"Difficulty of the hash is not enough.", __FILE__, __LINE__);
 	}
 
+	// [consensus] validate Pos and header time
+	{
+		uint16_t zone = this->header->getZone();
+		uint64_t lastHeight = this->header->getHeight() - 1;
+		SystemTimestamp* limitTm = ctrl->getPosVoteLimit(zone, lastHeight); __STP(limitTm);
+
+		if(lastHeight > 1){
+			ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(limitTm == nullptr
+					, L"Block must be generated after the Pos Time Limit.", __FILE__, __LINE__);
+
+			const SystemTimestamp* blockTm = this->header->getTimestamp();
+
+			ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(blockTm->compareTo(limitTm) < 0
+					, L"Block must be generated after the Pos Time Limit.", __FILE__, __LINE__);
+		}
+	}
+
 	// register header for PoS limit
 	bool updated = false;
 	{
 		uint16_t zone = this->header->getZone();
 		CodablecashSystemParam* config = inst->getCodablecashSystemParam();
 
-		updated = ctrl->registerBlockHeader4Limit(zone, header, config);
+		updated = ctrl->registerBlockHeader4Limit(zone, this->header, config);
 	}
 
 
 	if(!suspend && updated){
+		// [consensus] Request Stake vote
+		{
+			uint64_t height = this->header->getHeight();
+			uint16_t zone = this->header->getZone();
+			ctrl->requestPosVote(zone, height);
+		}
+
+
 		ReportNonceCalculatedNodeCommand cmd(*this);
 		cmd.setHeader(this->header);
 

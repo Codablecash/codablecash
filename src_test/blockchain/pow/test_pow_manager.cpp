@@ -19,6 +19,7 @@
 
 #include "bc_memorypool/MemoryPool.h"
 
+#include "bc_block_generator/MiningConfig.h"
 
 #include "TestBlockGenerator.h"
 
@@ -37,10 +38,12 @@ TEST_GROUP(TestPoWManagerGroup) {
  * if(lastHeader->isScheduledBlock()) --> false
  */
 TEST(TestPoWManagerGroup, case01){
+	MiningConfig mconfig;
+
 	File projectFolder = this->env->testCaseDir();
 
 	DebugDefaultLogger logger;
-	PoWManager manager(&logger);
+	PoWManager manager(&logger, &mconfig);
 
 	File* memdir = projectFolder.get(L"mempool"); __STP(memdir);
 	MemoryPool memPool(memdir);
@@ -81,8 +84,9 @@ TEST(TestPoWManagerGroup, case01){
 TEST(TestPoWManagerGroup, case02){
 	File projectFolder = this->env->testCaseDir();
 
+	MiningConfig mconfig;
 	DebugDefaultLogger logger;
-	PoWManager manager(&logger);
+	PoWManager manager(&logger, &mconfig);
 
 	File* memdir = projectFolder.get(L"mempool"); __STP(memdir);
 	MemoryPool memPool(memdir);
@@ -125,8 +129,9 @@ TEST(TestPoWManagerGroup, case02){
 TEST(TestPoWManagerGroup, case03){
 	File projectFolder = this->env->testCaseDir();
 
+	MiningConfig mconfig;
 	DebugDefaultLogger logger;
-	PoWManager manager(&logger);
+	PoWManager manager(&logger, &mconfig);
 
 	File* memdir = projectFolder.get(L"mempool"); __STP(memdir);
 	MemoryPool memPool(memdir);

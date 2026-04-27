@@ -47,7 +47,12 @@
 #include "bc_p2p_cmd_network/NodeShutdownCommand.h"
 
 #include "bc_p2p_cmd_client/ClientFetchHeaderTransactionsCommand.h"
+#include "pow_pool_client_cmd/PoWPoolCheckDataCommand.h"
 
+#include "pow_pool_client_cmd/PoWPoolStatusCommand.h"
+#include "pow_pool_client_cmd/PoWPoolNonceCalculatedCommand.h"
+
+#include "pow_pool_cmd/PoWPoolNotifyDataChangedCommand.h"
 
 
 namespace codablecash {
@@ -141,6 +146,20 @@ AbstractPubSubCommand* AbstractPubSubCommand::createFromBinary(ByteBuffer *buff)
 		break;
 	case TYPE_CONSENSUS_SEND_VOTE_TRANSACTION:
 		ret = new SendVoteTransactionNodeCommand();
+		break;
+
+	case TYPE_POW_POOL_NOTIFY_DATA_CHANGED:
+		ret = new PoWPoolNotifyDataChangedCommand();
+		break;
+
+	case TYPE_POW_POOL_CLIENT_STATUS:
+		ret = new PoWPoolStatusCommand();
+		break;
+	case TYPE_POW_POOL_CLIENT_CHECK_DATA:
+		ret = new PoWPoolCheckDataCommand();
+		break;
+	case TYPE_POW_POOL_CLIENT_NONCE_CALCULATED:
+		ret = new PoWPoolNonceCalculatedCommand();
 		break;
 
 	default:

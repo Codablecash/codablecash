@@ -12,6 +12,8 @@
 
 #include "osenv/sockets.h"
 
+#include "bc_p2p_info/P2pNodeRecord.h"
+
 namespace codablecash {
 
 class ClientConnectionSourceDescriptor;
@@ -35,6 +37,10 @@ public:
 	virtual bool isConnected();
 
 	virtual void setClientAddress(const ClientConnectionSourceDescriptor* desc) noexcept;
+
+	virtual int getSocketType() {
+		return P2pNodeRecord::TCP_IP_V6;
+	}
 
 private:
 	SOCKET_ID sock;

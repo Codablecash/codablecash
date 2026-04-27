@@ -31,6 +31,8 @@ int AbstractSQLBinaryExpression::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -43,6 +45,7 @@ void AbstractSQLBinaryExpression::toBinary(ByteBuffer* out) const {
 		exp->toBinary(out);
 	}
 
+	positionToBinary(out);
 }
 
 void AbstractSQLBinaryExpression::fromBinary(ByteBuffer* in) {
@@ -53,6 +56,8 @@ void AbstractSQLBinaryExpression::fromBinary(ByteBuffer* in) {
 		AbstractSQLExpression* exp = dynamic_cast<AbstractSQLExpression*>(element);
 		this->operands.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 

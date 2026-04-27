@@ -74,7 +74,7 @@ TEST(TestInsertGroup, case03_err) {
 
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exName = ex->getClassName();
-	bool bl = exName->equals(&DatabaseExceptionClassDeclare::NAME);
+	bool bl = exName->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME);
 	CHECK(bl)
 }
 
@@ -95,7 +95,7 @@ TEST(TestInsertGroup, case04_err) {
 
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exName = ex->getClassName();
-	bool bl = exName->equals(&DatabaseExceptionClassDeclare::NAME);
+	bool bl = exName->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME);
 	CHECK(bl)
 }
 
@@ -116,7 +116,7 @@ TEST(TestInsertGroup, case05_err) {
 
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exName = ex->getClassName();
-	bool bl = exName->equals(&DatabaseExceptionClassDeclare::NAME);
+	bool bl = exName->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME);
 	CHECK(bl)
 }
 
@@ -150,7 +150,7 @@ TEST(TestInsertGroup, case07_err){
 
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exName = ex->getClassName();
-	bool bl = exName->equals(&DatabaseExceptionClassDeclare::NAME);
+	bool bl = exName->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME);
 	CHECK(bl)
 }
 

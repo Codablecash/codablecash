@@ -234,7 +234,7 @@ void CodablecashNodeInstance::shutdownNetwork() {
 void CodablecashNodeInstance::startBlockGenerator(const MiningConfig *config) {
 	uint16_t zone = this->blockchain->getZoneSelf();
 
-	this->powManager = new PoWManager(this->logger);
+	this->powManager = new PoWManager(this->logger, config);
 	this->blockGenerator = this->allocator->newBlockGenerator(zone, this->param, this->memoryPool, this->ctrl, config, this->logger);
 	this->blockGenerator->setCentralProcessor(this->centralProcessor);
 

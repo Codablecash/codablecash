@@ -28,10 +28,13 @@ public:
 	static const constexpr uint8_t TYPE_STRING{26};
 	static const constexpr uint8_t TYPE_VOID{27};
 	static const constexpr uint8_t TYPE_OBJECT{28};
-	static const constexpr uint8_t TYPE_DOM{29};
-	static const constexpr uint8_t TYPE_DOM_ARRAY{30};
-	static const constexpr uint8_t TYPE_DOM_VALUE_PAIR{31};
-	static const constexpr uint8_t TYPE_DOM_VALUE{32};
+	static const constexpr uint8_t TYPE_OBJECT_ARRAY{29};
+
+	// check InternalTypeChecker#analyzeCompatibility()
+	static const constexpr uint8_t TYPE_DOM{30}; // var [id] meaning DOM_VALUE JsonInitializerExpression
+	static const constexpr uint8_t TYPE_DOM_ARRAY{31};
+	static const constexpr uint8_t TYPE_DOM_VALUE_PAIR{32};
+	static const constexpr uint8_t TYPE_DOM_VALUE{33}; // wildcard of DOM relevant values
 
 	static const constexpr uint8_t TYPE_GENERICS_TYPE{101};
 

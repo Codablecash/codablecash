@@ -18,6 +18,7 @@
 #include "base/StackRelease.h"
 
 #include "bc/CodablecashNodeInstance.h"
+#include "bc/ExceptionThrower.h"
 
 #include "bc_p2p_processor/P2pRequestProcessor.h"
 
@@ -28,10 +29,14 @@
 #include "bc_processor/CentralProcessor.h"
 
 #include "bc_p2p/BlockchainNodeHandshake.h"
+#include "bc_p2p/BlochchainP2pManager.h"
 
 #include "bc_status_cache/BlockchainController.h"
 
-#include "bc_p2p/BlochchainP2pManager.h"
+#include "bc_block_validator/BlockValidationException.h"
+
+#include "base_timestamp/SystemTimestamp.h"
+
 namespace codablecash {
 
 ReportMinedBlockNodeCommand::ReportMinedBlockNodeCommand(const ReportMinedBlockNodeCommand &inst) : AbstractNodeCommand(inst) {
@@ -97,14 +102,32 @@ AbstractCommandResponse* ReportMinedBlockNodeCommand::executeAsNode(BlockchainNo
 
 	bool alreadyReceived = processor->hasHistory(this->data);
 	if(!alreadyReceived){
+		const BlockHeader* header = this->data->getHeader();
+		uint16_t zone = header->getZone();
+		uint64_t height = header->getHeight();
+		const BlockHeaderId* headerId = header->getLastHeaderId();
+
+
+		// [consensus] validate Pos and header time
+		{
+			uint16_t zone = header->getZone();
+			uint64_t lastHeight = header->getHeight() - 1;
+			SystemTimestamp* limitTm = ctrl->getPosVoteLimit(zone, lastHeight); __STP(limitTm);
+
+			if(lastHeight > 1){
+				ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(limitTm == nullptr
+						, L"Block must be generated after the Pos Time Limit.", __FILE__, __LINE__);
+
+				const SystemTimestamp* blockTm = header->getTimestamp();
+
+				ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(blockTm->compareTo(limitTm) < 0
+						, L"Block must be generated after the Pos Time Limit.", __FILE__, __LINE__);
+			}
+		}
+
 		// check if has blockchain
 		bool alreadyHasChain = false;
 		{
-			const BlockHeader* header = this->data->getHeader();
-			uint16_t zone = header->getZone();
-			uint64_t height = header->getHeight();
-			const BlockHeaderId* headerId = header->getLastHeaderId();
-
 			inst->validateZone(zone);
 
 			// ReportMinedBlockNodeCommand

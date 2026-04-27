@@ -34,14 +34,19 @@ void ContinueStatement::analyze(AnalyzeContext* actx) {
 int ContinueStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void ContinueStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_CONTINUE);
+
+	positionToBinary(out);
 }
 
 void ContinueStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void ContinueStatement::init(VirtualMachine* vm) {

@@ -74,7 +74,7 @@ public:
 	ByteBuffer* to65Bytes() const;
 	static Secp256k1Point from65Bytes(ByteBuffer* buff);
 
-
+	UnicodeString* toString(int radix) const noexcept;
 
 private:
 	Secp256k1Point doMultiple(const BigInteger& val) const;

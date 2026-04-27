@@ -14,13 +14,18 @@ namespace alinous {
 
 class ExtNullPtrObject : public AbstractExtObject {
 public:
-	ExtNullPtrObject(const UnicodeString* name, uint8_t type);
+	ExtNullPtrObject(const UnicodeString* name, uint8_t atype);
 	virtual ~ExtNullPtrObject();
 
 	virtual bool isNull() const noexcept;
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
+
+private:
+	uint8_t atype;
 };
 
 } /* namespace alinous */

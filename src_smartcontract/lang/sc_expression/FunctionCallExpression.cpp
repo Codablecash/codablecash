@@ -196,12 +196,15 @@ void FunctionCallExpression::analyze(AnalyzeContext* actx, AnalyzedClass* athisC
 
 	analyzeArguments(actx);
 	analyzeMethodEntry(actx, athisClass, staticMode);
+	if(this->methodEntry == nullptr){
+		return;
+	}
 
 	MethodDeclare* methodDeclare = this->methodEntry->getMethod();
 	staticMode = isStaticMode();
 
-	uint8_t instType = lastInst->getType();
-	if(instType == AbstractVariableInstraction::INSTRUCTION_CLASS_TYPE && !methodDeclare->isStatic()){
+	uint8_t lastInstType = lastInst->getType();
+	if(lastInstType == AbstractVariableInstraction::INSTRUCTION_CLASS_TYPE && !methodDeclare->isStatic()){
 		if(staticMode){
 			// error
 			actx->addValidationError(ValidationError::CODE_WRONG_FUNC_CALL_CANT_CALL_NOSTATIC, actx->getCurrentElement(), L"The method can't invoke non-static method '{0}()'.", {this->strName});
@@ -221,7 +224,7 @@ void FunctionCallExpression::analyze(AnalyzeContext* actx, AnalyzedClass* athisC
 		}
 	}
 
-	if(instType == AbstractVariableInstraction::INSTRUCTION_CLASS_TYPE){
+	if(lastInstType == AbstractVariableInstraction::INSTRUCTION_CLASS_TYPE){ // static method
 		this->noVirtual = true;
 	}
 }
@@ -295,6 +298,8 @@ int FunctionCallExpression::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -311,6 +316,8 @@ void FunctionCallExpression::toBinary(ByteBuffer* out) const {
 		AbstractExpression* exp = this->args.get(i);
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void FunctionCallExpression::fromBinary(ByteBuffer* in) {
@@ -327,6 +334,8 @@ void FunctionCallExpression::fromBinary(ByteBuffer* in) {
 
 		this->args.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 AnalyzedType FunctionCallExpression::getType(AnalyzeContext* actx) {
@@ -351,6 +360,9 @@ void FunctionCallExpression::init(VirtualMachine* vm) {
 AbstractVmInstance* FunctionCallExpression::interpret(VirtualMachine* vm) {
 	FunctionArguments args;
 	interpretThisPointer(vm, &args);
+
+	// mark stack
+	vm->markStackEntryPoint(this);
 
 	GcManager* gc = vm->getGc();
 	StackFloatingVariableHandler releaser(gc);

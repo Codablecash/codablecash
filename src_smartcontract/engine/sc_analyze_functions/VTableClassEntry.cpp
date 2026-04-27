@@ -128,8 +128,21 @@ void VTableClassEntry::dobuildMethodSuperClass(ClassDeclare* clazz,	AnalyzeConte
 		}
 
 		MethodDeclare* superMethod = getSuperClassMethod(method);
-		if(superMethod == nullptr){
+		// add checking deliver class method
+		MethodDeclare* deliveredMethod = getDeliverClassMethod(method);
+		if(superMethod == nullptr && deliveredMethod == nullptr){
 			addSuperMethodEntry(method);
+			continue;
+		}
+
+		if(superMethod != nullptr && superMethod->isStatic() != method->isStatic()){
+			actx->addValidationError(ValidationError::CODE_VIRTUAL_FUNC_WITH_DIFFERENT_STATIC, method, L"The method '{0}()' has supuer class method with different static type.", {method->getName()});
+			continue;
+		}
+
+		AnalyzedType* retTypeSuper = deliveredMethod != nullptr ? deliveredMethod->getReturnedType(): superMethod->getReturnedType();
+		if(!retType->equals(retTypeSuper)){
+			actx->addValidationError(ValidationError::CODE_VIRTUAL_FUNC_WITH_DIFFERENT_RETURN, method, L"The method '{0}()' has supuer class method with different return type.", {method->getName()});
 			continue;
 		}
 
@@ -167,17 +180,19 @@ void VTableClassEntry::buildMethodSelf(ClassDeclare* clazz,	AnalyzeContext* actx
 		}*/
 
 		MethodDeclare* superMethod = getSuperClassMethod(method);
-		if(superMethod == nullptr){
+		// check Delived classes
+		MethodDeclare* deliveredMethod = getDeliverClassMethod(method);
+		if(superMethod == nullptr && deliveredMethod == nullptr){
 			addMethodEntry(method);
 			continue;
 		}
 
-		if(superMethod->isStatic() != method->isStatic()){
+		if(superMethod != nullptr && superMethod->isStatic() != method->isStatic()){
 			actx->addValidationError(ValidationError::CODE_VIRTUAL_FUNC_WITH_DIFFERENT_STATIC, method, L"The method '{0}()' has supuer class method with different static type.", {method->getName()});
 			continue;
 		}
 
-		AnalyzedType* retTypeSuper = superMethod->getReturnedType();
+		AnalyzedType* retTypeSuper = deliveredMethod != nullptr ? deliveredMethod->getReturnedType(): superMethod->getReturnedType();
 		if(!retType->equals(retTypeSuper)){
 			actx->addValidationError(ValidationError::CODE_VIRTUAL_FUNC_WITH_DIFFERENT_RETURN, method, L"The method '{0}()' has supuer class method with different return type.", {method->getName()});
 			continue;
@@ -252,6 +267,27 @@ MethodDeclare* VTableClassEntry::getSuperClassMethod(MethodDeclare* method) noex
 	return nullptr;
 }
 
+MethodDeclare* VTableClassEntry::getDeliverClassMethod(MethodDeclare *method) noexcept {
+	const UnicodeString* name = method->getName();
+	ArgumentsListDeclare* argList = method->getArguments();
+	ArrayList<AnalyzedType>* typeList = argList->getArgumentsAnalyzedType();
+
+	MethodDeclare* deliverMethod = nullptr;
+
+	const ArrayList<AnalyzedClass>* list = this->aclass->getDelivedImplClasse();
+	int maxLoop = list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AnalyzedClass* deliverClazz = list->get(i);
+
+		deliverMethod = deliverClazz->findMethod(name, typeList);
+		if(deliverMethod != nullptr){
+			return deliverMethod;
+		}
+	}
+
+	return nullptr;
+}
+
 void VTableClassEntry::addMethodNameEntry(VTableMethodEntry* entry) noexcept {
 	const UnicodeString* methodName = entry->getName();
 
@@ -276,5 +312,9 @@ VTableMethodEntry* VTableClassEntry::getVTableMethodEntry(const UnicodeString* c
 	return this->methods.get(callSignature);
 }
 
+ClassDeclare* VTableClassEntry::getClassDeclare() const noexcept {
+	ClassDeclare* dec = this->aclass->getClassDeclare();
+	return dec;
+}
 
 } /* namespace alinous */

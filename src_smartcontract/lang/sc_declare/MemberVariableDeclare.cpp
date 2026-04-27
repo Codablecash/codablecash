@@ -104,7 +104,7 @@ void MemberVariableDeclare::analyze(AnalyzeContext* actx) {
 
 		AnalyzedTypeChecker checker;
 		AnalyzedType exAt = this->exp->getType(actx);
-		int result = checker.checkCompatibility(actx, this->atype, &exAt);
+		int result = checker.checkCompatibility(actx, this->atype, &exAt, true);
 
 		if(result == InternalTypeChecker::INCOMPATIBLE){
 			actx->addValidationError(ValidationError::CODE_TYPE_INCOMPATIBLE, this, L"Initial variable is incompatible with variable declare .", {});
@@ -205,6 +205,8 @@ int MemberVariableDeclare::binarySize() const {
 	total += this->type->binarySize();
 	total += stringSize(this->name);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -225,10 +227,11 @@ void MemberVariableDeclare::toBinary(ByteBuffer* out) const {
 	this->ctrl->toBinary(out);
 	this->type->toBinary(out);
 	putString(out, this->name);
+
+	positionToBinary(out);
 }
 
 void MemberVariableDeclare::fromBinary(ByteBuffer* in) {
-
 	uint8_t bl = in->get();
 	if(bl == 0){
 		CodeElement* element = createFromBinary(in);
@@ -249,6 +252,8 @@ void MemberVariableDeclare::fromBinary(ByteBuffer* in) {
 	this->type = dynamic_cast<AbstractType*>(element);
 
 	this->name = getString(in);
+
+	positionFromBinary(in);
 }
 
 MemberVariableDeclare* MemberVariableDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {

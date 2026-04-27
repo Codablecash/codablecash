@@ -26,7 +26,7 @@ namespace alinous {
 
 const UnicodeString DomArrayVariable::LENGTH(L"length");
 
-DomArrayVariable::DomArrayVariable(VirtualMachine* vm) : AbstractDomInstance(vm, VmInstanceTypesConst::INST_DOM_ARRAY), list(vm, 1) {
+DomArrayVariable::DomArrayVariable(VirtualMachine* vm) : AbstractDomInstance(vm, VmInstanceTypesConst::INST_DOM_ARRAY, vm->publishInstanceSerial()), list(vm, 1) {
 	this->array = new(vm) VMemList<DomRuntimeReference>(vm);
 	this->str = nullptr;
 }

@@ -36,14 +36,19 @@ SQLWildCard::~SQLWildCard() {
 int SQLWildCard::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void SQLWildCard::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_WILDCARD);
+
+	positionToBinary(out);
 }
 
 void SQLWildCard::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void SQLWildCard::preAnalyze(AnalyzeContext* actx) {

@@ -149,6 +149,7 @@ AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(Blockchai
 
 				command.sign(nwkey);
 
+				// make list to exclude broad cast
 				ArrayList<NodeIdentifier> list;
 				list.setDeleteOnExit(true);
 				{

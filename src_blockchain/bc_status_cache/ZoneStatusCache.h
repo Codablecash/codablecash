@@ -50,7 +50,7 @@ public:
 	static const constexpr wchar_t* KEY_FINALIZED_TICKET_PRICE{L"finalizedTicketPrice"};
 
 	ZoneStatusCache(const File* baseDir, uint16_t zone, bool headerOnly, ISystemLogger* logger, const CodablecashSystemParam* config);
-	ZoneStatusCache(const File* baseDir, ISystemLogger* logger, bool headerOnly);
+	ZoneStatusCache(const File* baseDir, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config);
 	virtual ~ZoneStatusCache();
 
 	void initBlank();
@@ -91,6 +91,7 @@ public:
 	UtxoData* findUtxo(const UtxoId* utxoId) const;
 
 	bool registerBlockHeader4Limit(const BlockHeader* header, const CodablecashSystemParam* param);
+	SystemTimestamp* getPosVoteLimit(uint64_t lastHeight);
 
 private:
 	void addIdex2String(UnicodeString *str) const noexcept;

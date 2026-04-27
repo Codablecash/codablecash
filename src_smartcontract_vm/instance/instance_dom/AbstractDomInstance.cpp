@@ -11,7 +11,7 @@
 
 namespace alinous {
 
-AbstractDomInstance::AbstractDomInstance(VirtualMachine* vm, uint8_t type) : AbstractVmInstance(type) {
+AbstractDomInstance::AbstractDomInstance(VirtualMachine* vm, uint8_t type, uint64_t serial) : AbstractVmInstance(type, serial) {
 
 }
 

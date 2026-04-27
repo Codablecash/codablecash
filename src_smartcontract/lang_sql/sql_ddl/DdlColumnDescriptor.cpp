@@ -45,6 +45,8 @@ int DdlColumnDescriptor::binarySize() const {
 		total += this->defaultValue->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -65,6 +67,8 @@ void DdlColumnDescriptor::toBinary(ByteBuffer* out) const {
 	if(bl){
 		this->defaultValue->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void DdlColumnDescriptor::fromBinary(ByteBuffer* in) {
@@ -88,6 +92,7 @@ void DdlColumnDescriptor::fromBinary(ByteBuffer* in) {
 		this->defaultValue = dynamic_cast<AbstractSQLExpression*>(element);
 	}
 
+	positionFromBinary(in);
 }
 
 void DdlColumnDescriptor::analyze(AnalyzeContext* actx) {

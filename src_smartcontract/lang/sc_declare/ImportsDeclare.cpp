@@ -48,6 +48,8 @@ int ImportsDeclare::binarySize() const {
 		total += imp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -60,6 +62,8 @@ void ImportsDeclare::toBinary(ByteBuffer* out) const {
 		ImportDeclare* imp = this->list.get(i);
 		imp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ImportsDeclare::fromBinary(ByteBuffer* in) {
@@ -70,6 +74,8 @@ void ImportsDeclare::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(dynamic_cast<ImportDeclare*>(element));
 	}
+
+	positionFromBinary(in);
 }
 
 const ArrayList<ImportDeclare>* ImportsDeclare::getImports() const noexcept {

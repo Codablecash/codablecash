@@ -19,7 +19,6 @@ using namespace alinous;
 
 namespace codablecash {
 
-class VoterData;
 
 class HeightVoteData : public IBlockObject {
 public:
@@ -35,16 +34,13 @@ public:
 
 	void setTimestamp(const SystemTimestamp* tm);
 
-	void validateTransactions();
-
-	const SystemTimestamp* getTimestamp() const noexcept {
+	const SystemTimestamp* getNonceCalculatedTimestamp() const noexcept {
 		return this->timestamp;
 	}
 
 
 private:
 	SystemTimestamp* timestamp;
-	ArrayList<VoterData>* voters;
 };
 
 } /* namespace codablecash */

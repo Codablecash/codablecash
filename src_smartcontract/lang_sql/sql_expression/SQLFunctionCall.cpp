@@ -66,6 +66,8 @@ int SQLFunctionCall::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -82,6 +84,8 @@ void SQLFunctionCall::toBinary(ByteBuffer* out) const {
 		AbstractSQLExpression* exp = this->arguments.get(i);
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLFunctionCall::fromBinary(ByteBuffer* in) {
@@ -97,6 +101,8 @@ void SQLFunctionCall::fromBinary(ByteBuffer* in) {
 
 		this->arguments.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLFunctionCall::preAnalyze(AnalyzeContext* actx) {

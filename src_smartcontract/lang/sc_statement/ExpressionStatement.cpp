@@ -54,6 +54,8 @@ int ExpressionStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -62,12 +64,16 @@ void ExpressionStatement::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::STMT_EXPRESSION);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ExpressionStatement::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void ExpressionStatement::init(VirtualMachine* vm) {

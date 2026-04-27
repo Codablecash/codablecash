@@ -233,7 +233,7 @@ UnicodeString* P2pNodeRecord::toString() const noexcept {
 	UnicodeString* str = new UnicodeString(L""); __STP(str);
 
 	str->append(L"@");
-	str->append(this->zone);
+	str->append((int64_t)this->zone);
 
 	{
 		UnicodeString node = this->nodeId->getPublicKey()->toString(16);
@@ -255,7 +255,7 @@ UnicodeString* P2pNodeRecord::toString() const noexcept {
 	}
 	str->append(this->host);
 	str->append(L":");
-	str->append((int)this->port);
+	str->append((int64_t)this->port);
 
 	return __STP_MV(str);
 }

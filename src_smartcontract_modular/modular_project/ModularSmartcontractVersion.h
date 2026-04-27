@@ -18,6 +18,7 @@ public:
 	static const constexpr int TYPE_CARET{1};
 	static const constexpr int TYPE_TILDE{2};
 
+	ModularSmartcontractVersion(const ModularSmartcontractVersion& inst);
 	ModularSmartcontractVersion(int major, int minor, int patch, int verType);
 	virtual ~ModularSmartcontractVersion();
 
@@ -28,6 +29,11 @@ public:
 	int getVersionType() const noexcept {
 		return this->versionType;
 	}
+
+	// binary
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	static ModularSmartcontractVersion* createFromBinary(ByteBuffer* in);
 
 private:
 	bool validateCaret(const SoftwareVersion* other) const noexcept;

@@ -14,7 +14,9 @@
 #include "base/StackRelease.h"
 #include "bc_wallet_net_cmd/AbstractClientQueueCommand.h"
 
+#include "base/Exception.h"
 
+#include "bc/ISystemLogger.h"
 namespace codablecash {
 
 NetworkClientCommandProcessorThread::NetworkClientCommandProcessorThread(NetworkWallet* wallet, ClientCommandsQueueProcessor* queue, bool suspend, ISystemLogger* logger, const UnicodeString* name)
@@ -67,7 +69,14 @@ void NetworkClientCommandProcessorThread::process() noexcept {
 }
 
 void NetworkClientCommandProcessorThread::processCommand(const AbstractClientQueueCommand *cmd) const {
-	cmd->process(this->wallet);
+	try{
+		cmd->process(this->wallet);
+	}
+	catch(Exception* e){
+		this->logger->logException(e);
+		delete e;
+	}
+
 }
 
 void NetworkClientCommandProcessorThread::setRunning(bool bl) noexcept {

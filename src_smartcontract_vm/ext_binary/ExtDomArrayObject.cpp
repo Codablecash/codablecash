@@ -9,7 +9,12 @@
 
 #include "instance/VmInstanceTypesConst.h"
 
+#include "instance/instance_dom/DomArrayVariable.h"
+
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
+
+
 namespace alinous {
 
 ExtDomArrayObject::ExtDomArrayObject(const UnicodeString* name) : AbstractExtObject(name, VmInstanceTypesConst::INST_DOM_ARRAY) {
@@ -63,6 +68,23 @@ const UnicodeString* ExtDomArrayObject::toString() const noexcept {
 
 	this->str->append(L"]");
 	return this->str;
+}
+
+AbstractVmInstance* ExtDomArrayObject::toVmInstance(VirtualMachine *vm) {
+	DomArrayVariable* vmInstance = new(vm) DomArrayVariable(vm); __STP(vmInstance);
+
+	int maxLoop = this->list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractExtObject* obj = this->list->get(i);
+
+		AbstractVmInstance* inst = obj->toVmInstance(vm);
+		IAbstractVmInstanceSubstance* substance = inst->getInstance();
+
+		vmInstance->add(vm, substance);
+	}
+
+	return __STP_MV(vmInstance);
+	// FIXME toVmInstance(VirtualMachine* vm);
 }
 
 } /* namespace alinous */

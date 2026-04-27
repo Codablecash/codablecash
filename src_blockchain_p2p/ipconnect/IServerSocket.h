@@ -19,6 +19,7 @@ class IClientSocket;
 
 class IServerSocket {
 public:
+
 	IServerSocket();
 	virtual ~IServerSocket();
 
@@ -30,6 +31,8 @@ public:
 	virtual IClientSocket* accept() = 0;
 
 	virtual void close() = 0;
+
+	virtual int getSocketType() = 0;
 };
 
 } /* namespace codablecash */

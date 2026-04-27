@@ -16,8 +16,12 @@ class AnalyzedClass;
 
 class AbstractExceptionClassDeclare : public AbstractReservedClassDeclare {
 public:
+	static const UnicodeString PACKAGE_NAME;
+
 	AbstractExceptionClassDeclare();
 	virtual ~AbstractExceptionClassDeclare();
+
+	virtual const UnicodeString* getPackageName() const noexcept;
 };
 
 } /* namespace alinous */

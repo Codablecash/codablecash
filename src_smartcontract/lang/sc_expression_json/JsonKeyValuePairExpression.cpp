@@ -77,6 +77,8 @@ int JsonKeyValuePairExpression::binarySize() const {
 	total += stringSize(this->name);
 	total += this->value->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -87,6 +89,8 @@ void JsonKeyValuePairExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_JSON_VALUE_PAIR);
 	putString(out, this->name);
 	this->value->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void JsonKeyValuePairExpression::fromBinary(ByteBuffer* in) {
@@ -96,6 +100,8 @@ void JsonKeyValuePairExpression::fromBinary(ByteBuffer* in) {
 	checkIsExp(element);
 
 	this->value = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* JsonKeyValuePairExpression::getName() const noexcept {

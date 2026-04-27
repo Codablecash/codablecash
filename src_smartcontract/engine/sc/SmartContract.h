@@ -10,6 +10,7 @@
 
 #include "base/ArrayList.h"
 
+
 namespace alinous {
 
 class File;
@@ -24,16 +25,25 @@ class ExtClassObject;
 class CompileError;
 class ReservedClassRegistory;
 class GcManager;
+class ClassDeclare;
+class IInitializeCompilantUnitProvidor;
 
 class SmartContract {
 public:
 	SmartContract();
 	virtual ~SmartContract();
 
-	void addCompilationUnit(InputStream* stream, int length, const File* base, File* source);
-	void addCompilationUnit(File* file, const File* base);
+	CompilationUnit* addCompilationUnit(InputStream* stream, int length, const File* base, File* source);
+	CompilationUnit* addCompilationUnit(File* file, const File* base);
 	void analyze(VirtualMachine* vm);
 	bool hasError() noexcept;
+
+	void initBeforeAnalyze(VirtualMachine* vm);
+	void preAnalyze(VirtualMachine* vm);
+	void preAnalyzeGenerics(VirtualMachine* vm);
+	void analyzeType(VirtualMachine* vm);
+	void analyzeMetadata(VirtualMachine* vm);
+	void analyzeFinal(VirtualMachine* vm);
 
 	void setMainMethod(const UnicodeString* mainPackage, const UnicodeString* mainClass, const UnicodeString* mainMethod);
 
@@ -41,15 +51,29 @@ public:
 	void clearRootReference(VirtualMachine* vm) noexcept;
 	void releaseMainInstance(GcManager* gc) noexcept;
 
-	VmClassInstance* createInstance(VirtualMachine* vm);
-	void initialize(VirtualMachine* vm);
+	VmClassInstance* createInstance(VirtualMachine* vm, ArrayList<IInitializeCompilantUnitProvidor>* exprogs);
+	void initialize(VirtualMachine* vm, ArrayList<IInitializeCompilantUnitProvidor>* exprogs);
 
 	AnalyzeContext* getAnalyzeContext() const noexcept;
 
 	const ArrayList<CompileError>* getCompileErrors() const noexcept;
 
-	CompilationUnit* getCompilationUnit(int pos);
+	int getNumCompilationUnit() const noexcept;
+	CompilationUnit* getCompilationUnit(int pos) const noexcept;
+	void addCompilationUnit(CompilationUnit* unit);
+
 	ReservedClassRegistory* getReservedClassRegistory() const noexcept;
+
+	bool isInitialized() const noexcept {
+		return this->initialized;
+	}
+
+	ClassDeclare* getClassDeclareByFqn(const UnicodeString* fqn) const;
+
+	UnicodeString* getMainClassFqn() const noexcept;
+
+private:
+	void initializeExprogs(VirtualMachine* vm, ArrayList<IInitializeCompilantUnitProvidor>* exprogs);
 
 private:
 	UnicodeString* mainPackage;

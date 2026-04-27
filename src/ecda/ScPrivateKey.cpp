@@ -16,6 +16,7 @@ namespace codablecash {
 const BigInteger ScPrivateKey::p(L"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
 
 ScPrivateKey::ScPrivateKey(const BigInteger* seed, uint64_t solt) : keyvalue((int64_t)0) {
+	assert(solt != 0);
 	BigInteger pow(solt);
 
 	this->keyvalue = seed->multiply(pow).mod(ScPrivateKey::p);
@@ -35,6 +36,10 @@ ScPublicKey ScPrivateKey::generatePublicKey() {
 	Secp256k1Point pt = BASE_POINT.multiple(this->keyvalue);
 
 	return ScPublicKey(pt);
+}
+
+int ScPrivateKey::compareTo(const ScPrivateKey *other) const {
+	return this->keyvalue.compareTo(other->keyvalue);
 }
 
 } /* namespace codablecash */

@@ -32,7 +32,9 @@ public:
 	explicit P2pServer(ISystemLogger* logger, IPubsubCommandExecutor* executor);
 	virtual ~P2pServer();
 
+	void startListening(int protocol, const UnicodeString *host, int port, const UnicodeString* nodeName);
 	void startIpV6Listening(const UnicodeString* host, int port, const UnicodeString* nodeName);
+	void startIpV4Listening(const UnicodeString* host, int port, const UnicodeString* nodeName);
 	void stopListning();
 
 	void close() noexcept;
@@ -44,6 +46,8 @@ public:
 	void registerPublisher(CommandPublisher* publisher);
 	void newHandShake(CommandSubscriber* subscriber);
 	void registerHandshake(P2pHandshake* handshake);
+
+
 
 	ISystemLogger* getLogger() const noexcept {
 		return logger;

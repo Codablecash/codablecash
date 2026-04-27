@@ -79,6 +79,8 @@ int SQLWhere::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -87,12 +89,16 @@ void SQLWhere::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_PART_WHERE);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLWhere::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsSQLExp(element);
 	this->exp = dynamic_cast<AbstractSQLExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

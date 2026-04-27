@@ -14,9 +14,11 @@ namespace alinous {
 
 class TypeCastExceptionClassDeclare : public AbstractExceptionClassDeclare {
 public:
-	static UnicodeString NAME;
+	static const UnicodeString NAME;
+	static const UnicodeString FULL_QUALIFIED_NAME;
 	static AnalyzedClass* createAnalyzedClass() noexcept;
 	static void throwException(VirtualMachine* vm, const CodeElement* element) noexcept;
+	static void throwException(bool cond, VirtualMachine* vm, const CodeElement* element) noexcept;
 
 	TypeCastExceptionClassDeclare();
 	virtual ~TypeCastExceptionClassDeclare();
@@ -24,9 +26,6 @@ public:
 	virtual uint16_t getClassType() const noexcept {
 		return TYPE_TYPE_CAST_EXCEPTION;
 	}
-
-	virtual const UnicodeString* getName() const noexcept;
-	virtual const UnicodeString* getFullQualifiedName() noexcept;
 
 	virtual ClassDeclare* getBaseClass() const noexcept;
 

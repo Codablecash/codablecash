@@ -25,12 +25,13 @@ class ExtDomArrayObject;
 
 class ExtClassObject : public AbstractExtObject {
 public:
-	explicit ExtClassObject(const UnicodeString* name);
+	explicit ExtClassObject(const UnicodeString* name, const UnicodeString* fqn);
 	virtual ~ExtClassObject();
 
 	void add(AbstractExtObject* obj) noexcept;
 	ExtPrimitiveObject* getExtPrimitiveObject(const UnicodeString* name) const noexcept;
 	ExtClassObject* getExtClassObject(const UnicodeString* name) const noexcept;
+	ExtClassObject* getExtClassObject(const wchar_t* name) const noexcept;
 	ExtArrayObject* getExtArrayObject(const UnicodeString* name) const noexcept;
 	ExtStringClass* getExtStringObject(const UnicodeString* name)const noexcept;
 	ExtExceptionObject* getExtExceptionObject(const UnicodeString* name)const noexcept;
@@ -40,10 +41,13 @@ public:
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
 
 private:
 	ArrayList<AbstractExtObject>* list;
 	HashMap<UnicodeString, AbstractExtObject>* map;
+
+	UnicodeString* fqn;
 };
 
 } /* namespace alinous */

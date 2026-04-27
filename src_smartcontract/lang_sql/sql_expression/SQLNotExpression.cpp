@@ -51,6 +51,8 @@ int SQLNotExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -59,12 +61,16 @@ void SQLNotExpression::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_EXP_NOT);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLNotExpression::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsSQLExp(element);
 	this->exp = dynamic_cast<AbstractSQLExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void SQLNotExpression::preAnalyze(AnalyzeContext* actx) {

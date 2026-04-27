@@ -14,6 +14,7 @@
 
 #include "base/UnicodeString.h"
 
+#include "instance/instance_string/VmString.h"
 TEST_GROUP(TestExceptionInsttGroup) {
 	TEST_SETUP(){}
 	TEST_TEARDOWN(){}
@@ -30,12 +31,11 @@ TEST(TestExceptionInsttGroup, meg01){
 		VmExceptionInstance* inst = new(vm) VmExceptionInstance(clazz, vm); __STP(inst);
 
 		UnicodeString message(L"Hello");
-		inst->setMessage(&message);
+		inst->setMessage(&message, vm);
 
-		const UnicodeString* str = inst->getMessage();
+		const VmString* vmstr = inst->getMessage();
+		UnicodeString* str = new UnicodeString(vmstr->towString());
+
 		CHECK(str->equals(&message))
-
-		str = inst->toString();
-		CHECK(str != nullptr)
 	}
 }

@@ -25,13 +25,18 @@ public:
 	void setClassName(const UnicodeString* className) noexcept;
 	const UnicodeString* getClassName() const noexcept;
 
+	void setMessage(const UnicodeString* message) noexcept;
+	const UnicodeString* getMessage() const noexcept;
+
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
 
 private:
 	const CodeElement* element;
 	UnicodeString* className;
+	UnicodeString* message;
 };
 
 } /* namespace alinous */

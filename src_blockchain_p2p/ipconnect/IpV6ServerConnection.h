@@ -12,6 +12,8 @@
 
 #include "osenv/sockets.h"
 
+#include "bc_p2p_info/P2pNodeRecord.h"
+
 namespace alinous {
 class UnicodeString;
 }
@@ -36,6 +38,10 @@ public:
 	virtual void close();
 
 	static void checkInetFamily(int family);
+
+	virtual int getSocketType() {
+		return P2pNodeRecord::TCP_IP_V6;
+	}
 
 private:
 	IPV6Context context;

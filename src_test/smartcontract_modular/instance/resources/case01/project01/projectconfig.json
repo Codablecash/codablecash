@@ -1,5 +1,6 @@
 {
 	"project" : "Sample01",
+	"version" : "1.0.0",
 	"executable" : "exec/",
 	
 	"author": "Tomohiro Iizuka",

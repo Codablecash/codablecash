@@ -79,7 +79,7 @@ TEST(TestTransactionFwGroup, case03_err){
 	CHECK(e != nullptr)
 
 	const UnicodeString* exname = e->getClassName();
-	CHECK(exname->equals(&DatabaseExceptionClassDeclare::NAME))
+	CHECK(exname->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME))
 }
 
 TEST(TestTransactionFwGroup, case04_err){
@@ -99,7 +99,7 @@ TEST(TestTransactionFwGroup, case04_err){
 	CHECK(e != nullptr)
 
 	const UnicodeString* exname = e->getClassName();
-	CHECK(exname->equals(&DatabaseExceptionClassDeclare::NAME))
+	CHECK(exname->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME))
 }
 
 TEST(TestTransactionFwGroup, case05_err){
@@ -119,6 +119,6 @@ TEST(TestTransactionFwGroup, case05_err){
 	CHECK(e != nullptr)
 
 	const UnicodeString* exname = e->getClassName();
-	CHECK(exname->equals(&DatabaseExceptionClassDeclare::NAME))
+	CHECK(exname->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME))
 }
 

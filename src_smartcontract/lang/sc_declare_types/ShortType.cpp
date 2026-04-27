@@ -25,16 +25,22 @@ int ShortType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
-void ShortType::toBinary(ByteBuffer* out) {
+void ShortType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_SHORT);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ShortType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* ShortType::toString() noexcept {

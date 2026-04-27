@@ -9,7 +9,7 @@
 #define INSTANCE_VMSTRINGINSTANCE_H_
 
 #include "instance/IAbstractVmInstanceSubstance.h"
-#include "instance/AbstractVmInstance.h"
+#include "instance/VmClassInstance.h"
 
 #include "instance/instance_string/VmString.h"
 
@@ -17,13 +17,16 @@
 namespace alinous {
 
 class VirtualMachine;
+class StringClassDeclare;
+class AnalyzedClass;
 
-class VmStringInstance : public AbstractVmInstance, public IAbstractVmInstanceSubstance {
+class VmStringInstance : public VmClassInstance {
 public:
 	VmStringInstance(const VmStringInstance& inst) = delete;
 	VmStringInstance(VirtualMachine* vm, const UnicodeString* str);
 	virtual ~VmStringInstance();
 
+	// AbstractVmInstance
 	virtual IAbstractVmInstanceSubstance* getInstance() noexcept;
 	virtual int valueCompare(const IAbstractVmInstanceSubstance* right) const noexcept;
 	virtual AbstractReference* wrap(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm);
@@ -31,6 +34,7 @@ public:
 	virtual AnalyzedType getRuntimeType() const noexcept;
 	virtual int hashCode() const noexcept;
 
+	// IAbstractVmInstanceSubstance
 	virtual const VMemList<AbstractReference>* getInstReferences() const noexcept;
 	virtual int instHashCode() const noexcept;
 	virtual bool instIsPrimitive() const noexcept;
@@ -48,6 +52,11 @@ public:
 	public:
 		int operator() (const VmStringInstance* const _this, const  VmStringInstance* const object) const noexcept;
 	};
+
+	VmString* getValue() const noexcept {
+		return this->value;
+	}
+
 private:
 	VmString* value;
 	static const VmString::ValueCompare compareFunctor;

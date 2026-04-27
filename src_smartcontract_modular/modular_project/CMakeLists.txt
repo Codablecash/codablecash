@@ -6,6 +6,7 @@ set(__src
 	DependencyConfig.cpp
 	ExecutableSmartcontractModule.cpp
 	LibrarySmartcontractModule.cpp
+	LocalProjectModuleDependencyConfig.cpp
 	ModularConfigException.cpp
 	ModularInstanceConfig.cpp
 	ModularProjectConfig.cpp
@@ -13,6 +14,7 @@ set(__src
 	ModularSmartcontractProject.cpp
 	ModularSmartcontractVersion.cpp
 	ModularConfigException.cpp
+	SmartcontractProjectId.cpp
 )
 handle_sub(codablecashlib "${__src}" smartcontract_modular modular_project)
 

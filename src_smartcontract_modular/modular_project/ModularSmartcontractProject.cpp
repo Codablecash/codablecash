@@ -11,10 +11,14 @@
 #include "modular_project/ModularProjectConfig.h"
 #include "modular_project/ModularConfigException.h"
 
-#include "base_io/File.h"
+#include "smartcontract_instance/ModularSmartcontractInstance.h"
+#include "smartcontract_instance/ExecutableModuleInstance.h"
+#include "smartcontract_instance/LibraryExectableModuleInstance.h"
 
 #include "base/StackRelease.h"
 #include "base/UnicodeString.h"
+
+#include "base_io/File.h"
 
 #include "bc/ExceptionThrower.h"
 
@@ -42,6 +46,12 @@ ModularSmartcontractProject::~ModularSmartcontractProject() {
 }
 
 void ModularSmartcontractProject::loadProject() {
+	if(this->config == nullptr){
+		__loadProject();
+	}
+}
+
+void ModularSmartcontractProject::__loadProject() {
 	File* projectConfig = this->baseDir->get(PROJECT_CONFIG_FILE_NAME); __STP(projectConfig);
 
 	this->config = new ModularProjectConfig();
@@ -88,12 +98,59 @@ void ModularSmartcontractProject::loadLibrary(const File* libraryPath, const Uni
 
 	UnicodeString projectRelativePath(MODULE_DIR_NAME);
 	projectRelativePath.append(L"/");
+	projectRelativePath.append(libname);
+	projectRelativePath.append(L"/");
 
 	LibrarySmartcontractModule* libMod = new LibrarySmartcontractModule(&projectRelativePath); __STP(libMod);
 	libMod->load(libPath);
 
 
 	this->libModules->addElement(__STP_MV(libMod));
+}
+
+ModularSmartcontractInstance* ModularSmartcontractProject::toInstance() const {
+	ModularSmartcontractInstance* instance = new ModularSmartcontractInstance(); __STP(instance);
+
+	instance->setModularProjectConfig(this->config);
+
+	// exec
+	{
+		AbstractExecutableModuleInstance* inst = this->executableModule->toInstance();
+		UnicodeString name(L"exec");
+		inst->setName(&name);
+		instance->setExecutableModuleInstance(dynamic_cast<ExecutableModuleInstance*>(inst));
+	}
+
+	{
+		int maxLoop = this->libModules->size();
+		for(int i = 0; i != maxLoop; ++i){
+			LibrarySmartcontractModule* mod = this->libModules->get(i);
+
+			AbstractExecutableModuleInstance* inst = mod->toInstance();
+			LibraryExectableModuleInstance* lib = dynamic_cast<LibraryExectableModuleInstance*>(inst);
+
+			const UnicodeString* name = lib->getLibraryName();
+			lib->setName(name);
+
+			if(!instance->libraryExists(name)){
+				instance->addLibraryModuleInstance(name, lib);
+			}
+		}
+	}
+
+	return __STP_MV(instance);
+}
+
+SmartcontractProjectId* ModularSmartcontractProject::getProjectId() const {
+	ModularSmartcontractInstance* instance = toInstance(); __STP(instance);
+	instance->loadCompilantUnits(this->baseDir);
+
+	bool res = instance->hasCompileError();
+	ExceptionThrower<Exception>::throwExceptionIfCondition(res == true, L"Compile error exists.", __FILE__, __LINE__);
+
+	SmartcontractProjectId* projectId = instance->getProjectId();
+
+	return projectId;
 }
 
 } /* namespace codablecash */

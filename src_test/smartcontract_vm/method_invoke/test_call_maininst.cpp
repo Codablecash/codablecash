@@ -71,7 +71,7 @@ TEST(TestCallMainInstGroup, callMainMethod){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	VmClassInstance* mainInst = vm->createScInstance();
+	VmClassInstance* mainInst = vm->createScInstance(nullptr);
 
 	{
 		vm->interpret(&mainMethod);
@@ -112,7 +112,7 @@ TEST(TestCallMainInstGroup, callMainMethod2){
 	args.setDeleteOnExit();
 
 	args.addElement(new NumericArgument(10, AnalyzedType::TYPE_INT));
-	util.vm->interpret(&method, &args);
+	util.vm->interpretMainObjectMethod(&method, &args);
 
 	ExtClassObject* classObject = util.getMainExtObject(); __STP(classObject);
 
@@ -141,7 +141,7 @@ TEST(TestCallMainInstGroup, callMainMethod2_err){
 
 	VmMethodNotFoundException* ex = nullptr;
 	try{
-		util.vm->interpret(&method, &args);
+		util.vm->interpretMainObjectMethod(&method, &args);
 	}catch(VmMethodNotFoundException* e){
 		ex = e;
 	}
@@ -169,7 +169,7 @@ TEST(TestCallMainInstGroup, callMainMethod3){
 
 	UnicodeString hello(L"Hello World");
 	args.addElement(new StringArgument(&hello));
-	util.vm->interpret(&method, &args);
+	util.vm->interpretMainObjectMethod(&method, &args);
 }
 
 TEST(TestCallMainInstGroup, callMainMethod4){
@@ -191,7 +191,7 @@ TEST(TestCallMainInstGroup, callMainMethod4){
 
 	args.addElement(new BoolArgument(true));
 
-	util.vm->interpret(&method, &args);
+	util.vm->interpretMainObjectMethod(&method, &args);
 
 	ExtClassObject* classObject = util.getMainExtObject(); __STP(classObject);
 	bool bl = VmTestUtils::getBoolMemberValue(classObject, L"count");
@@ -218,7 +218,7 @@ TEST(TestCallMainInstGroup, callMainMethod5){
 	AnalyzedType at(AnalyzedType::TYPE_STRING);
 	args.addElement(new NullArgument(&at));
 
-	util.vm->interpret(&method, &args);
+	util.vm->interpretMainObjectMethod(&method, &args);
 
 	ExtClassObject* classObject = util.getMainExtObject(); __STP(classObject);
 	const UnicodeString* str = VmTestUtils::getStringMemberValue(classObject, L"str");
@@ -248,7 +248,7 @@ TEST(TestCallMainInstGroup, callMainMethod6){
 	args.addElement(new NumericArgument(12, AnalyzedType::TYPE_CHAR));
 	args.addElement(new NumericArgument(13, AnalyzedType::TYPE_LONG));
 
-	util.vm->interpret(&method, &args);
+	util.vm->interpretMainObjectMethod(&method, &args);
 
 	ExtClassObject* classObject = util.getMainExtObject(); __STP(classObject);
 

@@ -14,11 +14,19 @@ namespace alinous {
 
 class BoolArgument : public AbstractFunctionExtArguments {
 public:
+	BoolArgument();
 	explicit BoolArgument(bool value);
 	virtual ~BoolArgument();
 
-	virtual AnalyzedType getType() const noexcept;
+	virtual ArgumentType* getType() const noexcept;
 	virtual AbstractVmInstance* interpret(VirtualMachine* vm);
+
+	virtual AbstractFunctionExtArguments* copy() const;
+
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	virtual void fromBinary(ByteBuffer* in);
+
 private:
 	bool value;
 };

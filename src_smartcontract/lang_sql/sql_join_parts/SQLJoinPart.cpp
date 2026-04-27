@@ -46,6 +46,8 @@ int SQLJoinPart::binarySize() const {
 		total += this->exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -60,6 +62,8 @@ void SQLJoinPart::toBinary(ByteBuffer* out) const {
 	if(this->exp != nullptr){
 		this->exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLJoinPart::fromBinary(ByteBuffer* in) {
@@ -75,6 +79,8 @@ void SQLJoinPart::fromBinary(ByteBuffer* in) {
 		checkIsSQLExp(element);
 		this->exp = dynamic_cast<AbstractSQLExpression*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLJoinPart::preAnalyze(AnalyzeContext* actx) {

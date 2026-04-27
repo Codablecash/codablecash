@@ -27,16 +27,22 @@ int DomType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
-void DomType::toBinary(ByteBuffer* out) {
+void DomType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_DOM);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void DomType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* DomType::toString() noexcept {

@@ -12,6 +12,7 @@
 
 namespace alinous {
 class UnicodeString;
+class ByteBuffer;
 }
 using namespace alinous;
 
@@ -19,6 +20,7 @@ namespace codablecash {
 
 class SoftwareVersion {
 public:
+	SoftwareVersion(const SoftwareVersion& inst);
 	SoftwareVersion(int major, int minor, int patch);
 	virtual ~SoftwareVersion();
 
@@ -37,6 +39,11 @@ public:
 	int compareTo(const SoftwareVersion* other) const noexcept;
 
 	static SoftwareVersion* parseString(const UnicodeString* str);
+
+	// binary
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	static SoftwareVersion* createFromBinary(ByteBuffer* in);
 
 protected:
 	int major;

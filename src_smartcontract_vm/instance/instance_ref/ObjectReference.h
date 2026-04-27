@@ -14,17 +14,19 @@ namespace alinous {
 
 class AbstractVmInstance;
 class VmStringInstance;
+class AbstractVmReservedInstance;
 
 class ObjectReference : public AbstractReference {
 public:
 	static constexpr uint8_t CLASS_INSTANCE {1};
 	static constexpr uint8_t STRING_INSTANCE {2};
 
-	explicit ObjectReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint8_t instanceType);
+	explicit ObjectReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint8_t instanceType, uint64_t serial);
 	virtual ~ObjectReference();
 
 	static ObjectReference* createObjectReference(IAbstractVmInstanceSubstance* owner, VmClassInstance* clazzInst, VirtualMachine* vm);
 	static ObjectReference* createStringReference(IAbstractVmInstanceSubstance* owner, VmStringInstance* clazzInst, VirtualMachine* vm);
+	static ObjectReference* createReservedClassObjectReference(IAbstractVmInstanceSubstance* owner, AbstractVmReservedInstance* clazzInst, VirtualMachine* vm);
 
 	virtual bool isPrimitive() const noexcept;
 	virtual IAbstractVmInstanceSubstance* getInstance() noexcept;

@@ -124,6 +124,8 @@ int AllocationExpression::binarySize() const {
 		total += this->array->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -142,6 +144,7 @@ void AllocationExpression::toBinary(ByteBuffer* out) const {
 		this->array->toBinary(out);
 	}
 
+	positionToBinary(out);
 }
 
 void AllocationExpression::fromBinary(ByteBuffer* in) {
@@ -158,6 +161,8 @@ void AllocationExpression::fromBinary(ByteBuffer* in) {
 		checkKind(element, CodeElement::EXP_CONSTRUCTORARRAY);
 		this->array = dynamic_cast<ConstructorArray*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 AnalyzedType AllocationExpression::getType(AnalyzeContext* actx) {

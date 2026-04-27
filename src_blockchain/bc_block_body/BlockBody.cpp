@@ -476,10 +476,10 @@ UnicodeString* BlockBody::toStatString() const noexcept {
 	//str->append(rootstr);
 	str->append(L" [ ");
 
-	str->append(L" CTRL: ").append((int)this->controlTransactions->size());
-	str->append(L" ICC: ").append((int)this->iccTransactions->size());
-	str->append(L" BL: ").append((int)this->balanceTransactions->size());
-	str->append(L" SMRT: ").append((int)this->smartcontractTransactions->size());
+	str->append(L" CTRL: ").append((int64_t)this->controlTransactions->size());
+	str->append(L" ICC: ").append((int64_t)this->iccTransactions->size());
+	str->append(L" BL: ").append((int64_t)this->balanceTransactions->size());
+	str->append(L" SMRT: ").append((int64_t)this->smartcontractTransactions->size());
 	str->append(L" ]");
 
 	return str;

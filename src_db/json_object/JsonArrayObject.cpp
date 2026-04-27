@@ -8,6 +8,10 @@
 #include "json_object/JsonArrayObject.h"
 #include "json_object/AbstractJsonObject.h"
 
+#include "base_io/ByteBuffer.h"
+
+#include "bc_base/BinaryUtils.h"
+
 
 namespace codablecash {
 
@@ -66,6 +70,42 @@ bool JsonArrayObject::equals(const AbstractJsonObject *other) const noexcept {
 	}
 
 	return bl;
+}
+
+int JsonArrayObject::binarySize() const {
+	int total = sizeof(uint8_t);
+
+	int maxLoop = this->list->size();
+	total += sizeof(uint16_t);
+
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = this->list->get(i);
+		total += obj->binarySize();
+	}
+
+	return total;
+}
+
+void JsonArrayObject::toBinary(ByteBuffer *out) const {
+	out->put(getType());
+
+	int maxLoop = this->list->size();
+	out->putShort(maxLoop);
+
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = this->list->get(i);
+		obj->toBinary(out);
+	}
+}
+
+void JsonArrayObject::fromBinary(ByteBuffer *in) {
+	int maxLoop = in->getShort();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = AbstractJsonObject::createFromBinary(in);
+		BinaryUtils::checkNotNull(obj);
+
+		this->list->addElement(obj);
+	}
 }
 
 } /* namespace codablecash */

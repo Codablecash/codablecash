@@ -47,6 +47,8 @@ int AlterRenameTableCommand::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->newName->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -55,6 +57,8 @@ void AlterRenameTableCommand::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_ALTER_RENAME_TABLE);
 	this->newName->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void AlterRenameTableCommand::fromBinary(ByteBuffer* in) {
@@ -62,6 +66,8 @@ void AlterRenameTableCommand::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::SQL_EXP_TABLE_ID);
 
 	this->newName = dynamic_cast<TableIdentifier*>(element);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterRenameTableCommand::getCommandLog(VirtualMachine* vm) {

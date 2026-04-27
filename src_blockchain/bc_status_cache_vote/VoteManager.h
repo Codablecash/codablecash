@@ -29,7 +29,7 @@ class VoteManager {
 public:
 	static const constexpr wchar_t* VOTE_HEIGHT_DATA{L"vote_data"};
 
-	explicit VoteManager(const File* baseDir);
+	VoteManager(const File* baseDir, const CodablecashSystemParam* config);
 	virtual ~VoteManager();
 
 	void initBlank();
@@ -38,6 +38,8 @@ public:
 	void close() noexcept;
 
 	bool registerBlockHeader(const BlockHeader* header, const CodablecashSystemParam* param);
+
+	SystemTimestamp* getPosVoteLimit(uint64_t lastHeight);
 
 private:
 	HeightVoteData* getHeightVoteData(uint64_t height);
@@ -49,6 +51,8 @@ private:
 
 	DiskCacheManager* cacheManager;
 	Btree* heightVoteDataIndex;
+
+	const CodablecashSystemParam* config;
 };
 
 } /* namespace codablecash */

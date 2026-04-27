@@ -38,17 +38,23 @@ int SQLBooleanLiteral::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void SQLBooleanLiteral::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_BOOL_LITERAL);
 	out->put(this->value ? 1 : 0);
+
+	positionToBinary(out);
 }
 
 void SQLBooleanLiteral::fromBinary(ByteBuffer* in) {
 	uint8_t bl = in->get();
 	this->value = (bl == 1);
+
+	positionFromBinary(in);
 }
 
 void SQLBooleanLiteral::preAnalyze(AnalyzeContext* actx) {

@@ -50,7 +50,7 @@ void EqualityExpression::analyze(AnalyzeContext* actx) {
 	this->right->analyze(actx);
 
 	AnalyzedTypeChecker checker;
-	checker.checkCompatibility(actx, this->left, this->right, true);
+	checker.checkCompatibility(actx, this->left, this->right, false);
 }
 
 void EqualityExpression::setLeft(AbstractExpression* exp) noexcept {
@@ -74,6 +74,8 @@ int EqualityExpression::binarySize() const {
 	total += this->right->binarySize();
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -85,6 +87,8 @@ void EqualityExpression::toBinary(ByteBuffer* out) const {
 	this->left->toBinary(out);
 	this->right->toBinary(out);
 	out->put(this->op);
+
+	positionToBinary(out);
 }
 
 void EqualityExpression::fromBinary(ByteBuffer* in) {
@@ -97,6 +101,8 @@ void EqualityExpression::fromBinary(ByteBuffer* in) {
 	this->right = dynamic_cast<AbstractExpression*>(element);
 
 	this->op = in->get();
+
+	positionFromBinary(in);
 }
 
 AnalyzedType EqualityExpression::getType(AnalyzeContext* actx) {

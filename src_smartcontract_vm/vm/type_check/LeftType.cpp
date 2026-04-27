@@ -25,14 +25,14 @@ LeftType::~LeftType() {
 
 }
 
-int LeftType::checkTypeCompatibility(AnalyzeContext* actx, RightType* rightType, bool compare) {
+int LeftType::checkTypeCompatibility(AnalyzeContext* actx, RightType* rightType, bool compare, bool downCastOnly) {
 	AnalyzedType* arightType = rightType->getAnalyzedType();
 
 	if(!compare && arightType->isNull() && (this->atype->isArray() || (!this->atype->isPrimitiveInteger() && !this->atype->isBool()))){
 		return InternalTypeChecker::OK;
 	}
 
-	return InternalTypeChecker::analyzeCompatibility(this->atype, arightType);
+	return InternalTypeChecker::analyzeCompatibility(this->atype, arightType, downCastOnly);
 }
 
 } /* namespace alinous */

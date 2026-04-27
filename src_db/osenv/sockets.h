@@ -63,6 +63,8 @@ public:
 
 class IPV4 {
 public:
+	static IPV6Context socket(const UnicodeString* hostname, const UnicodeString* port);
+	static IPV6Context socket(const UnicodeString* hostname, const UnicodeString* port, int protocol);
 	static SOCKET_ID connect(const UnicodeString* hostname, const UnicodeString* port);
 };
 

@@ -28,7 +28,7 @@ IpV4ClientConnection::~IpV4ClientConnection() {
 
 void IpV4ClientConnection::connect(const UnicodeString *host, int port) {
 	UnicodeString strPort(L"");
-	strPort.append(port);
+	strPort.append((int64_t)port);
 
 	this->sock = IPV4::connect(host, &strPort);
 }

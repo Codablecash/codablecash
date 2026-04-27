@@ -63,6 +63,8 @@ int SQLLikeExpression::binarySize() const {
 		total += this->escape->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -78,6 +80,8 @@ void SQLLikeExpression::toBinary(ByteBuffer* out) const {
 	if(this->escape != nullptr){
 		this->escape->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLLikeExpression::fromBinary(ByteBuffer* in) {
@@ -95,6 +99,8 @@ void SQLLikeExpression::fromBinary(ByteBuffer* in) {
 		checkKind(element, CodeElement::SQL_EXP_LITERAL);
 		this->escape = dynamic_cast<SQLLiteral*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLLikeExpression::preAnalyze(AnalyzeContext* actx) {

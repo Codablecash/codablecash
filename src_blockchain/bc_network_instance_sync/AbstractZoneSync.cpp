@@ -60,7 +60,7 @@ AbstractZoneSync::~AbstractZoneSync() {
 
 AbstractZoneSync* AbstractZoneSync::createZone(uint16_t zone,	uint16_t zoneSelf, NetworkNodeSync *parent, ISystemLogger* logger) {
 	UnicodeString str(L"SYNC_ZONE_");
-	str.append(zone);
+	str.append((int64_t)zone);
 
 	if(zone == zoneSelf){
 		return new ZoneBlockchainSync(zone, parent, logger, &str);
@@ -98,7 +98,7 @@ void AbstractZoneSync::importHeaders() noexcept {
 			const NodeIdentifier* nodeId = sel.next();
 
 			UnicodeString str(L"AbstractZoneSyncWk");
-			str.append(threadindex);
+			str.append((int64_t)threadindex);
 			threadindex++;
 
 			this->logger->debugLog(ISystemLogger::DEBUG_TMP_INFO, &str, __FILE__, __LINE__);
@@ -126,7 +126,7 @@ void AbstractZoneSync::initHeadersRepo() {
 	const File* syncBaseDir = this->parent->getTmpSyncDir();
 
 	UnicodeString zoneStr(L"zonedata_");
-	zoneStr.append((int)this->zone);
+	zoneStr.append((int64_t)this->zone);
 
 	File* zoneDir = syncBaseDir->get(&zoneStr); __STP(zoneDir);
 	zoneDir->mkdirs();

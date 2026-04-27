@@ -266,6 +266,8 @@ int InsertStatement::binarySize() const {
 
 	total += this->expList->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -282,6 +284,8 @@ void InsertStatement::toBinary(ByteBuffer* out) const {
 	}
 
 	this->expList->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void InsertStatement::fromBinary(ByteBuffer* in) {
@@ -299,6 +303,8 @@ void InsertStatement::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkKind(element, CodeElement::SQL_EXP_EXP_LIST);
 	this->expList = dynamic_cast<SQLExpressionList*>(element);
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

@@ -40,6 +40,8 @@ public:
 	AnalyzedClass* getExtends() const noexcept;
 	void addImplements(AnalyzedClass* clazz) noexcept;
 	const ArrayList<AnalyzedClass>* getImplements() const noexcept;
+	bool hasImplements(AnalyzedClass* interface) noexcept;
+
 
 	MethodDeclare* getDefaultConstructor() noexcept;
 	MethodDeclare* findMethod(const UnicodeString* name, ArrayList<AnalyzedType>* argumentTypeList) noexcept;
@@ -66,16 +68,25 @@ public:
 	bool isReserved() const noexcept;
 
 	bool isInterface() const noexcept;
+
+	void addDelivedImplementClass(AnalyzedClass* clazz);
+	bool hasDeliveredImplClass(AnalyzedClass* clazz);
+	const ArrayList<AnalyzedClass>* getDelivedImplClasse() const noexcept {
+		return &this->delivedImplClasses;
+	}
+
+
 private:
-	//void bulidMethodVTable(AnalyzeContext* actx, MethodDeclare* method) noexcept;
-	//AnalyzedClass* findBaseClassOfMethod(AnalyzedClass* currentClass, MethodDeclare* method) noexcept;
-
-
+	bool hasDelivedImplementClass(AnalyzedClass* clazz);
+	bool followExtends(AnalyzedClass* clazz);
+	bool followImplements(AnalyzedClass* ifclazz);
 private:
 	ClassDeclare* clazz;
 
 	AnalyzedClass* extends;
 	ArrayList<AnalyzedClass> implements;
+
+	ArrayList<AnalyzedClass> delivedImplClasses;
 
 	HashMap<UnicodeString, MemberVariableDeclare>* variables;
 	ArrayList<MemberVariableDeclare> variablesList;

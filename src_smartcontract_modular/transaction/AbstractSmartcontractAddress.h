@@ -26,6 +26,8 @@ public:
 	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
+	int compareTo(const AbstractSmartcontractAddress* other) const noexcept;
+
 protected:
 	Secp256k1CompressedPoint* pubkey;
 };

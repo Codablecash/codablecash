@@ -35,6 +35,9 @@ public:
 	MemberVariableTable* getMemberVariableTable() const noexcept;
 	VTableMethodEntry* getVTableMethodEntry(const UnicodeString* callSignature) const noexcept;
 
+	ClassDeclare* getClassDeclare() const noexcept;
+
+
 private:
 	void buildMethodSelf(ClassDeclare* clazz, AnalyzeContext* actx);
 	void buildMethodsuper(ClassDeclare* clazz, AnalyzeContext* actx);
@@ -46,6 +49,7 @@ private:
 	void addSuperVirtualMethodImplEntry(MethodDeclare* method);
 
 	MethodDeclare* getSuperClassMethod(MethodDeclare* method) noexcept;
+	MethodDeclare* getDeliverClassMethod(MethodDeclare* method) noexcept;
 
 	void addMethodNameEntry(VTableMethodEntry* entry) noexcept;
 

@@ -51,6 +51,8 @@ AbstractVmInstance* MemberFunctionCallAccess::interpret(VirtualMachine* vm, Abst
 	}
 
 	AbstractVmInstance* inst = lastInst;
+
+	IAbstractVmInstanceSubstance* substance = inst->getInstance();
 	VmClassInstance* classInst = dynamic_cast<VmClassInstance*>(inst->getInstance());
 
 	return this->exp->interpret(vm, classInst);

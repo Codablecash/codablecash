@@ -37,6 +37,8 @@ int ParenthesisJoinPart::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->part->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -45,12 +47,16 @@ void ParenthesisJoinPart::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_EXP_PARENTHESIS_JOIN_PART);
 	this->part->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ParenthesisJoinPart::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsJoinPart(element);
 	this->part = dynamic_cast<AbstractJoinPart*>(element);
+
+	positionFromBinary(in);
 }
 
 void ParenthesisJoinPart::preAnalyze(AnalyzeContext* actx) {

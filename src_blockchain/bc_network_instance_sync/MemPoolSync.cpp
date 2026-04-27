@@ -62,7 +62,7 @@ void MemPoolSync::doProcess() {
 			const NodeIdentifier* nodeId = sel.next();
 
 			UnicodeString str(L"MemPoolSyncWk");
-			str.append(threadindex);
+			str.append((int64_t)threadindex);
 			threadindex++;
 
 			MemPoolSyncWorker* worker = new MemPoolSyncWorker(nodeId, this->parent, this->logger, &str);

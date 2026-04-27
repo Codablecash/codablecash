@@ -42,6 +42,8 @@ int SQLDistinctArgument::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -50,6 +52,8 @@ void SQLDistinctArgument::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_EXP_DISTINCT_ARGUMENT);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLDistinctArgument::fromBinary(ByteBuffer* in) {
@@ -57,6 +61,8 @@ void SQLDistinctArgument::fromBinary(ByteBuffer* in) {
 
 	checkIsSQLExp(el);
 	this->exp = dynamic_cast<AbstractSQLExpression*>(el);
+
+	positionFromBinary(in);
 }
 
 void SQLDistinctArgument::preAnalyze(AnalyzeContext* actx) {

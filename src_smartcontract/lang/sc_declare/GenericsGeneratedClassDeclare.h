@@ -16,6 +16,7 @@ class GenericsClassDeclare;
 
 class GenericsGeneratedClassDeclare : public ClassDeclare {
 public:
+	GenericsGeneratedClassDeclare(short kind);
 	GenericsGeneratedClassDeclare();
 	virtual ~GenericsGeneratedClassDeclare();
 
@@ -33,9 +34,16 @@ public:
 
 	virtual const UnicodeString* getConstructorName() const noexcept;
 
+	virtual IVmInstanceFactory* getFactory() const noexcept {
+		return this->factory;
+	}
+	void setFactory(IVmInstanceFactory* factory){
+		this->factory = factory;
+	}
 
-private:
+protected:
 	GenericsClassDeclare* genericsClass;
+	IVmInstanceFactory* factory;
 };
 
 } /* namespace alinous */

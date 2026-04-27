@@ -77,5 +77,10 @@ int VmString::ValueCompare::operator ()(const VmString* const a, const VmString*
 	return res;
 }
 
+int VmString::compareTo(const VmString *other) const noexcept {
+	static VmString::ValueCompare cmp;
+
+	return cmp(this, other);
+}
 
 } /* namespace alinous */

@@ -146,6 +146,8 @@ int UpdateStatement::binarySize() const {
 		total += this->where->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -161,6 +163,8 @@ void UpdateStatement::toBinary(ByteBuffer* out) const {
 	if(this->where != nullptr){
 		this->where->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void UpdateStatement::fromBinary(ByteBuffer* in) {
@@ -178,6 +182,8 @@ void UpdateStatement::fromBinary(ByteBuffer* in) {
 		 checkKind(element, CodeElement::SQL_PART_WHERE);
 		 this->where = dynamic_cast<SQLWhere*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void UpdateStatement::init(VirtualMachine* vm) {

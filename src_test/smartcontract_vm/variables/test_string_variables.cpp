@@ -49,7 +49,7 @@ TEST(TestStringVariablesGroup, stringMemberVariable){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 	vm->destroy();
 }
 

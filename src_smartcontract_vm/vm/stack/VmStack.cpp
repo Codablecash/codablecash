@@ -19,13 +19,18 @@
 namespace alinous {
 
 VmStack::VmStack(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm)
-				: AbstractReference(owner, VmInstanceTypesConst::STACK), IInstanceContainer() {
+				: AbstractReference(owner, VmInstanceTypesConst::STACK, vm->publishInstanceSerial()), IInstanceContainer() {
 	this->stack = new(vm) VMemList<AbstractReference>(vm);
 	this->vm = vm;
+	this->currentMethod = nullptr;
+	this->entryPoint = nullptr;
 }
 
 VmStack::~VmStack() {
 	delete this->stack;
+
+	this->currentMethod = nullptr;
+	this->entryPoint = nullptr;
 }
 
 void VmStack::addInnerReference(AbstractReference* ref) {
@@ -116,6 +121,14 @@ AnalyzedType VmStack::getRuntimeType() const noexcept {
 
 void VmStack::resetOnGc() noexcept {
 	this->stack->reset();
+}
+
+void VmStack::setCurrentMethod(MethodDeclare *currentMethod) noexcept {
+	this->currentMethod = currentMethod;
+}
+
+void VmStack::setEntryPoint(AbstractExpression *entryPoint) noexcept {
+	this->entryPoint = entryPoint;
 }
 
 } /* namespace alinous */

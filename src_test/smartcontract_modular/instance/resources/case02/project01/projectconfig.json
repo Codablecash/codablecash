@@ -1,0 +1,10 @@
+{
+	"project" : "Sample01",
+	"version" : "1.0.0",
+	"executable" : "exec/",
+	
+	"libraries" : ["mod01"],
+	
+	"author": "Tomohiro Iizuka",
+	"license": "MIT"
+}

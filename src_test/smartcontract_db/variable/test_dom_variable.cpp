@@ -119,7 +119,7 @@ TEST(TestDomVariableGroup, testLocalDec05_err){
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exname = ex->getClassName();
 
-	CHECK(exname->equals(&NullPointerExceptionClassDeclare::NAME));
+	CHECK(exname->equals(&NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomVariableGroup, testLocalDec06_err){
@@ -140,7 +140,7 @@ TEST(TestDomVariableGroup, testLocalDec06_err){
 	ExtExceptionObject* ex = util.vm->getUncaughtException(); __STP(ex);
 	const UnicodeString* exname = ex->getClassName();
 
-	CHECK(exname->equals(&TypeCastExceptionClassDeclare::NAME));
+	CHECK(exname->equals(&TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomVariableGroup, testLocalDec07_err){

@@ -64,4 +64,8 @@ void AbstractSmartcontractAddress::fromBinary(ByteBuffer *in) {
 	this->pubkey = Secp256k1CompressedPoint::fromBinary(in);
 }
 
+int AbstractSmartcontractAddress::compareTo(const AbstractSmartcontractAddress *other) const noexcept {
+	return this->pubkey->compareTo(other->pubkey);
+}
+
 } /* namespace codablecash */

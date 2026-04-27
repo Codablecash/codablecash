@@ -56,5 +56,5 @@ TEST(TestInstanceGroup, constructError){
 }
 
 TEST(TestInstanceGroup, constructRef){
-	PrimitiveReference ref(VmInstanceTypesConst::REF_BYTE);
+	PrimitiveReference ref(VmInstanceTypesConst::REF_BYTE, 0);
 }

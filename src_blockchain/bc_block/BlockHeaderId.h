@@ -21,6 +21,8 @@ public:
 	BlockHeaderId(const char* binary, int length);
 	virtual ~BlockHeaderId();
 
+	static BlockHeaderId* makeRandomHeaderId();
+
 	static BlockHeaderId* fromBinary(ByteBuffer* in);
 
 	virtual IBlockObject* copyData() const noexcept;

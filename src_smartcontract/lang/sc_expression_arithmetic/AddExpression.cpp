@@ -173,4 +173,23 @@ AbstractExpression* AddExpression::generateGenericsImplement(HashMap<UnicodeStri
 	return inst;
 }
 
+int AddExpression::binarySize() const {
+	int total = AbstractArithmeticBinaryExpresson::binarySize();
+
+	total += positionBinarySize();
+	return total;
+}
+
+void AddExpression::toBinary(ByteBuffer *out) const {
+	AbstractArithmeticBinaryExpresson::toBinary(out);
+
+	positionToBinary(out);
+}
+
+void AddExpression::fromBinary(ByteBuffer *in) {
+	AbstractArithmeticBinaryExpresson::fromBinary(in);
+
+	positionFromBinary(in);
+}
+
 } /* namespace alinous */

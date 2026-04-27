@@ -10,7 +10,8 @@
 namespace alinous {
 
 VmStackManager::VmStackManager() {
-
+	this->currentMethod = nullptr;
+	this->entryPoint = nullptr;
 }
 
 VmStackManager::~VmStackManager() {
@@ -18,6 +19,16 @@ VmStackManager::~VmStackManager() {
 }
 
 void VmStackManager::addStack(VmStack* stack) noexcept {
+	if(this->currentMethod != nullptr){
+		stack->setCurrentMethod(this->currentMethod);
+		this->currentMethod = nullptr;
+	}
+
+	if(this->entryPoint != nullptr){
+		stack->setEntryPoint(this->entryPoint);
+		this->entryPoint = nullptr;
+	}
+
 	this->list.addElement(stack);
 }
 
@@ -42,6 +53,14 @@ bool VmStackManager::isEmpty() const noexcept {
 
 VmStack* VmStackManager::get(int pos) const noexcept {
 	return this->list.get(pos);
+}
+
+void VmStackManager::markStackbyMethod(MethodDeclare *method) {
+	this->currentMethod = method;
+}
+
+void VmStackManager::markStackEntryPoint(AbstractExpression *exp) {
+	this->entryPoint = exp;
 }
 
 } /* namespace alinous */

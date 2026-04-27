@@ -568,6 +568,7 @@ bool ByteBuffer::binaryEquals(const ByteBuffer* buff) const noexcept {
 
 int ByteBuffer::binaryCmp(const ByteBuffer *buff) const noexcept {
 	int length = this->cap < buff->cap ? this->cap : buff->cap;
+
 	return Mem::memcmp(array(), buff->array(), length);
 }
 

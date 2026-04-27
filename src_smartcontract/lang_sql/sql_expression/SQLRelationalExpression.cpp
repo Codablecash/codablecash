@@ -59,6 +59,8 @@ int SQLRelationalExpression::binarySize() const {
 	total += this->right->binarySize();
 	total += sizeof(uint8_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -70,6 +72,8 @@ void SQLRelationalExpression::toBinary(ByteBuffer* out) const {
 	this->left->toBinary(out);
 	this->right->toBinary(out);
 	out->put(this->op);
+
+	positionToBinary(out);
 }
 
 void SQLRelationalExpression::fromBinary(ByteBuffer* in) {
@@ -82,6 +86,8 @@ void SQLRelationalExpression::fromBinary(ByteBuffer* in) {
 	this->right = dynamic_cast<AbstractSQLExpression*>(element);
 
 	this->op = in->get();
+
+	positionFromBinary(in);
 }
 
 void SQLRelationalExpression::preAnalyze(AnalyzeContext* actx) {

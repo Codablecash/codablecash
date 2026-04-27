@@ -61,7 +61,7 @@ TEST(TestExecAlterIndexAddErrGroup, case01){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -96,7 +96,7 @@ TEST(TestExecAlterIndexAddErrGroup, case02){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -128,7 +128,7 @@ TEST(TestExecAlterIndexAddErrGroup, case03){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -150,7 +150,7 @@ TEST(TestExecAlterIndexAddErrGroup, case04){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -173,6 +173,6 @@ TEST(TestExecAlterIndexAddErrGroup, case05){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }

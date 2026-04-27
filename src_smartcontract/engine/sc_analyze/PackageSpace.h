@@ -32,8 +32,12 @@ public:
 
 	HashMap<UnicodeString, AnalyzedClass>* getMap() const noexcept;
 	bool isEmpty() const noexcept;
+
 private:
 	void doAnalyzeClassInheritance(AnalyzedClass* cls) noexcept;
+	void doAnalyzeDeliverClasses(AnalyzedClass* cls) noexcept;
+	void analyzeInterfaceInheritance(AnalyzedClass* ifclazz, ArrayList<AnalyzedClass>* list);
+	void addDeliverClasses(AnalyzedClass* targetClazz, ArrayList<AnalyzedClass>* list, int pos);
 private:
 	UnicodeString* name;
 	HashMap<UnicodeString, AnalyzedClass>* classes;

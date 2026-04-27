@@ -99,9 +99,13 @@ void SystemTimestamp::adjustUsec() noexcept {
 }
 
 int SystemTimestamp::compareTo(const SystemTimestamp* other) const noexcept {
-	int diff = this->sec - other->usec;
+	int diff = this->sec - other->sec;
+	if(diff != 0){
+		return diff;
+	}
 
-	return diff != 0 ? diff : this->usec - other->usec;
+	return this->usec == other->usec ? 0 : (this->usec > other->usec ? 1 : -1);
+	// return diff != 0 ? diff : this->usec - other->usec;
 }
 
 BigInteger SystemTimestamp::toBigIntegerMills() const noexcept {

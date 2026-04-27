@@ -43,6 +43,8 @@ int GenericsParameter::binarySize() const {
 		total += this->genericsExtendsName->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -57,6 +59,8 @@ void GenericsParameter::toBinary(ByteBuffer *out) const {
 	if(bl > 0){
 		this->genericsExtendsName->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void GenericsParameter::fromBinary(ByteBuffer *in) {
@@ -70,6 +74,8 @@ void GenericsParameter::fromBinary(ByteBuffer *in) {
 
 		__STP_MV(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void GenericsParameter::setGenericsName(UnicodeString *name) noexcept {

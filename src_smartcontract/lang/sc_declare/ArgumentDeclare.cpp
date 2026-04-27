@@ -75,6 +75,8 @@ int alinous::ArgumentDeclare::binarySize() const {
 	total += this->type->binarySize();
 	total += stringSize(this->name);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -85,6 +87,8 @@ void alinous::ArgumentDeclare::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::ARGUMENT_DECLARE);
 	this->type->toBinary(out);
 	putString(out, this->name);
+
+	positionToBinary(out);
 }
 
 AnalyzedType* ArgumentDeclare::getAnalyzedType() const noexcept {
@@ -98,6 +102,8 @@ void alinous::ArgumentDeclare::fromBinary(ByteBuffer* in) {
 	this->type = dynamic_cast<AbstractType*>(element);
 
 	this->name = getString(in);
+
+	positionFromBinary(in);
 }
 
 ArgumentDeclare* ArgumentDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {

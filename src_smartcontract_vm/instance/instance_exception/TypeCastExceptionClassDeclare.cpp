@@ -27,10 +27,13 @@
 
 namespace alinous {
 
-UnicodeString TypeCastExceptionClassDeclare::NAME{L"TypeCastException"};
+const UnicodeString TypeCastExceptionClassDeclare::NAME{L"TypeCastException"};
+const UnicodeString TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME{L"lang.TypeCastException"};
 
 TypeCastExceptionClassDeclare::TypeCastExceptionClassDeclare() {
 	addDefaultConstructor(&NAME);
+
+	this->name = new UnicodeString(&NAME);
 
 	this->extends = new ClassExtends();
 	this->extends->setClassName(&ExceptionClassDeclare::NAME);
@@ -44,29 +47,29 @@ AnalyzedClass* TypeCastExceptionClassDeclare::createAnalyzedClass() noexcept {
 }
 
 void TypeCastExceptionClassDeclare::throwException(VirtualMachine* vm, const CodeElement* element) noexcept {
-	ExecControlManager* ctrl = vm->getCtrl();
-	IVmInstanceFactory* factory = ExceptionInstanceFactory::getInstance();
+	throwException(true, vm, element);
+}
 
-	AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&NAME);
+void TypeCastExceptionClassDeclare::throwException(bool cond,VirtualMachine *vm, const CodeElement *element) noexcept {
+	if(cond){
+		ExecControlManager* ctrl = vm->getCtrl();
+		IVmInstanceFactory* factory = ExceptionInstanceFactory::getInstance();
 
-	VmClassInstance* inst = factory->createInstance(aclass, vm);
-	inst->init(vm);
+		UnicodeString fqn(&AbstractExceptionClassDeclare::PACKAGE_NAME);
+		fqn.append(L".");
+		fqn.append(&NAME);
+		AnalyzedClass* aclass = vm->getReservedClassRegistory()->getAnalyzedClass(&fqn);
 
+		VmClassInstance* inst = factory->createInstance(aclass, vm);
+		inst->init(vm);
 
-	VmExceptionInstance* exception = dynamic_cast<VmExceptionInstance*>(inst);
+		VmExceptionInstance* exception = dynamic_cast<VmExceptionInstance*>(inst);
 
-	vm->throwException(exception, element);
+		vm->throwException(exception, element);
+	}
 }
 
 TypeCastExceptionClassDeclare::~TypeCastExceptionClassDeclare() {
-}
-
-const UnicodeString* TypeCastExceptionClassDeclare::getName() const noexcept {
-	return &NAME;
-}
-
-const UnicodeString* TypeCastExceptionClassDeclare::getFullQualifiedName() noexcept {
-	return &NAME;
 }
 
 ClassDeclare* TypeCastExceptionClassDeclare::getBaseClass() const noexcept {

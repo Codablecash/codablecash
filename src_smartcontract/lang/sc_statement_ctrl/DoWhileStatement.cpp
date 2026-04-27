@@ -96,6 +96,8 @@ int DoWhileStatement::binarySize() const {
 	total += this->exp->binarySize();
 	total += this->stmt->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -106,6 +108,8 @@ void DoWhileStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_DO_WHILE);
 	this->exp->toBinary(out);
 	this->stmt->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void DoWhileStatement::fromBinary(ByteBuffer* in) {
@@ -116,6 +120,8 @@ void DoWhileStatement::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkIsStatement(element);
 	this->stmt = dynamic_cast<AbstractStatement*>(element);
+
+	positionFromBinary(in);
 }
 
 void DoWhileStatement::init(VirtualMachine* vm) {

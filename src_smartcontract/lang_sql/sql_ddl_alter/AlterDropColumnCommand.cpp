@@ -50,6 +50,8 @@ int AlterDropColumnCommand::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += stringSize(this->name);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -58,10 +60,14 @@ void AlterDropColumnCommand::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_ALTER_DROP_COLUMN);
 	putString(out, this->name);
+
+	positionToBinary(out);
 }
 
 void AlterDropColumnCommand::fromBinary(ByteBuffer* in) {
 	this->name = getString(in);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterDropColumnCommand::getCommandLog(VirtualMachine* vm) {

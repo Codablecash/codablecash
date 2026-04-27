@@ -75,6 +75,8 @@ int AlterTableStatement::binarySize() const {
 	total += this->tableId->binarySize();
 	total += this->cmd->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -86,6 +88,8 @@ void AlterTableStatement::toBinary(ByteBuffer* out) const {
 
 	this->tableId->toBinary(out);
 	this->cmd->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void AlterTableStatement::fromBinary(ByteBuffer* in) {
@@ -97,6 +101,7 @@ void AlterTableStatement::fromBinary(ByteBuffer* in) {
 	checkIsAlterCommand(element);
 	this->cmd =dynamic_cast<AbstractAlterDdlCommand*>(element);
 
+	positionFromBinary(in);
 }
 
 void AlterTableStatement::interpret(VirtualMachine* vm) {

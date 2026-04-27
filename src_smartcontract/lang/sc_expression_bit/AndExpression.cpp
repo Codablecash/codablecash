@@ -45,16 +45,21 @@ int AndExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractBinaryExpression::binarySize();
 
+	total += positionBinarySize();
 	return total;
 }
 
 void AndExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_AND);
 	AbstractBinaryExpression::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void AndExpression::fromBinary(ByteBuffer* in) {
 	AbstractBinaryExpression::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType AndExpression::getType(AnalyzeContext* actx) {

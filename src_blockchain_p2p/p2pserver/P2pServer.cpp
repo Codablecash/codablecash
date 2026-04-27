@@ -14,6 +14,8 @@
 #include "ipconnect/IServerSocket.h"
 #include "ipconnect/IpV6ServerConnection.h"
 #include "ipconnect/IpV6ClientConnection.h"
+#include "ipconnect/IpV4ClientConnection.h"
+#include "ipconnect/IpV4ServerConnection.h"
 
 #include "base/UnicodeString.h"
 #include "base/StackRelease.h"
@@ -57,9 +59,41 @@ void P2pServer::dispose() noexcept {
 	}
 }
 
+void P2pServer::startListening(int protocol, const UnicodeString *host, int port, const UnicodeString* nodeName) {
+	if(protocol == P2pNodeRecord::TCP_IP_V4){
+		startIpV4Listening(host, port, nodeName);
+		return;
+	}
+	startIpV6Listening(host, port, nodeName);
+}
+
 void P2pServer::startIpV6Listening(const UnicodeString *host, int port, const UnicodeString* nodeName) {
 	this->portSelf = port;
 	this->srvSocket = new IpV6ServerConnection();
+
+	this->srvSocket->initAddress(host, port);
+	this->srvSocket->bind();
+	this->srvSocket->listen();
+
+	{
+		UnicodeString name(L"");
+		if(nodeName != nullptr){
+			name.append(nodeName);
+			name.append(L"_");
+		}
+
+		name.append(L"IP6SRV");
+
+		this->thread = new P2pConnectionListeningThread(this->srvSocket, this, &name);
+		this->thread->start();
+	}
+
+	waitForStarted();
+}
+
+void P2pServer::startIpV4Listening(const UnicodeString *host, int port, const UnicodeString *nodeName) {
+	this->portSelf = port;
+	this->srvSocket = new IpV4ServerConnection();
 
 	this->srvSocket->initAddress(host, port);
 	this->srvSocket->bind();
@@ -85,18 +119,32 @@ void P2pServer::stopListning() {
 	if(this->thread != nullptr){
 		this->thread->setContinueFlag(false);
 
-		IpV6ClientConnection con;
-		UnicodeString strLocal(L"::1");
-		con.connect(&strLocal, this->portSelf);
+		int protocol = this->srvSocket->getSocketType();
 
-		NopConnectionCommand* cmd = new NopConnectionCommand(); __STP(cmd);
-		cmd->sendCommand(&con);
+		IClientSocket* con = nullptr;
+		if(protocol == P2pNodeRecord::TCP_IP_V4){
+			con = new IpV4ClientConnection();
+			UnicodeString strLocal(L"127.0.0.1");
+			con->connect(&strLocal, this->portSelf);
+
+			NopConnectionCommand* cmd = new NopConnectionCommand(); __STP(cmd);
+			cmd->sendCommand(con);
+		}
+		else {
+			con = new IpV6ClientConnection();
+			UnicodeString strLocal(L"::1");
+			con->connect(&strLocal, this->portSelf);
+
+			NopConnectionCommand* cmd = new NopConnectionCommand(); __STP(cmd);
+			cmd->sendCommand(con);
+		}
+		__STP(con);
 
 		this->thread->join();
 		delete this->thread;
 		this->thread = nullptr;
 
-		con.close();
+		con->close();
 	}
 }
 

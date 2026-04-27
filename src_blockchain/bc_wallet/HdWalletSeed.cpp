@@ -19,8 +19,7 @@
 
 namespace codablecash {
 
-const BigInteger HdWalletSeed::Q(L"ff66c4652cbb54e13e4cc75898014aef72332e147343a95031cf416ca9f77ce7", 16);
-const BigInteger HdWalletSeed::G(L"e000000000000000000000000000000000000000000000000000000000000002", 16);
+
 
 
 HdWalletSeed::HdWalletSeed() : Abstract32BytesId() {
@@ -33,21 +32,11 @@ HdWalletSeed::~HdWalletSeed() {
 }
 
 HdWalletSeed* HdWalletSeed::newSeed() noexcept {
-	int size = 0;
-	BigInteger p(L"0", 16);
-	do{
-		BigInteger seed = BigInteger::ramdom();
-
-		BigInteger s = seed.mod(HdWalletSeed::Q);
-		p = G.modPow(s, HdWalletSeed::Q);
-		size = p.binarySize();
-	} while(size != 32);
-
-	ByteBuffer* buff = p.toBinary(); __STP(buff);
+	ByteBuffer* buff = makeRandom16Bytes(); __STP(buff);
 	buff->position(0);
 
 	HdWalletSeed* walletSeed = new HdWalletSeed();
-	walletSeed->id = ByteBuffer::wrapWithEndian(buff->array(), size, true);
+	walletSeed->id = ByteBuffer::wrapWithEndian(buff->array(), buff->capacity(), true);
 
 	return walletSeed;
 

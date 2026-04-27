@@ -27,7 +27,7 @@ void LexErrorHandler::lexicalError(bool EOFSeen, int lexState, int errorLine,
 		endoutedChar->append(L"EOF");
 	}
 	else{
-		endoutedChar->append(curChar);
+		endoutedChar->append((int64_t)curChar);
 	}
 
 	LexError* er = new LexError(errorAfterStr, endoutedChar, errorLine, errorColumn);

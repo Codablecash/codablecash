@@ -22,7 +22,7 @@ public:
 	virtual ~ObjectType();
 
 	virtual int binarySize() const;
-	virtual void toBinary(ByteBuffer* out);
+	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
 	virtual const UnicodeString* toString() noexcept;
@@ -31,7 +31,7 @@ public:
 	void setPackageName(PackageNameDeclare* packageName) noexcept;
 	void setName(UnicodeString* className) noexcept;
 
-	PackageNameDeclare* getPackageName() const noexcept;
+	PackageNameDeclare* getPackageNameDeclare() const noexcept;
 	virtual const UnicodeString* getClassName() const noexcept;
 
 	virtual void visit(ITypeVisitor* visitor);

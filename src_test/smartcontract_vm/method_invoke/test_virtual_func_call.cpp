@@ -62,4 +62,16 @@ TEST(TestVFunctionCallGroup, test02){
 	CHECK(param = 20);
 }
 
+TEST(TestVFunctionCallGroup, test03){
+	const File* projectFolder = this->env->getProjectRoot();
+	VmTestUtils util(L"src_test/smartcontract_vm/method_invoke/resources/vfunc/case03/", projectFolder);
 
+	util.loadAllFiles();
+	util.setMain(L"test.fw", L"SmartContract", L"main");
+
+	bool result = util.analyze();
+	CHECK(result)
+
+	result = util.createInstance();
+	CHECK(result)
+}

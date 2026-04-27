@@ -25,6 +25,8 @@ public:
 
 	virtual const UnicodeString* toString() const noexcept;
 
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
+
 private:
 	UnicodeString* value;
 };

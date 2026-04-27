@@ -40,7 +40,7 @@ GenericsObjectType::GenericsObjectType() : ObjectType(TYPE_GENERICS_OBJECT) {
 }
 
 GenericsObjectType::GenericsObjectType(const ObjectType *objectType) : ObjectType(TYPE_GENERICS_OBJECT) {
-	const PackageNameDeclare* package = objectType->getPackageName();
+	const PackageNameDeclare* package = objectType->getPackageNameDeclare();
 
 	this->packageName = package != nullptr ? new PackageNameDeclare(*package) : nullptr;
 	this->className = new UnicodeString(objectType->getClassName());
@@ -70,7 +70,7 @@ int GenericsObjectType::binarySize() const {
 	return total;
 }
 
-void GenericsObjectType::toBinary(ByteBuffer *out) {
+void GenericsObjectType::toBinary(ByteBuffer *out) const {
 	ObjectType::toBinary(out);
 
 	int maxLoop = this->genericsType->size();

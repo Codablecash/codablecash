@@ -25,9 +25,6 @@ class HdWalletSeed : public Abstract32BytesId {
 protected:
 	HdWalletSeed();
 public:
-	static const BigInteger Q;
-	static const BigInteger G;
-
 	HdWalletSeed(const char* binary, int length);
 
 	virtual ~HdWalletSeed();

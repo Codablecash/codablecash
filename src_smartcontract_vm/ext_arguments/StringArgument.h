@@ -16,11 +16,18 @@ class UnicodeString;
 
 class StringArgument : public AbstractFunctionExtArguments {
 public:
+	StringArgument();
 	explicit StringArgument(const UnicodeString* str);
 	virtual ~StringArgument();
 
-	virtual AnalyzedType getType() const noexcept;
+	virtual ArgumentType* getType() const noexcept;
 	virtual AbstractVmInstance* interpret(VirtualMachine* vm);
+
+	virtual AbstractFunctionExtArguments* copy() const;
+
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	virtual void fromBinary(ByteBuffer* in);
 
 private:
 	UnicodeString* value;

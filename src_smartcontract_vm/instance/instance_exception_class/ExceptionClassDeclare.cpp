@@ -20,10 +20,14 @@
 
 namespace alinous {
 
-UnicodeString ExceptionClassDeclare::NAME{L"Exception"};
+const UnicodeString ExceptionClassDeclare::NAME{L"Exception"};
+const UnicodeString ExceptionClassDeclare::FULL_QUALIFIED_NAME{L"lang.Exception"};
+
 
 ExceptionClassDeclare::ExceptionClassDeclare() : AbstractExceptionClassDeclare() {
 	addDefaultConstructor(&NAME);
+
+	this->name = new UnicodeString(&NAME);
 
 	MemberVariableDeclare* message = new MemberVariableDeclare();
 	message->setAccessControl(AccessControlDeclare::PROTECTED);
@@ -42,14 +46,6 @@ AnalyzedClass* ExceptionClassDeclare::createAnalyzedClass() noexcept {
 	AnalyzedClass* aclass = new AnalyzedClass(classDec);
 
 	return aclass;
-}
-
-const UnicodeString* ExceptionClassDeclare::getName() const noexcept {
-	return &NAME;
-}
-
-const UnicodeString* ExceptionClassDeclare::getFullQualifiedName() noexcept {
-	return &NAME;
 }
 
 ClassDeclare* ExceptionClassDeclare::getBaseClass() const noexcept {

@@ -58,6 +58,8 @@ int AlterAddPrimaryKeyCommand::binarySize() const {
 		total += stringSize(col);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -71,6 +73,8 @@ void AlterAddPrimaryKeyCommand::toBinary(ByteBuffer* out) const {
 		UnicodeString* col = this->list.get(i);
 		putString(out, col);
 	}
+
+	positionToBinary(out);
 }
 
 void AlterAddPrimaryKeyCommand::fromBinary(ByteBuffer* in) {
@@ -79,6 +83,8 @@ void AlterAddPrimaryKeyCommand::fromBinary(ByteBuffer* in) {
 		UnicodeString* col = getString(in);
 		addColumn(col);
 	}
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterAddPrimaryKeyCommand::getCommandLog(VirtualMachine* vm) {

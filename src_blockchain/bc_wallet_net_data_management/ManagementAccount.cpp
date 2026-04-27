@@ -14,6 +14,9 @@
 #include "bc_trx/IAddressChecker.h"
 #include "bc_trx/AbstractUtxo.h"
 
+#include "base_thread/SysMutex.h"
+
+#include "base_thread/StackUnlocker.h"
 namespace codablecash {
 
 ManagementAccount::ManagementAccount(int storeType) {
@@ -21,25 +24,35 @@ ManagementAccount::ManagementAccount(int storeType) {
 
 	this->trxHistory = new ManagementTransactionsHistory();
 	this->utxoCache = new ManagedUtxoCache();
+
+	this->mutex = new SysMutex();
+
 }
 
 ManagementAccount::~ManagementAccount() {
 	delete this->trxHistory;
 	delete this->utxoCache;
+	delete this->mutex;
 }
 
 void ManagementAccount::reset() noexcept {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
 	this->trxHistory->reset();
 	this->utxoCache->reset();
 }
 
 bool ManagementAccount::checkUtxo(const AbstractUtxoReference *ref) const {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
 	const UtxoId* utxoId = ref->getUtxoId();
 
 	return this->utxoCache->hasUtxo(utxoId);
 }
 
 void ManagementAccount::addTransaction(const AbstractBlockchainTransaction *trx, const IAddressChecker *addressChecker) {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
 	bool trxIsRelevant = false;
 	const TransactionId* trxId = trx->getTransactionId();
 
@@ -82,6 +95,8 @@ void ManagementAccount::addTransaction(const AbstractBlockchainTransaction *trx,
 }
 
 void ManagementAccount::importOtherAccount(const ManagementAccount* other) {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
 	this->trxHistory->importOtherManagementTransactionsHistory(other->trxHistory);
 	this->utxoCache->importOtherManagedUtxoCache(other->utxoCache);
 }
@@ -91,6 +106,8 @@ const ArrayList<ManagedUtxoCacheRecord>* ManagementAccount::getUtxoList() const 
 }
 
 bool ManagementAccount::hasTransaction(const TransactionId *trxId) const {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
 	const AbstractBlockchainTransaction* trx = this->trxHistory->getTransaction(trxId);
 
 	return trx != nullptr;

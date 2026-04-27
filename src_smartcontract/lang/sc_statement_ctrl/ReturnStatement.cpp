@@ -51,6 +51,8 @@ int alinous::ReturnStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -59,12 +61,16 @@ void alinous::ReturnStatement::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::STMT_RETURN);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void alinous::ReturnStatement::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void ReturnStatement::init(VirtualMachine* vm) {

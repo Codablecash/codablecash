@@ -44,7 +44,7 @@
 
 using namespace codablecash;
 
-TEST_GROUP(TestExecAlterMofdifyTextGroup) {
+TEST_GROUP(TestExecAlterModifyTextGroup) {
 	TEST_SETUP() {
 		env->setup();
 	}
@@ -71,7 +71,7 @@ bool checkTextValue(const AbstractCdbValue* cdbv, const wchar_t* ans){
  * text to int (includes not int)
  * ALTER TABLE test_table MODIFY name int;
  */
-TEST(TestExecAlterMofdifyTextGroup, case01){
+TEST(TestExecAlterModifyTextGroup, case01){
 	TestDbSchemaAlterText01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert01();
@@ -138,7 +138,7 @@ TEST(TestExecAlterMofdifyTextGroup, case01){
  * text to int (includes not int)
  * ALTER TABLE test_table MODIFY name int UNIQUE;
  */
-TEST(TestExecAlterMofdifyTextGroup, case01_err){
+TEST(TestExecAlterModifyTextGroup, case01_err){
 	TestDbSchemaAlterTextUnique01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert01();
@@ -166,7 +166,7 @@ TEST(TestExecAlterMofdifyTextGroup, case01_err){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 
 }
@@ -176,7 +176,7 @@ TEST(TestExecAlterMofdifyTextGroup, case01_err){
  * text change length(shorter) including null
  * ALTER TABLE test_table MODIFY name VARCHAR(2) UNIQUE;
  */
-TEST(TestExecAlterMofdifyTextGroup, case02){
+TEST(TestExecAlterModifyTextGroup, case02){
 	TestDbSchemaAlterTextUnique01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert01();
@@ -251,7 +251,7 @@ TEST(TestExecAlterMofdifyTextGroup, case02){
  * unique error on text change length(shorter)
  * ALTER TABLE test_table MODIFY name VARCHAR(2) UNIQUE;
  */
-TEST(TestExecAlterMofdifyTextGroup, case03_err){
+TEST(TestExecAlterModifyTextGroup, case03_err){
 	TestDbSchemaAlterTextUnique01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert02();
@@ -279,7 +279,7 @@ TEST(TestExecAlterMofdifyTextGroup, case03_err){
 		const ExtExceptionObject* ex = tester.checkUncaughtException();
 		CHECK(ex != nullptr);
 
-		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+		CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 	}
 }
 
@@ -288,7 +288,7 @@ TEST(TestExecAlterMofdifyTextGroup, case03_err){
  * text change length(longer)
  * ALTER TABLE test_table MODIFY name VARCHAR(255) UNIQUE;
  */
-TEST(TestExecAlterMofdifyTextGroup, case04){
+TEST(TestExecAlterModifyTextGroup, case04){
 	TestDbSchemaAlterTextUnique01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert03();
@@ -365,7 +365,7 @@ TEST(TestExecAlterMofdifyTextGroup, case04){
  * text change length(longer)
  * ALTER TABLE test_table MODIFY name TEXT UNIQUE;
  */
-TEST(TestExecAlterMofdifyTextGroup, case05){
+TEST(TestExecAlterModifyTextGroup, case05){
 	TestDbSchemaAlterTextUnique01 tester(this->env);
 	tester.init(1024*512);
 	tester.insert03();

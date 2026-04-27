@@ -21,6 +21,7 @@ class AbstractType;
 
 class GenericsClassDeclare : public ClassDeclare {
 public:
+	GenericsClassDeclare(short kind);
 	GenericsClassDeclare();
 	virtual ~GenericsClassDeclare();
 
@@ -44,11 +45,11 @@ public:
 		return this->genericsParams;
 	}
 
-	virtual ClassDeclare* generateClassDeclare(HashMap<UnicodeString, AbstractType>* input);
+	virtual ClassDeclare* generateGenericsImplement(HashMap<UnicodeString, AbstractType>* input);
 
 	virtual void init(VirtualMachine* vm);
 
-private:
+protected:
 	ArrayList<GenericsParameter>* genericsParams;
 
 };

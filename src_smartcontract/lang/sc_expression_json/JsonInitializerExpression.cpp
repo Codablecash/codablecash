@@ -115,6 +115,8 @@ int JsonInitializerExpression::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -129,6 +131,8 @@ void JsonInitializerExpression::toBinary(ByteBuffer* out) const {
 
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void JsonInitializerExpression::fromBinary(ByteBuffer* in) {
@@ -140,6 +144,8 @@ void JsonInitializerExpression::fromBinary(ByteBuffer* in) {
 		JsonKeyValuePairExpression* exp = dynamic_cast<JsonKeyValuePairExpression*>(element);
 		addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 AbstractExpression* JsonInitializerExpression::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {

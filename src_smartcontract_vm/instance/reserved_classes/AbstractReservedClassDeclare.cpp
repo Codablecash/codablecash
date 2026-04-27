@@ -15,12 +15,14 @@
 
 #include "base/ArrayList.h"
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
 
 #include "lang/sc_declare/AccessControlDeclare.h"
 #include "lang/sc_declare/ArgumentsListDeclare.h"
 #include "lang/sc_declare/ClassExtends.h"
 #include "lang/sc_declare/ClassDeclareBlock.h"
 #include "lang/sc_declare/ClassImplements.h"
+#include "lang/sc_declare/ClassName.h"
 
 #include "lang/sc_statement/StatementBlock.h"
 
@@ -41,6 +43,14 @@
 
 #include "trx/transaction_exception/DatabaseExceptionClassDeclare.h"
 
+#include "instance/reserved_classes/object/ObjectClassDeclare.h"
+
+#include "modular_interfaces/ModularProxyListnerClassDeclare.h"
+
+#include "inter_modular_access/ModularProxyClassDeclare.h"
+
+
+using namespace codablecash;
 
 namespace alinous {
 
@@ -55,19 +65,34 @@ AbstractReservedClassDeclare::~AbstractReservedClassDeclare() {
 
 	this->members->deleteElements();
 	delete this->members;
-
-	delete this->extends;
-	this->extends = nullptr;
 }
 
 ArrayList<MethodDeclare>* AbstractReservedClassDeclare::getMethods() noexcept {
 	return this->methods;
 }
 
+ArrayList<MemberVariableDeclare>* AbstractReservedClassDeclare::getMemberVariables() noexcept {
+	return this->members;
+}
+
 void AbstractReservedClassDeclare::preAnalyze(AnalyzeContext* actx) {
+	// Object as Extends
+	const UnicodeString* packageName = getPackageName();
+	if(this->extends == nullptr &&
+			!(packageName != nullptr && packageName->equals(&ObjectClassDeclare::PACKAGE)
+					&& this->name->equals(ObjectClassDeclare::NAME))){
+		this->extends = new ClassExtends();
+		ClassName* name = new ClassName();
+		name->addStr("lang.Object");
+		this->extends->setClassName(name);
+	}
 	if(this->extends != nullptr){
 		this->extends->setParent(this);
 		this->extends->preAnalyze(actx);
+	}
+	if(this->implements != nullptr){
+		this->implements->setParent(this);
+		this->implements->preAnalyze(actx);
 	}
 
 	int maxLoop = this->methods->size();
@@ -91,6 +116,13 @@ void AbstractReservedClassDeclare::analyzeTypeRef(AnalyzeContext* actx) {
 	if(this->extends != nullptr){
 		this->extends->analyzeTypeRef(actx);
 	}
+	if(this->implements != nullptr){
+		this->implements->analyzeTypeRef(actx);
+	}
+
+	if(actx->hasError()){
+		return;
+	}
 
 	int maxLoop = this->methods->size();
 	for(int i = 0; i != maxLoop; ++i){
@@ -106,17 +138,25 @@ void AbstractReservedClassDeclare::analyzeTypeRef(AnalyzeContext* actx) {
 		member->analyzeTypeRef(actx);
 	}
 
-	ReservedClassRegistory* reg = actx->getReservedClassRegistory();
-	CompilationUnit* unit = reg->getUnit();
-	PackageSpace* space = actx->getPackegeSpace(unit->getPackageName());
+	PackageSpace* space = actx->getPackegeSpace(this->getPackageName());
 
-	const UnicodeString* fqn = getFullQualifiedName();
+	const UnicodeString* fqn = getName();
 	AnalyzedClass* dec = space->getClass(fqn);
 
 	// set analyzed class
 	if(this->extends != nullptr){
 		AnalyzedType* cls = this->extends->getAnalyzedType();
 		dec->setExtends(cls->getAnalyzedClass());
+	}
+
+	if(this->implements != nullptr){
+		const ArrayList<AnalyzedType>* list = this->implements->getAnalyzedTypes();
+
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			AnalyzedType* cls = list->get(i);
+			dec->addImplements(cls->getAnalyzedClass());
+		}
 	}
 }
 
@@ -136,8 +176,8 @@ void AbstractReservedClassDeclare::analyze(AnalyzeContext* actx) {
 	}
 }
 
-ArrayList<MemberVariableDeclare>* AbstractReservedClassDeclare::getMemberVariables() noexcept {
-	return this->members;
+void AbstractReservedClassDeclare::init(VirtualMachine *vm) {
+
 }
 
 void AbstractReservedClassDeclare::addDefaultConstructor(const UnicodeString* className) noexcept {
@@ -185,32 +225,57 @@ AbstractReservedClassDeclare* AbstractReservedClassDeclare::createFromBinary(Byt
 	case TYPE_ZERO_DIVISION_EXCEPTION:
 		ret = new ZeroDivisionExceptionClassDeclare();
 		break;
+	case TYPE_OBJECT:
+		ret = new ObjectClassDeclare();
+		break;
+	case TYPE_MODULAR_PROXY:
+		ret = new ModularProxyClassDeclare();
+		break;
+	case TYPE_MODULAR_PROXY_LISTNER:
+		ret = new ModularProxyListnerClassDeclare();
+		break;
 	default:
 		throw new BinaryFormatException(__FILE__, __LINE__);
 	}
-
-	ret->fromBinary(in);
 
 	return ret;
 }
 
 int AbstractReservedClassDeclare::binarySize() const {
-	int total = ClassDeclare::binarySize();
-	total += sizeof(uint16_t);
+	checkNotNull(this->name);
+
+	int total = sizeof(uint16_t); // toBinaryHead(out);
+
+	total += sizeof(uint16_t); // out->putShort(getClassType());
 
 	return total;
 }
 
-void AbstractReservedClassDeclare::toBinary(ByteBuffer *out) {
-	toBinaryCheck(out);
+void AbstractReservedClassDeclare::toBinary(ByteBuffer *out) const {
+	checkNotNull(this->name);
+
 	toBinaryHead(out);
 	out->putShort(getClassType());
-
-	toBinaryBody(out);
 }
 
 void AbstractReservedClassDeclare::fromBinary(ByteBuffer *in) {
-	ClassDeclare::fromBinary(in);
+
+}
+
+void AbstractReservedClassDeclare::addMethod(MethodDeclare *method) noexcept {
+	this->methods->addElement(method);
+}
+
+ClassDeclare* AbstractReservedClassDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) {
+	int cap = binarySize();
+	ByteBuffer* buff = ByteBuffer::allocateWithEndian(cap, true);
+
+	toBinary(buff);
+	buff->position(0);
+
+	CodeElement* element = CodeElement::createFromBinary(buff);
+
+	return dynamic_cast<ClassDeclare*>(element);
 }
 
 } /* namespace alinous */

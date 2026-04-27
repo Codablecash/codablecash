@@ -34,6 +34,8 @@ public:
 		return &this->s;
 	}
 
+	UnicodeString* toString() const;
+
 private:
 	Secp256k1Point calcX() const noexcept;
 	BigInteger calcL() const noexcept;

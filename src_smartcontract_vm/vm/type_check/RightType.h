@@ -19,7 +19,7 @@ public:
 	explicit RightType(AbstractExpression* exp);
 	virtual ~RightType();
 
-	int checkTypeCompatibility(AnalyzeContext* actx, LeftType* leftType);
+	int checkTypeCompatibility(AnalyzeContext* actx, LeftType* leftType, bool downCastOnly);
 };
 
 } /* namespace alinous */

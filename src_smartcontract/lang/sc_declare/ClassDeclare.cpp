@@ -24,6 +24,7 @@
 #include "engine/sc_analyze_functions/VTableMethodEntry.h"
 #include "engine/sc_analyze_functions/VTableClassEntry.h"
 
+#include "lang/sc_declare/ClassName.h"
 
 namespace alinous {
 
@@ -55,17 +56,19 @@ ClassDeclare::~ClassDeclare() {
 		delete this->name;
 	}
 	delete this->extends;
+	this->extends = nullptr;
 	delete this->implements;
 	delete this->fqn;
 }
 
 void ClassDeclare::preAnalyze(AnalyzeContext* actx) {
-	this->block->setParent(this);
+	if(this->block != nullptr){
+		this->block->setParent(this);
+	}
 
 	if(!this->interface){
 		addDefaultConstructor();
 	}
-
 
 	CompilationUnit* unit = getCompilationUnit();
 	PackageSpace* space = actx->getPackegeSpace(unit->getPackageName());
@@ -79,6 +82,14 @@ void ClassDeclare::preAnalyze(AnalyzeContext* actx) {
 
 	space->addClassDeclare(this);
 
+	// Object as Extends
+	if(this->extends == nullptr){
+		this->extends = new ClassExtends();
+		ClassName* name = new ClassName();
+		name->addStr("lang.Object");
+		this->extends->setClassName(name);
+	}
+
 	if(this->extends != nullptr){
 		this->extends->setParent(this);
 		this->extends->preAnalyze(actx);
@@ -88,11 +99,15 @@ void ClassDeclare::preAnalyze(AnalyzeContext* actx) {
 		this->implements->preAnalyze(actx);
 	}
 
-	this->block->preAnalyze(actx);
+	if(this->block != nullptr){
+		this->block->preAnalyze(actx);
+	}
 }
 
 void ClassDeclare::addDefaultConstructor() noexcept {
-	this->block->addDefaultConstructor(this->name);
+	if(this->block != nullptr){
+		this->block->addDefaultConstructor(this->name);
+	}
 }
 
 
@@ -121,19 +136,30 @@ void ClassDeclare::analyzeTypeRef(AnalyzeContext* actx) {
 	if(this->implements != nullptr){
 		const ArrayList<AnalyzedType>* list = this->implements->getAnalyzedTypes();
 
-		int maxLoop = list->size();
-		for(int i = 0; i != maxLoop; ++i){
-			AnalyzedType* cls = list->get(i);
-			dec->addImplements(cls->getAnalyzedClass());
+		// interface can't implements other interfaces
+		if(!list->isEmpty() && isInterface()){
+			actx->addValidationError(ValidationError::CODE_INTERFACE_CANNOT_IMPLEMENTS, this, L"Class {0} is interface. It can't implement other interfaces.", {this->name});
+		}
+
+		if(!actx->hasError()){
+			int maxLoop = list->size();
+			for(int i = 0; i != maxLoop; ++i){
+				AnalyzedType* cls = list->get(i);
+				dec->addImplements(cls->getAnalyzedClass());
+			}
 		}
 	}
 
-	this->block->analyzeTypeRef(actx);
+	if(this->block != nullptr){
+		this->block->analyzeTypeRef(actx);
+	}
 }
 
 
 void ClassDeclare::analyze(AnalyzeContext* actx) {
-	this->block->analyze(actx);
+	if(this->block != nullptr){
+		this->block->analyze(actx);
+	}
 
 	if(!this->interface && this->implements != nullptr){
 		checkImplementsInterfaces(actx);
@@ -190,7 +216,7 @@ void ClassDeclare::setBlock(ClassDeclareBlock* block) noexcept {
 	this->block = block;
 }
 
-void alinous::ClassDeclare::setName(UnicodeString* name) noexcept {
+void ClassDeclare::setName(UnicodeString* name) noexcept {
 	this->name = name;
 }
 
@@ -222,6 +248,8 @@ int ClassDeclare::binarySize() const {
 
 	int total = sizeof(uint16_t);
 
+	total += sizeof(uint8_t);
+
 	total += stringSize(this->name);
 	total += sizeof(uint8_t);
 	if(this->block != nullptr){
@@ -238,6 +266,8 @@ int ClassDeclare::binarySize() const {
 		total += this->implements->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -245,6 +275,8 @@ void ClassDeclare::toBinary(ByteBuffer* out) const {
 	toBinaryCheck(out);
 	toBinaryHead(out);
 	toBinaryBody(out);
+
+	positionToBinary(out);
 }
 
 void ClassDeclare::toBinaryCheck(ByteBuffer *out) const {
@@ -257,6 +289,8 @@ void ClassDeclare::toBinaryHead(ByteBuffer *out) const {
 }
 
 void ClassDeclare::toBinaryBody(ByteBuffer *out) const {
+	out->put(this->interface ? 1 : 0);
+
 	putString(out, this->name);
 
 	out->put(this->block != nullptr ? (uint8_t)1 : (uint8_t)0);
@@ -275,27 +309,9 @@ void ClassDeclare::toBinaryBody(ByteBuffer *out) const {
 	}
 }
 
-void ClassDeclare::setExtends(ClassExtends* extends) noexcept {
-	this->extends = extends;
-}
-
-ClassExtends* ClassDeclare::getExtends() const noexcept {
-	return this->extends;
-}
-
-void ClassDeclare::setImplements(ClassImplements* implements) noexcept {
-	this->implements = implements;
-}
-
-void ClassDeclare::setInterface(bool interface) noexcept {
-	this->interface = interface;
-}
-
-bool ClassDeclare::isInterface() const noexcept {
-	return this->interface;
-}
-
 void ClassDeclare::fromBinary(ByteBuffer* in) {
+	this->interface = (in->get() > 0 ? 1 : 0);
+
 	this->name = getString(in);
 
 	uint8_t bl = in->get();
@@ -318,6 +334,28 @@ void ClassDeclare::fromBinary(ByteBuffer* in) {
 		checkKind(element, CodeElement::CLASS_IMPLEMENTS);
 		this->implements = dynamic_cast<ClassImplements*>(element);
 	}
+
+	positionFromBinary(in);
+}
+
+void ClassDeclare::setExtends(ClassExtends* extends) noexcept {
+	this->extends = extends;
+}
+
+ClassExtends* ClassDeclare::getExtends() const noexcept {
+	return this->extends;
+}
+
+void ClassDeclare::setImplements(ClassImplements* implements) noexcept {
+	this->implements = implements;
+}
+
+void ClassDeclare::setInterface(bool interface) noexcept {
+	this->interface = interface;
+}
+
+bool ClassDeclare::isInterface() const noexcept {
+	return this->interface;
 }
 
 ClassDeclare* ClassDeclare::getBaseClass() const noexcept {
@@ -346,11 +384,11 @@ ArrayList<MemberVariableDeclare>* ClassDeclare::getMemberVariables() noexcept {
 	return this->block->getMemberVariables();
 }
 
-IVmInstanceFactory* alinous::ClassDeclare::getFactory() const noexcept {
+IVmInstanceFactory* ClassDeclare::getFactory() const noexcept {
 	return nullptr;
 }
 
-ClassDeclare* ClassDeclare::generateClassDeclare(HashMap<UnicodeString, AbstractType> *input) {
+ClassDeclare* ClassDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) {
 	ClassDeclare* clazz = new ClassDeclare();
 	clazz->copyCodePositions(this);
 

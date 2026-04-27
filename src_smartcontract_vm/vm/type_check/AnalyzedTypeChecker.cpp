@@ -32,20 +32,20 @@ AnalyzedTypeChecker::~AnalyzedTypeChecker() {
 	delete this->right;
 }
 
-bool AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp) {
-	return checkCompatibility(actx, leftExp, rightExp, false);
+bool AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool downCastOnly) {
+	return checkCompatibility(actx, leftExp, rightExp, false, downCastOnly);
 }
 
-bool AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool compare) {
+bool AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool compare, bool downCastOnly) {
 	this->left = new LeftType(leftExp);
 	this->left->init(actx);
 
 	this->right = new RightType(rightExp);
 	this->right->init(actx);
 
-	int result = this->left->checkTypeCompatibility(actx, this->right, compare);
+	int result = this->left->checkTypeCompatibility(actx, this->right, compare, downCastOnly);
 	if(compare && (result == InternalTypeChecker::INCOMPATIBLE || result == InternalTypeChecker::WARN_PRECISION)){
-		result = this->right->checkTypeCompatibility(actx, this->left);
+		result = this->right->checkTypeCompatibility(actx, this->left, downCastOnly);
 	}
 
 	bool ret = true;
@@ -63,8 +63,8 @@ bool AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AbstractExpre
 	return ret;
 }
 
-int AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AnalyzedType* leftType, AnalyzedType* rightType) {
-	int result = InternalTypeChecker::analyzeCompatibility(leftType, rightType);
+int AnalyzedTypeChecker::checkCompatibility(AnalyzeContext* actx, AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly) {
+	int result = InternalTypeChecker::analyzeCompatibility(leftType, rightType, downCastOnly);
 
 	return result;
 }

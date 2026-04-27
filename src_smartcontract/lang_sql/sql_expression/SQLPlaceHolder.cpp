@@ -55,6 +55,8 @@ int SQLPlaceHolder::binarySize() const {
 		total += this->available->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -71,6 +73,7 @@ void SQLPlaceHolder::toBinary(ByteBuffer* out) const {
 		this->available->toBinary(out);
 	}
 
+	positionToBinary(out);
 }
 
 void SQLPlaceHolder::fromBinary(ByteBuffer* in) {
@@ -84,6 +87,8 @@ void SQLPlaceHolder::fromBinary(ByteBuffer* in) {
 		checkIsExp(element);
 		this->available = dynamic_cast<AbstractExpression*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLPlaceHolder::preAnalyze(AnalyzeContext* actx) {

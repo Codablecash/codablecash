@@ -17,18 +17,22 @@
 
 #include "crypto/Sha256.h"
 
+#include "bc_base/AddressDescriptor.h"
 namespace codablecash {
 
 TicketVotedUtxo::TicketVotedUtxo(const TicketVotedUtxo &inst) : AbstractUtxo(inst) {
+	this->address = inst.address != nullptr ? dynamic_cast<AddressDescriptor*>(inst.address->copyData()) : nullptr;
 	this->votedUtxoId = inst.votedUtxoId != nullptr ? dynamic_cast<UtxoId*>(inst.votedUtxoId->copyData()) : nullptr;
 	this->amount = inst.amount;
 }
 
 TicketVotedUtxo::TicketVotedUtxo() : AbstractUtxo(), amount(BalanceUnit(0L)) {
+	this->address = nullptr;
 	this->votedUtxoId = nullptr;
 }
 
 TicketVotedUtxo::~TicketVotedUtxo() {
+	delete this->address;
 	delete this->votedUtxoId;
 }
 
@@ -46,11 +50,13 @@ void TicketVotedUtxo::setAmount(BalanceUnit amount) noexcept {
 }
 
 int TicketVotedUtxo::binarySize() const {
+	BinaryUtils::checkNotNull(this->address);
 	BinaryUtils::checkNotNull(this->utxoId);
 	BinaryUtils::checkNotNull(this->votedUtxoId);
 
 	int total = sizeof(uint8_t);
 
+	total += this->address->binarySize();
 	total += this->utxoId->binarySize();
 	total += this->votedUtxoId->binarySize();
 	total += this->amount.binarySize();
@@ -59,17 +65,20 @@ int TicketVotedUtxo::binarySize() const {
 }
 
 void TicketVotedUtxo::toBinary(ByteBuffer *out) const {
+	BinaryUtils::checkNotNull(this->address);
 	BinaryUtils::checkNotNull(this->utxoId);
 	BinaryUtils::checkNotNull(this->votedUtxoId);
 
 	out->put(getType());
 
+	this->address->toBinary(out);
 	this->utxoId->toBinary(out);
 	this->votedUtxoId->toBinary(out);
 	this->amount.toBinary(out);
 }
 
 void TicketVotedUtxo::fromBinary(ByteBuffer *in) {
+	this->address = AddressDescriptor::createFromBinary(in);
 	this->utxoId = UtxoId::fromBinary(in);
 	this->votedUtxoId = UtxoId::fromBinary(in);
 
@@ -82,12 +91,14 @@ IBlockObject* TicketVotedUtxo::copyData() const noexcept {
 }
 
 void TicketVotedUtxo::build() {
-	int capacity = this->votedUtxoId->binarySize();
+	int capacity = this->address->binarySize();
+	capacity += this->votedUtxoId->binarySize();
 	capacity += this->amount.binarySize();
 	capacity += 32;
 
 	ByteBuffer* buff = ByteBuffer::allocateWithEndian(capacity, true); __STP(buff);
 
+	this->address->toBinary(buff);
 	this->votedUtxoId->toBinary(buff);
 	this->amount.toBinary(buff);
 	buff->put(this->nonce, 32);
@@ -102,11 +113,16 @@ void TicketVotedUtxo::build() {
 }
 
 const AddressDescriptor* TicketVotedUtxo::getAddress() const noexcept {
-	return nullptr;
+	return this->address;
 }
 
 BalanceUnit TicketVotedUtxo::getAmount() const noexcept {
 	return this->amount;
+}
+
+void TicketVotedUtxo::setAddress(const AddressDescriptor *desc) {
+	delete this->address, this->address = nullptr;
+	this->address = dynamic_cast<AddressDescriptor*>(desc->copyData());
 }
 
 } /* namespace codablecash */

@@ -37,14 +37,19 @@ void BreakStatement::init(VirtualMachine* vm) {
 int BreakStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void BreakStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_BREAK);
+
+	positionToBinary(out);
 }
 
 void BreakStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void BreakStatement::interpret(VirtualMachine* vm) {

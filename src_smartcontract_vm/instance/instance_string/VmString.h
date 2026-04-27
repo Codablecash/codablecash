@@ -27,6 +27,9 @@ public:
 
 	const wchar_t* towString() const noexcept;
 	int hashCode() const noexcept;
+
+	int compareTo(const VmString* other) const noexcept;
+
 private:
 	VmString* __append(wchar_t ch) noexcept;
 	void __closeString() noexcept;

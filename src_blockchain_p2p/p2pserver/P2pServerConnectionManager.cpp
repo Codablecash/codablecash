@@ -27,7 +27,7 @@ P2pServerConnectionManager::P2pServerConnectionManager(ISystemLogger* logger, IP
 	this->hslist = new ArrayList<P2pHandshake>();
 	this->hslistMutex = new SysMutex();
 
-	this->expireSec = 20;
+	this->expireSec = 200;
 	this->logger = logger;
 
 	this->listnersMutex = new SysMutex();
@@ -143,6 +143,43 @@ void P2pServerConnectionManager::registerHandshake(P2pHandshake *handshake) {
 	__removeDisabledHandshake();
 
 	this->hslist->addElement(handshake);
+}
+
+ArrayList<PubSubId>* P2pServerConnectionManager::getHandshakeIdList() const noexcept {
+	StackUnlocker __lock(this->hslistMutex, __FILE__, __LINE__);
+
+	ArrayList<PubSubId>* list = new ArrayList<PubSubId>();
+
+	int maxLoop = this->hslist->size();
+	for(int i = 0; i != maxLoop; ++i){
+		P2pHandshake* hs = this->hslist->get(i);
+
+		if(!hs->is2Delete()){
+			const PubSubId* id = hs->getPubsubid();
+			list->addElement(new PubSubId(*id));
+		}
+	}
+
+	return list;
+}
+
+P2pHandshake* P2pServerConnectionManager::getP2pHandshake(const PubSubId *pubsubId) const noexcept {
+	StackUnlocker __lock(this->hslistMutex, __FILE__, __LINE__);
+
+	P2pHandshake* ret = nullptr;
+
+	int maxLoop = this->hslist->size();
+	for(int i = 0; i != maxLoop; ++i){
+		P2pHandshake* hs = this->hslist->get(i);
+		const PubSubId *id = hs->getPubsubid();
+
+		if(id->equals(pubsubId)){
+			ret = hs;
+			hs->addRef();
+		}
+	}
+
+	return ret;
 }
 
 bool P2pServerConnectionManager::handShakeExists(const PubSubId *pubsubId) const noexcept {

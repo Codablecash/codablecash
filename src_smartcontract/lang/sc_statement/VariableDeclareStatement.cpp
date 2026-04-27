@@ -109,7 +109,7 @@ void VariableDeclareStatement::analyze(AnalyzeContext* actx) {
 	if(this->exp != nullptr){
 		AnalyzedTypeChecker checker;
 		AnalyzedType exAt = this->exp->getType(actx);
-		int result = checker.checkCompatibility(actx, this->atype, &exAt);
+		int result = checker.checkCompatibility(actx, this->atype, &exAt, true);
 
 		if(result == InternalTypeChecker::INCOMPATIBLE){
 			actx->addValidationError(ValidationError::CODE_TYPE_INCOMPATIBLE, this, L"Initial variable is incompatible with variable declare .", {});
@@ -147,6 +147,8 @@ int VariableDeclareStatement::binarySize() const {
 		total += this->exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -166,6 +168,8 @@ void VariableDeclareStatement::toBinary(ByteBuffer* out) const {
 	if(!isNull){
 		this->exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void VariableDeclareStatement::fromBinary(ByteBuffer* in) {
@@ -183,6 +187,8 @@ void VariableDeclareStatement::fromBinary(ByteBuffer* in) {
 		checkIsExp(element);
 		this->exp = dynamic_cast<AbstractExpression*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void VariableDeclareStatement::init(VirtualMachine* vm) {

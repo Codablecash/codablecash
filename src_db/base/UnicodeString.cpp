@@ -240,7 +240,7 @@ UnicodeString& UnicodeString::append(const UnicodeString* str) noexcept {
 	return *this;
 }
 
-UnicodeString& UnicodeString::append(const int v) noexcept
+UnicodeString& UnicodeString::append(const int64_t v) noexcept
 {
 	if(v == 0){
 		append(L"0");
@@ -549,13 +549,13 @@ ArrayList<UnicodeString>* UnicodeString::split(const UnicodeString* regex, bool 
 
 	std::wsregex_token_iterator it(str.begin(), str.end(), wreg, -1), end;
 	for (; it != end; ++it) {
-		const std::wstring res = *it;//(it->first, it->second);
+		const std::wstring partres = *it;//(it->first, it->second); // @suppress("Invalid arguments")
 
-		int len = res.length();
+		int len = partres.length();
 		if(!addBlankString && len == 0){
 			continue;
 		}
-		const wchar_t *cwstr = res.c_str();
+		const wchar_t *cwstr = partres.c_str();
 
 		UnicodeString* result = new UnicodeString(cwstr);
 		list->addElement(result);
@@ -585,6 +585,9 @@ bool UnicodeString::equals(const UnicodeString& str) const noexcept {
 
 bool UnicodeString::equals(const UnicodeString* str) const noexcept
 {
+	if(str == nullptr){
+		return false;
+	}
 	int hash = str->hashCode();
 	int _this_hash = this->hashCode();
 	if(hash != _this_hash){

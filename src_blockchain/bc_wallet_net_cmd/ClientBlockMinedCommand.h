@@ -16,6 +16,10 @@
 namespace codablecash {
 
 class NodeIdentifier;
+class BlockHeader;
+class WalletNetworkManager;
+class ISystemLogger;
+class NetworkWalletData;
 
 class ClientBlockMinedCommand : public AbstractClientQueueCommand {
 public:
@@ -34,6 +38,10 @@ public:
 	void setData(const BlockHeaderTransferData* data);
 
 	void setSourceNodeId(const NodeIdentifier* nodeId);
+
+private:
+	BlockHeader* processBlock(uint16_t zone, const BlockHeaderId* headerId, uint64_t height, const NodeIdentifier* nodeId, WalletNetworkManager* networkManager, ISystemLogger* logger, NetworkWalletData* walletData) const;
+	void checkOrphan(const BlockHeader* header, NetworkWallet *wallet, WalletNetworkManager *networkManager, ISystemLogger *logger) const;
 
 private:
 	BlockHeaderTransferData* data;

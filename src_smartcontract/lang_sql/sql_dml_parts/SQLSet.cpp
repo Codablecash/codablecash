@@ -84,6 +84,8 @@ int SQLSet::binarySize() const {
 		total += pair->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -97,6 +99,8 @@ void SQLSet::toBinary(ByteBuffer* out) const {
 		SQLSetPair* pair = this->list.get(i);
 		pair->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLSet::fromBinary(ByteBuffer* in) {
@@ -108,6 +112,8 @@ void SQLSet::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(pair);
 	}
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

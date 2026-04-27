@@ -153,6 +153,8 @@ int ForStatement::binarySize() const {
 	total += this->cond->binarySize();
 	total += this->postLoop->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -167,6 +169,8 @@ void ForStatement::toBinary(ByteBuffer* out) const {
 	this->initStatement->toBinary(out);
 	this->cond->toBinary(out);
 	this->postLoop->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ForStatement::fromBinary(ByteBuffer* in) {
@@ -185,6 +189,8 @@ void ForStatement::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkIsStatement(element);
 	this->postLoop = dynamic_cast<AbstractStatement*>(element);
+
+	positionFromBinary(in);
 }
 
 void ForStatement::init(VirtualMachine* vm) {

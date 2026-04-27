@@ -47,6 +47,7 @@ BlockHeader::BlockHeader() {
 	this->nonce = new PoWNonce(&defaultNonce);
 
 	this->votePart = new VotePart();
+	this->lastNouceCalculated = dynamic_cast<SystemTimestamp*>(Os::now().copyData());;
 }
 
 BlockHeader::~BlockHeader() {
@@ -58,6 +59,7 @@ BlockHeader::~BlockHeader() {
 
 	delete this->timestamp;
 	delete this->nonceGeneratedtimestamp;
+	delete this->lastNouceCalculated;
 }
 
 int BlockHeader::binarySize() const {
@@ -69,6 +71,7 @@ int BlockHeader::binarySize() const {
 	total += this->lastid->binarySize();
 	total += this->nonce->binarySize();
 	total += this->votePart->binarySize();
+	total += this->lastNouceCalculated->binarySize();
 
 	return total;
 }
@@ -83,6 +86,7 @@ void BlockHeader::toBinary(ByteBuffer *out) const {
 	this->lastid->toBinary(out);
 	this->nonce->toBinary(out);
 	this->votePart->toBinary(out);
+	this->lastNouceCalculated->toBinary(out);
 }
 
 BlockHeader* BlockHeader::createFromBinary(ByteBuffer* in) {
@@ -111,6 +115,9 @@ BlockHeader* BlockHeader::createFromBinary(ByteBuffer* in) {
 
 	delete header->votePart;
 	header->votePart = VotePart::createFromBinary(in);
+
+	delete header->lastNouceCalculated;
+	header->lastNouceCalculated = SystemTimestamp::fromBinary(in);
 
 	header->buildHeaderId();
 
@@ -141,6 +148,7 @@ void BlockHeader::buildHeaderId() {
 	total += this->lastid->binarySize();
 	// total += this->nonce->binarySize();
 	total += this->votePart->binarySize();
+	total += this->lastNouceCalculated->binarySize();
 
 	ByteBuffer* buff = ByteBuffer::allocateWithEndian(total, true); __STP(buff);
 	buff->putShort(this->zone);
@@ -152,6 +160,7 @@ void BlockHeader::buildHeaderId() {
 	this->lastid->toBinary(buff);
 	// this->nonce->toBinary(buff);
 	this->votePart->toBinary(buff);
+	this->lastNouceCalculated->toBinary(buff);
 
 	ByteBuffer* sha = Sha256::sha256(buff, true); __STP(sha);
 	sha->position(0);
@@ -213,6 +222,11 @@ void BlockHeader::setNonceGeneratedTimestamp(const SystemTimestamp *tm) const no
 
 bool BlockHeader::isScheduledBlock() const noexcept {
 	return this->nonce->compareTo(&PoWNonce::MAX_NONCE) == 0;
+}
+
+void BlockHeader::setLastNouceCalculated(const SystemTimestamp *tm) noexcept {
+	delete this->lastNouceCalculated;
+	this->lastNouceCalculated = dynamic_cast<SystemTimestamp*>(tm->copyData());
 }
 
 } /* namespace codablecash */

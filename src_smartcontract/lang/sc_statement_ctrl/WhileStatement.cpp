@@ -87,6 +87,8 @@ int WhileStatement::binarySize() const {
 	total += this->exp->binarySize();
 	total += this->stmt->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -97,6 +99,8 @@ void WhileStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_WHILE);
 	this->exp->toBinary(out);
 	this->stmt->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void WhileStatement::fromBinary(ByteBuffer* in) {
@@ -107,6 +111,8 @@ void WhileStatement::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkIsStatement(element);
 	this->stmt = dynamic_cast<AbstractStatement*>(element);
+
+	positionFromBinary(in);
 }
 
 void WhileStatement::init(VirtualMachine* vm) {

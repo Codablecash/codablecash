@@ -2,6 +2,7 @@
 
 set(__src
 	exceptions.cpp
+	IInitializeCompilantUnitProvidor.cpp
 	VirtualMachine.cpp
 	VmSelectPlannerSetter.cpp
 )

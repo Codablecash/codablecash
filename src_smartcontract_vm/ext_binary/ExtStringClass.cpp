@@ -11,6 +11,7 @@
 
 #include "base/UnicodeString.h"
 
+#include "instance/instance_string/VmStringInstance.h"
 namespace alinous {
 
 ExtStringClass::ExtStringClass(const UnicodeString* name, const UnicodeString* value)
@@ -45,5 +46,9 @@ const UnicodeString* ExtStringClass::toString() const noexcept {
 
 }
 
+AbstractVmInstance* ExtStringClass::toVmInstance(VirtualMachine *vm) {
+	VmStringInstance* inst = new(vm) VmStringInstance(vm, this->value);
+	return inst;
+}
 
 } /* namespace alinous */

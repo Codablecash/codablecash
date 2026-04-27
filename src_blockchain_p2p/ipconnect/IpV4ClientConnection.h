@@ -12,6 +12,8 @@
 
 #include "osenv/sockets.h"
 
+#include "bc_p2p_info/P2pNodeRecord.h"
+
 namespace codablecash {
 
 class IpV4ClientConnection : public IClientSocket {
@@ -30,6 +32,10 @@ public:
 	virtual int readPool(int sec, int usec);
 
 	virtual bool isConnected();
+
+	virtual int getSocketType() {
+		return P2pNodeRecord::TCP_IP_V4;
+	}
 
 private:
 	SOCKET_ID sock;

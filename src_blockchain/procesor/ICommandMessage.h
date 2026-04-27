@@ -8,11 +8,13 @@
 #ifndef PROCESOR_ICOMMANDMESSAGE_H_
 #define PROCESOR_ICOMMANDMESSAGE_H_
 
+#include "procesor/ICommandParameter.h"
+
 namespace codablecash {
 
 class ICommandParameter;
 
-class ICommandMessage {
+class ICommandMessage : public ICommandParameter {
 public:
 	ICommandMessage();
 	virtual ~ICommandMessage();

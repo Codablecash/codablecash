@@ -11,7 +11,7 @@
 
 namespace alinous {
 
-ConstStaticPrimitive::ConstStaticPrimitive(PrimitiveReference* primitiveObj) : PrimitiveReference(primitiveObj->getType()) {
+ConstStaticPrimitive::ConstStaticPrimitive(PrimitiveReference* primitiveObj, uint64_t serial) : PrimitiveReference(primitiveObj->getType(), serial) {
 	size_t size = primitiveObj->getDataSize(primitiveObj->getType());
 
 	this->type = primitiveObj->getType();

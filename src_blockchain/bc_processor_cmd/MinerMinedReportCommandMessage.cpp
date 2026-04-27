@@ -47,6 +47,15 @@ void MinerMinedReportCommandMessage::process(CentralProcessor *processor) {
 	BlockchainController* ctrl = processor->getCtrl();
 	ctrl->addBlock(this->block);
 
+	// Pos Voting Request
+	{
+		uint16_t zone = this->block->getZone();
+		uint16_t height = this->block->getHeight();
+
+		ctrl->requestPosVote(zone, height);
+	}
+
+
 	// [Network] bload cast
 	P2pRequestProcessor* p2pRequestProcessor = processor->getP2pRequestProcessor();
 	BlochchainP2pManager* p2pManager = processor->getBlochchainP2pManager();

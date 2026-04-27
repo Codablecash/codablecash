@@ -18,7 +18,7 @@ class AbstractReference : public AbstractVmInstance {
 public:
 	static const UnicodeString NULL_STR;
 
-	explicit AbstractReference(IAbstractVmInstanceSubstance* owner, uint8_t type);
+	explicit AbstractReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint64_t serial);
 	virtual ~AbstractReference();
 
 	virtual IAbstractVmInstanceSubstance* getInstance() noexcept = 0;

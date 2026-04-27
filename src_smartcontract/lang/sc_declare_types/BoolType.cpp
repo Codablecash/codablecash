@@ -27,16 +27,22 @@ int BoolType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void BoolType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_BOOL);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void BoolType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* BoolType::toString() noexcept {

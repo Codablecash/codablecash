@@ -71,7 +71,7 @@ private:
 	const UnicodeString* callSignature;
 
 	StackVariableAccess* thisAccess;
-	bool noVirtual;
+	bool noVirtual; // on static method
 };
 
 } /* namespace alinous */

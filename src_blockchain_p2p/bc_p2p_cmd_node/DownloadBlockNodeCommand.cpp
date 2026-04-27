@@ -115,7 +115,7 @@ AbstractCommandResponse* DownloadBlockNodeCommand::executeAsNode(BlockchainNodeH
 			}
 			str.append(L" at height ");
 			{
-				str.append((int)this->height);
+				str.append((int64_t)this->height);
 			}
 			wres->setMessage(&str);
 

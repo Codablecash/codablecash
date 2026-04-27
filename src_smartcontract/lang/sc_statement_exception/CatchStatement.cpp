@@ -76,7 +76,7 @@ void CatchStatement::analyze(AnalyzeContext* actx) {
 	}
 
 	TypeResolver* resolver = actx->getTypeResolver();
-	AnalyzedType* exType = resolver->findClassType((const UnicodeString*)nullptr, &ExceptionClassDeclare::NAME); __STP(exType);
+	AnalyzedType* exType = resolver->findClassType(&AbstractExceptionClassDeclare::PACKAGE_NAME, &ExceptionClassDeclare::NAME); __STP(exType);
 
 	AnalyzedClass* ac = at.getAnalyzedClass();
 	AnalyzedClass* exc = exType->getAnalyzedClass();
@@ -138,6 +138,8 @@ int CatchStatement::binarySize() const {
 	total += this->variableDeclare->binarySize();
 	total += this->block->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -149,6 +151,8 @@ void CatchStatement::toBinary(ByteBuffer* out) const {
 
 	this->variableDeclare->toBinary(out);
 	this->block->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void CatchStatement::fromBinary(ByteBuffer* in) {
@@ -161,6 +165,8 @@ void CatchStatement::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::STMT_BLOCK);
 
 	this->block = dynamic_cast<StatementBlock*>(element);
+
+	positionFromBinary(in);
 }
 
 void CatchStatement::setBlock(StatementBlock* block) noexcept {

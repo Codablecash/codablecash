@@ -20,7 +20,7 @@ public:
 	virtual ~DomType();
 
 	virtual int binarySize() const;
-	virtual void toBinary(ByteBuffer* out);
+	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
 	virtual const UnicodeString* toString() noexcept;

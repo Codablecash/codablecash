@@ -44,6 +44,8 @@ CodablecashSystemParam::CodablecashSystemParam(const CodablecashSystemParam &ins
 
 	this->consensusTrxMaxHops = inst.consensusTrxMaxHops;
 	this->consensusTrxAllowedDelayMillis = inst.consensusTrxAllowedDelayMillis;
+
+	this->consensusPosVoteLimitMillis = inst.consensusPosVoteLimitMillis;
 }
 
 CodablecashSystemParam::CodablecashSystemParam() {
@@ -67,7 +69,7 @@ CodablecashSystemParam::CodablecashSystemParam() {
 	this->ticketVoterFeeBasisPoint = 50;
 
 	this->voteBeforeNBlocks = 1;
-	this->voteBlockIncludeAfterNBlocks = 3; // must be more than 3
+	this->voteBlockIncludeAfterNBlocks = 1; //
 
 	this->votePerBlock = 5;
 
@@ -80,7 +82,9 @@ CodablecashSystemParam::CodablecashSystemParam() {
 	this->numInitialSyncNodes = 3;
 
 	this->consensusTrxMaxHops = 8;
-	this->consensusTrxAllowedDelayMillis = 500;
+	this->consensusTrxAllowedDelayMillis = 3000;
+
+	this->consensusPosVoteLimitMillis = 20000;
 }
 
 CodablecashSystemParam::~CodablecashSystemParam() {
@@ -193,7 +197,6 @@ uint16_t CodablecashSystemParam::getVoteBlockIncludeAfterNBlocks(uint64_t height
 }
 
 void CodablecashSystemParam::setVoteBlockIncludeAfterNBlocks(uint16_t voteBlockIncludeAfterNBlocks) noexcept {
-	assert(voteBlockIncludeAfterNBlocks >= 3);
 	this->voteBlockIncludeAfterNBlocks = voteBlockIncludeAfterNBlocks;
 }
 
@@ -223,6 +226,10 @@ void CodablecashSystemParam::setConsensusTrxMaxHops(uint16_t consensusTrxMaxHops
 
 void CodablecashSystemParam::setConsensusTrxAllowedDelayMillis(uint32_t consensusTrxAllowedDelayMillis) noexcept {
 	this->consensusTrxAllowedDelayMillis = consensusTrxAllowedDelayMillis;
+}
+
+void CodablecashSystemParam::setConsensusPosVoteLimitMillis(uint32_t consensusPosVoteLimitMillis) noexcept {
+	this->consensusPosVoteLimitMillis = consensusPosVoteLimitMillis;
 }
 
 } /* namespace codablecash */

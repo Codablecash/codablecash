@@ -96,11 +96,15 @@ bool BlockchainController::addBlock(const Block *block) {
 		UnicodeString* strId = header->getId()->toString(); __STP(strId);
 
 		UnicodeString message(L"[Add Block] Height: ");
-		message.append((int)header->getHeight());
+		message.append((int64_t)header->getHeight());
 		message.append(L" Header Id: ").append(strId);
 
 		this->logger->log(&message);
 
+		{
+			uint16_t zone = header->getZone();
+			registerBlockHeader4Limit(zone, header, this->config);
+		}
 	}
 
 	{
@@ -136,10 +140,15 @@ bool BlockchainController::addBlockHeader(const BlockHeader *header) {
 		UnicodeString* strId = header->getId()->toString(); __STP(strId);
 
 		UnicodeString message(L"[Add Block Header] Height: ");
-		message.append((int)header->getHeight());
+		message.append((int64_t)header->getHeight());
 		message.append(L" Header Id: ").append(strId);
 
 		this->logger->log(&message);
+
+		{
+			uint16_t zone = header->getZone();
+			registerBlockHeader4Limit(zone, header, this->config);
+		}
 	}
 
 	MemPoolTransaction* memTrx = this->memoryPool->begin(); __STP(memTrx);
@@ -390,7 +399,7 @@ void BlockchainController::finalize(uint16_t zone, uint64_t finalizingHeight, co
 		UnicodeString* strId = headerId->toString(); __STP(strId);
 
 		UnicodeString message(L"  [Finalize] Height: ");
-		message.append((int)finalizingHeight);
+		message.append((int64_t)finalizingHeight);
 		message.append(L" Header Id: ").append(strId);
 
 		this->logger->log(&message);
@@ -434,7 +443,7 @@ void BlockchainController::finalizeHeader(uint16_t zone, uint64_t finalizingHeig
 		UnicodeString* strId = headerId->toString(); __STP(strId);
 
 		UnicodeString message(L"  [Finalize Header] Height: ");
-		message.append((int)finalizingHeight);
+		message.append((int64_t)finalizingHeight);
 		message.append(L" Header Id: ").append(strId);
 
 		this->logger->log(&message);
@@ -699,6 +708,16 @@ bool BlockchainController::registerBlockHeader4Limit(uint16_t zone,	const BlockH
 	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
 
 	return this->statusCache->registerBlockHeader4Limit(zone, header, param);
+}
+
+SystemTimestamp* BlockchainController::getPosVoteLimit(uint16_t zone, uint64_t lastHeight) {
+	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
+
+	return this->statusCache->getPosVoteLimit(zone, lastHeight);
+}
+
+void BlockchainController::requestPosVote(uint16_t zone, uint64_t calculatedNonceHeight) {
+	this->statusCache->requestPosVote(zone, calculatedNonceHeight, this->blockchain);
 }
 
 } /* namespace codablecash */

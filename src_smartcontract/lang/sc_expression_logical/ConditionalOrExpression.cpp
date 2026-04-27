@@ -53,16 +53,22 @@ int ConditionalOrExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractBinaryExpression::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void ConditionalOrExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_CND_OR);
 	AbstractBinaryExpression::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ConditionalOrExpression::fromBinary(ByteBuffer* in) {
 	AbstractBinaryExpression::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType ConditionalOrExpression::getType(AnalyzeContext* actx) {

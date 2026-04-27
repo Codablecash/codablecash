@@ -35,14 +35,19 @@ void BeginStatement::analyze(AnalyzeContext* actx) {
 int BeginStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void BeginStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::DML_STMT_BEGIN);
+
+	positionToBinary(out);
 }
 
 void BeginStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void BeginStatement::interpret(VirtualMachine* vm) {

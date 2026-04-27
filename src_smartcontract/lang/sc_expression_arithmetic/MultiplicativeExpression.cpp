@@ -238,4 +238,23 @@ AbstractExpression* MultiplicativeExpression::generateGenericsImplement(HashMap<
 	return inst;
 }
 
+int MultiplicativeExpression::binarySize() const {
+	int total = AbstractArithmeticBinaryExpresson::binarySize();
+
+	total += positionBinarySize();
+	return total;
+}
+
+void MultiplicativeExpression::toBinary(ByteBuffer *out) const {
+	AbstractArithmeticBinaryExpresson::toBinary(out);
+
+	positionToBinary(out);
+}
+
+void MultiplicativeExpression::fromBinary(ByteBuffer *in) {
+	AbstractArithmeticBinaryExpresson::fromBinary(in);
+
+	positionFromBinary(in);
+}
+
 } /* namespace alinous */

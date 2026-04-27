@@ -14,10 +14,11 @@
 namespace alinous {
 
 class AbstractExtObject;
+class AnalyzedType;
 
 class ExtArrayObject : public AbstractExtObject {
 public:
-	ExtArrayObject(const UnicodeString* name, int length);
+	ExtArrayObject(const UnicodeString* name, int length, uint8_t atype, int dim, const UnicodeString* fqn);
 	virtual ~ExtArrayObject();
 
 	void addInnerElement(AbstractExtObject* obj) noexcept;
@@ -27,9 +28,16 @@ public:
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
+
 private:
 	ArrayList<AbstractExtObject> array;
 	int length;
+
+	uint8_t atype;
+	int dim;
+	UnicodeString* fqn;
+
 };
 
 } /* namespace alinous */

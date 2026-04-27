@@ -147,19 +147,22 @@ void WalletAccountUtxoRepository::importUtxo(const AbstractUtxo *utxo) {
 }
 
 void WalletAccountUtxoRepository::removeUtxo(const UtxoId *utxoId) {
-	BalanceUtxo* utxo = getBalanceUtxo(utxoId); __STP(utxo);
+	AbstractUtxo* utxo = getUtxo(utxoId); __STP(utxo);
 	assert(utxo != nullptr);
 
-	const AddressDescriptor* desc = utxo->getAddress();
-	{
-		AddressDescriptorKey key(desc);
-		key.setUtxo(utxo);
-		this->btree->remove(&key);
+	if(utxo != nullptr){
+		const AddressDescriptor* desc = utxo->getAddress();
+		{
+			AddressDescriptorKey key(desc);
+			key.setUtxo(utxo);
+			this->btree->remove(&key);
+		}
+		{
+			UtxoIdKey key(utxoId);
+			this->utxoIdBtree->remove(&key);
+		}
 	}
-	{
-		UtxoIdKey key(utxoId);
-		this->utxoIdBtree->remove(&key);
-	}
+
 }
 
 BalanceUnit WalletAccountUtxoRepository::getTotalAmount() const noexcept {

@@ -27,16 +27,22 @@ int IntType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
-void IntType::toBinary(ByteBuffer* out) {
+void IntType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_INT);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void IntType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* IntType::toString() noexcept {

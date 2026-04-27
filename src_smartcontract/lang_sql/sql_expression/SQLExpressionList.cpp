@@ -51,6 +51,8 @@ int SQLExpressionList::binarySize() const {
 		total += exp->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -64,6 +66,8 @@ void SQLExpressionList::toBinary(ByteBuffer* out) const {
 		AbstractSQLExpression* exp = this->list.get(i);
 		exp->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLExpressionList::fromBinary(ByteBuffer* in) {
@@ -75,6 +79,8 @@ void SQLExpressionList::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(exp);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLExpressionList::preAnalyze(AnalyzeContext* actx) {

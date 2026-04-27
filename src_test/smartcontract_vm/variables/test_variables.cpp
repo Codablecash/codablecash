@@ -80,7 +80,7 @@ TEST(TestVmVariableGroup, primitives){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 	vm->destroy();
 }
 

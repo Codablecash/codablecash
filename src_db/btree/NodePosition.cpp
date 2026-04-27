@@ -143,11 +143,23 @@ uint64_t NodePosition::getNextChildPrevious(const AbstractBtreeKey* key) {
 	for(int i = maxLoop - 1; i >= 0; --i){
 		NodeHandle* nh = this->innerNodes->get(i);
 
-		if(key->compareTo(nh->getKey()) <= 0){
+		if(key->compareTo(nh->getKey()) == 0){
 			ret = nh->getFpos();
 			this->pos = i - 1;
 			break;
 		}
+		else if(key->compareTo(nh->getKey()) > 0){
+			nh = this->innerNodes->get(i + 1);
+			ret = nh->getFpos();
+			this->pos = i;
+			break;
+		}
+	}
+
+	if(ret == 0){
+		NodeHandle* nh = this->innerNodes->get(0);
+		ret = nh->getFpos();
+		this->pos = -1;
 	}
 
 	return ret;

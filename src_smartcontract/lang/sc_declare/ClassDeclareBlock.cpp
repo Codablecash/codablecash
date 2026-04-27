@@ -164,6 +164,8 @@ int ClassDeclareBlock::binarySize() const {
 		total += method->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -183,6 +185,8 @@ void ClassDeclareBlock::toBinary(ByteBuffer* out) const {
 		MethodDeclare* method = this->methods.get(i);
 		method->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ClassDeclareBlock::fromBinary(ByteBuffer* in) {
@@ -203,6 +207,8 @@ void ClassDeclareBlock::fromBinary(ByteBuffer* in) {
 		MethodDeclare* method = dynamic_cast<MethodDeclare*>(element);
 		this->methods.addElement(method);
 	}
+
+	positionFromBinary(in);
 }
 
 bool ClassDeclareBlock::hasCtrlStatement() const noexcept {

@@ -107,13 +107,16 @@ ArrayList<AnalyzedType>* ArgumentsListDeclare::getArgumentsAnalyzedType() noexce
 
 int ArgumentsListDeclare::binarySize() const {
 	int total = sizeof(uint16_t);
-	total += sizeof(uint32_t);
 
 	int maxLoop = this->list.size();
+	total += sizeof(uint32_t);
+
 	for(int i = 0; i != maxLoop; ++i){
 		ArgumentDeclare* arg = this->list.get(i);
 		total += arg->binarySize();
 	}
+
+	total += positionBinarySize();
 
 	return total;
 }
@@ -128,6 +131,8 @@ void ArgumentsListDeclare::toBinary(ByteBuffer* out) const {
 		ArgumentDeclare* arg = this->list.get(i);
 		arg->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 
@@ -140,6 +145,8 @@ void ArgumentsListDeclare::fromBinary(ByteBuffer* in) {
 		ArgumentDeclare* arg = dynamic_cast<ArgumentDeclare*>(element);
 		this->list.addElement(arg);
 	}
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* ArgumentsListDeclare::toString() noexcept {

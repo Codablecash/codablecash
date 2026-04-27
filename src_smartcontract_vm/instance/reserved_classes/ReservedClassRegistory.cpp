@@ -22,11 +22,25 @@
 #include "trx/transaction_exception/DatabaseExceptionClassDeclare.h"
 
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
+
+#include "instance/reserved_classes/object/ObjectClassDeclare.h"
+
+#include "instance/reserved_classes/list/ListClassDeclare.h"
+
+#include "lang/sc_declare/PackageDeclare.h"
+#include "lang/sc_declare/PackageNameDeclare.h"
+
+
+#include "inter_modular_access/InterModuleAccessException.h"
+
+#include "modular_interfaces/ModularProxyListnerClassDeclare.h"
+using namespace codablecash;
 
 namespace alinous {
 
 ReservedClassRegistory::ReservedClassRegistory() {
-	this->unit = new CompilationUnit();
+	this->unitlist = new ArrayList<CompilationUnit>();
 
 	AnalyzedClass* aclass = StringClassDeclare::createAnalyzedClass();
 	addAnalyzedClass(aclass);
@@ -48,6 +62,21 @@ ReservedClassRegistory::ReservedClassRegistory() {
 
 	aclass = DatabaseExceptionClassDeclare::createAnalyzedClass();
 	addAnalyzedClass(aclass);
+
+	aclass = InterModuleAccessException::createAnalyzedClass();
+	addAnalyzedClass(aclass);
+
+	// Object Class
+	aclass = ObjectClassDeclare::createAnalyzedClass();
+	addAnalyzedClass(aclass);
+
+	// List Class (Generics)
+	aclass = ListClassDeclare::createAnalyzedClass();
+	addAnalyzedClass(aclass);
+
+	// ModularProxyListnerClassDeclare
+	aclass = ModularProxyListnerClassDeclare::createAnalyzedClass();
+	addAnalyzedClass(aclass);
 }
 
 AnalyzedClass* ReservedClassRegistory::getAnalyzedClass(const UnicodeString* fqn) const noexcept {
@@ -63,26 +92,51 @@ void ReservedClassRegistory::addAnalyzedClass(AnalyzedClass* aclass) noexcept {
 }
 
 ReservedClassRegistory::~ReservedClassRegistory() {
-	int maxLoop = this->list.size();
-	for(int i = 0; i != maxLoop; ++i){
-		AnalyzedClass* aclass = this->list.get(i);
-
-		ClassDeclare* dec = aclass->getClassDeclare();
-		delete dec;
-	}
-
 	this->list.deleteElements();
 
-	delete this->unit;
+	this->unitlist->deleteElements();
+	delete this->unitlist;
 }
 
 const ArrayList<AnalyzedClass>* ReservedClassRegistory::getReservedClassesList() const noexcept {
 	return &this->list;
 }
 
-CompilationUnit* ReservedClassRegistory::getUnit() const noexcept {
-	return this->unit;
+CompilationUnit* ReservedClassRegistory::makeCompilantUnit(const UnicodeString *packageName) noexcept {
+	CompilationUnit* unit = new CompilationUnit();
+
+	this->unitlist->addElement(unit);
+
+	if(packageName != nullptr){
+		PackageDeclare* packageDec = new PackageDeclare();
+
+		PackageNameDeclare* nameDec = new PackageNameDeclare();
+		nameDec->setParent(packageDec);
+
+		UnicodeString pattern(L"\\.");
+		ArrayList<UnicodeString>* list = packageName->split(&pattern); __STP(list);
+		list->setDeleteOnExit();
+
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			UnicodeString* seg = list->get(i);
+
+			nameDec->addSegment(new UnicodeString(seg));
+		}
+
+		packageDec->setName(nameDec);
+		unit->setPackage(packageDec);
+	}
+
+	return unit;
 }
 
+void ReservedClassRegistory::initCompilantUnits(VirtualMachine *vm) {
+	int maxLoop = this->unitlist->size();
+	for(int i = 0; i != maxLoop; ++i){
+		CompilationUnit* unit = this->unitlist->get(i);
+		unit->init(vm);
+	}
+}
 
 } /* namespace alinous */

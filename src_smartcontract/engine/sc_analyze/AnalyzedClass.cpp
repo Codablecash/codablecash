@@ -26,6 +26,8 @@
 #include "engine/sc_analyze_functions/VTableClassEntry.h"
 
 #include "engine/sc_analyze/IVmInstanceFactory.h"
+
+
 namespace alinous {
 
 AnalyzedClass::AnalyzedClass(const AnalyzedClass& inst) {
@@ -141,6 +143,22 @@ const ArrayList<AnalyzedClass>* AnalyzedClass::getImplements() const noexcept {
 	return &this->implements;
 }
 
+bool AnalyzedClass::hasImplements(AnalyzedClass *interface) noexcept {
+	bool result = false;
+
+	int maxLoop = this->implements.size();
+	for(int i = 0; i != maxLoop; ++i){
+		AnalyzedClass* cls = this->implements.get(i);
+
+		if(interface->equals(cls)){
+			result = true;
+			break;
+		}
+	}
+
+	return result;
+}
+
 MethodDeclare* AnalyzedClass::getDefaultConstructor() noexcept {
 	MethodDeclare* ret = nullptr;
 
@@ -175,7 +193,7 @@ MethodDeclare* AnalyzedClass::findMethod(const UnicodeString* name, ArrayList<An
 		AnalyzedType* atype = argumentTypeList->get(i);
 		AnalyzedType* atype2 = argumentTypeList2->get(i);
 
-		if(!atype->equals(atype2)){
+		if(!(atype->equals(atype2))){
 			return nullptr;
 		}
 	}
@@ -272,6 +290,71 @@ bool AnalyzedClass::isReserved() const noexcept {
 
 bool AnalyzedClass::isInterface() const noexcept {
 	return this->clazz->isInterface();
+}
+
+void AnalyzedClass::addDelivedImplementClass(AnalyzedClass *clazz) {
+	if(!hasDeliveredImplClass(clazz) && hasDelivedImplementClass(clazz)){
+		this->delivedImplClasses.addElement(clazz);
+	}
+}
+
+bool AnalyzedClass::hasDeliveredImplClass(AnalyzedClass *clazz) {
+	bool ret = false;
+
+	int maxLoop = this->delivedImplClasses.size();
+	for(int i = 0; i != maxLoop; ++i){
+		AnalyzedClass* cls = this->delivedImplClasses.get(i);
+
+		if(cls->equals(clazz)){
+			ret = true;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+bool AnalyzedClass::hasDelivedImplementClass(AnalyzedClass *clazz) {
+	return followExtends(clazz);
+}
+
+bool AnalyzedClass::followExtends(AnalyzedClass *clazz) {
+	if(clazz->equals(this)){
+		return true;
+	}
+
+	AnalyzedClass* extendsClazz = clazz->getExtends();
+	if(extendsClazz != nullptr && followExtends(extendsClazz)){
+		return true;
+	}
+
+	bool result = false;
+	if(isInterface()){
+		const ArrayList<AnalyzedClass>* list = clazz->getImplements();
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			AnalyzedClass* ifclazz = list->get(i);
+			if(ifclazz != nullptr && followImplements(ifclazz)){
+				result = true;
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+bool AnalyzedClass::followImplements(AnalyzedClass *ifclazz) {
+	if(ifclazz->equals(this)){
+		return true;
+	}
+
+	AnalyzedClass* extendsClazz = ifclazz->getExtends();
+	if(extendsClazz != nullptr && followExtends(extendsClazz)){
+		return true;
+	}
+
+	return false;
 }
 
 } /* namespace alinous */

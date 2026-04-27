@@ -33,14 +33,14 @@ void MuSigHashBuilder::add(const Secp256k1Point *pt) {
 	this->list->addElement(buff);
 }
 
-void MuSigHashBuilder::add(const BigInteger *bi) {
+void MuSigHashBuilder::addBigInteger(const BigInteger *bi) {
 	ByteBuffer* buff = bi->toBinary();
 	buff->position(0);
 
 	this->list->addElement(buff);
 }
 
-void MuSigHashBuilder::add(const char *data, int length) {
+void MuSigHashBuilder::addArray(const char *data, int length) {
 	ByteBuffer* buff = ByteBuffer::wrapWithEndian(data, length, true);
 	buff->position(0);
 

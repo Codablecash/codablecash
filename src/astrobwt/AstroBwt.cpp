@@ -23,7 +23,7 @@ namespace codablecash {
 AstroBwt::AstroBwt() {
 	this->stage1 = new uint8_t[stage1_length];
 	this->stage2 = new uint8_t[stage2_max_length];
-	this->bwtBuff = ByteBuffer::allocateWithEndian(stage2_max_length, false);
+	this->bwtBuff = ByteBuffer::allocateWithEndian(stage2_max_length, true);
 	this->bwtTransform = new BwtTransform(stage2_max_length);
 	this->transformMask = DEFAULT_MASK2;
 }

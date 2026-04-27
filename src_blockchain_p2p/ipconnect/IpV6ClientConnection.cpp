@@ -35,7 +35,7 @@ IClientSocket* IpV6ClientConnection::newSameClient() {
 
 void IpV6ClientConnection::connect(const UnicodeString* host, int port) {
 	UnicodeString strPort(L"");
-	strPort.append(port);
+	strPort.append((int64_t)port);
 
 	this->sock = IPV6::connect(host, &strPort);
 	this->port = port;

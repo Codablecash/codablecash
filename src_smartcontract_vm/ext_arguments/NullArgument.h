@@ -16,14 +16,22 @@ class AnalyzedType;
 
 class NullArgument : public AbstractFunctionExtArguments {
 public:
+	NullArgument(const NullArgument& inst);
+	NullArgument();
 	explicit NullArgument(const AnalyzedType* type);
 	virtual ~NullArgument();
 
-	virtual AnalyzedType getType() const noexcept;
+	virtual ArgumentType* getType() const noexcept;
 	virtual AbstractVmInstance* interpret(VirtualMachine* vm);
 
+	virtual AbstractFunctionExtArguments* copy() const;
+
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	virtual void fromBinary(ByteBuffer* in);
+
 private:
-	AnalyzedType* atype;
+	ArgumentType* atype;
 };
 
 } /* namespace alinous */

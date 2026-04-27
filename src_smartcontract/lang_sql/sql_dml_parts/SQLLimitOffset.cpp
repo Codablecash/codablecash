@@ -41,6 +41,8 @@ int SQLLimitOffset::binarySize() const {
 		total += this->offset->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -56,6 +58,8 @@ void SQLLimitOffset::toBinary(ByteBuffer* out) const {
 	if(this->offset != nullptr){
 		this->offset->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLLimitOffset::fromBinary(ByteBuffer* in) {
@@ -72,6 +76,8 @@ void SQLLimitOffset::fromBinary(ByteBuffer* in) {
 		checkIsSQLExp(element);
 		this->offset = dynamic_cast<AbstractSQLExpression*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

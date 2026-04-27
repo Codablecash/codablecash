@@ -22,6 +22,7 @@ class SoftwareVersion;
 class DependencyConfig;
 class JsonObject;
 class ModularInstanceConfig;
+class AbstractExecutableModuleInstance;
 
 class AbstractSmartcontractModule {
 public:
@@ -37,9 +38,11 @@ public:
 	virtual ~AbstractSmartcontractModule();
 
 	virtual void load(const File* modulePath) = 0;
+	virtual AbstractExecutableModuleInstance* toInstance() const = 0;
 
 protected:
 	virtual void analyzeJsonObject(const JsonObject* object);
+	void setupInstance(AbstractExecutableModuleInstance* inst) const;
 
 protected:
 	const UnicodeString* projectRelativePath;

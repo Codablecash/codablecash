@@ -29,7 +29,7 @@ TEST_GROUP(TestAddressDataGroup) {
 TEST(TestAddressDataGroup, case01){
 	HdWalletSeed* seed = HdWalletSeed::newSeed(); __STP(seed);
 	BigInteger* bigInt = seed->toBigInteger(); __STP(bigInt);
-	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 0); __STP(privateKey);
+	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 1); __STP(privateKey);
 
 	ScPublicKey publicKey = privateKey->generatePublicKey();
 

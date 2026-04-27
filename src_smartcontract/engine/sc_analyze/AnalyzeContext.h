@@ -46,6 +46,7 @@ public:
 
 	PackageSpace* getPackegeSpace(const UnicodeString* spaceName) noexcept;
 
+	void addValidationError(bool condition, int errorCode, CodeElement* element, const wchar_t* msg, std::initializer_list<const UnicodeString*> params) noexcept;
 	void addValidationError(int errorCode, CodeElement* element, const UnicodeString* msg, std::initializer_list<const UnicodeString*> params) noexcept;
 	void addValidationError(int errorCode, CodeElement* element, const wchar_t* msg, std::initializer_list<const UnicodeString*> params) noexcept;
 

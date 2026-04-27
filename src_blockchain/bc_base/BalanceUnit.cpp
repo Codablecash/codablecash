@@ -101,7 +101,7 @@ IBlockObject* BalanceUnit::copyData() const noexcept {
 }
 
 int BalanceUnit::compareTo(const BalanceUnit *other) const noexcept {
-	return this->amount - other->amount;
+	return this->amount == other->amount ? 0 : ( this->amount > other->amount ? 1 : -1);
 }
 
 int BalanceUnit::compareTo(const BalanceUnit &other) const noexcept {

@@ -18,7 +18,7 @@
 namespace alinous {
 
 ClassTypeReference::ClassTypeReference(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm, const AnalyzedType* type)
-	: AbstractReference(owner, VmInstanceTypesConst::REF_CLASS_TYPE) {
+	: AbstractReference(owner, VmInstanceTypesConst::REF_CLASS_TYPE, vm->publishInstanceSerial()) {
 	this->atype = new AnalyzedType(*type);
 
 }

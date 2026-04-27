@@ -1,0 +1,9 @@
+package modsample;
+
+class Result {
+	public Result(){
+	
+	}
+	
+	private int result = 0;
+}

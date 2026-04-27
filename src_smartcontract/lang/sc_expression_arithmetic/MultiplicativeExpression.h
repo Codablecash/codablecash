@@ -35,6 +35,10 @@ public:
 
 	virtual AbstractExpression* generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const;
 
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer* out) const;
+	virtual void fromBinary(ByteBuffer* in);
+
 private:
 	AbstractVmInstance* interpret8Bit(VirtualMachine* vm);
 	AbstractVmInstance* interpret16Bit(VirtualMachine* vm);

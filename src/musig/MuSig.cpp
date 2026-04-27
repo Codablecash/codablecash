@@ -10,6 +10,10 @@
 
 #include "numeric/BigInteger.h"
 
+#include "base/StackRelease.h"
+#include "base/UnicodeString.h"
+
+
 namespace codablecash {
 
 MuSig& MuSig::operator =(const MuSig &inst) {
@@ -67,7 +71,7 @@ bool MuSig::verify(const char *data, int length) const noexcept {
 		MuSigHashBuilder hashBuilder;
 		hashBuilder.add(&X);
 		hashBuilder.add(&this->R);
-		hashBuilder.add(data, length);
+		hashBuilder.addArray(data, length);
 		hashBuilder.buildHash();
 		HXRm = hashBuilder.getResultAsBigInteger();
 	}
@@ -91,7 +95,7 @@ Secp256k1Point MuSig::calcX() const noexcept {
 		Secp256k1Point* Xi = this->XiList->get(i);
 
 		MuSigHashBuilder hashBuilder;
-		hashBuilder.add(&L);
+		hashBuilder.addBigInteger(&L);
 		hashBuilder.add(Xi);
 		hashBuilder.buildHash();
 
@@ -121,6 +125,17 @@ BigInteger MuSig::calcL() const noexcept {
 	//L.modSelf(Secp256k1Point::n);
 
 	return L;
+}
+
+UnicodeString* MuSig::toString() const {
+	UnicodeString* ret = new UnicodeString(L"");
+
+	{
+		UnicodeString* rstr = this->R.toString(16); __STP(rstr);
+		ret->append(L"R : ").append(rstr);
+	}
+
+	return ret;
 }
 
 } /* namespace codablecash */

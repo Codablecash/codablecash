@@ -34,6 +34,8 @@ public:
 	virtual int readPool(int sec, int usec) = 0;
 
 	virtual bool isConnected() = 0;
+
+	virtual int getSocketType() = 0;
 };
 
 } /* namespace codablecash */

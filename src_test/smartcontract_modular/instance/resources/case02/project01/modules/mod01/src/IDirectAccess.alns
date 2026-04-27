@@ -1,0 +1,6 @@
+package modsample.export;
+
+
+interface IDirectAccess {
+	
+}

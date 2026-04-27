@@ -223,6 +223,8 @@ int StatementBlock::binarySize() const {
 		total += stmt->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -236,6 +238,8 @@ void StatementBlock::toBinary(ByteBuffer* out) const {
 		AbstractStatement* stmt = this->statements.get(i);
 		stmt->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void StatementBlock::fromBinary(ByteBuffer* in) {
@@ -247,6 +251,8 @@ void StatementBlock::fromBinary(ByteBuffer* in) {
 		AbstractStatement* stmt = dynamic_cast<AbstractStatement*>(element);
 		this->statements.addElement(stmt);
 	}
+
+	positionFromBinary(in);
 }
 
 void StatementBlock::init(VirtualMachine* vm) {

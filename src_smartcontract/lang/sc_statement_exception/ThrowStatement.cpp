@@ -61,7 +61,7 @@ void ThrowStatement::analyze(AnalyzeContext* actx) {
 	}
 
 	TypeResolver* resolver = actx->getTypeResolver();
-	AnalyzedType* exType = resolver->findClassType(this, &ExceptionClassDeclare::NAME); __STP(exType);
+	AnalyzedType* exType = resolver->findClassType(&AbstractExceptionClassDeclare::PACKAGE_NAME, &ExceptionClassDeclare::NAME); __STP(exType);
 
 	AnalyzedClass* clazz = atype.getAnalyzedClass();
 	if(!clazz->hasBaseClass(exType->getAnalyzedClass())){
@@ -113,6 +113,8 @@ int ThrowStatement::binarySize() const {
 
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -122,6 +124,8 @@ void ThrowStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_THROW);
 
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ThrowStatement::fromBinary(ByteBuffer* in) {
@@ -129,6 +133,8 @@ void ThrowStatement::fromBinary(ByteBuffer* in) {
 	checkIsExp(element);
 
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void ThrowStatement::setExpression(AbstractExpression* exp) noexcept {

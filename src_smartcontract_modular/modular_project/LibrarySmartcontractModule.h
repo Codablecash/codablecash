@@ -15,6 +15,7 @@ namespace codablecash {
 class LibrarySmartcontractModule : public AbstractSmartcontractModule {
 public:
 	static constexpr const wchar_t* LIBRARY_NAME = L"libraryName";
+	static constexpr const wchar_t* EXPORT_CLASSES = L"exportClasses";
 
 	explicit LibrarySmartcontractModule(const UnicodeString* projectRelativePath);
 	virtual ~LibrarySmartcontractModule();
@@ -23,8 +24,11 @@ public:
 
 	void setLibraryName(const UnicodeString* str) noexcept;
 
+	virtual AbstractExecutableModuleInstance* toInstance() const;
+
 private:
 	UnicodeString* libraryName;
+	ArrayList<UnicodeString>* exportClasses;
 };
 
 } /* namespace codablecash */

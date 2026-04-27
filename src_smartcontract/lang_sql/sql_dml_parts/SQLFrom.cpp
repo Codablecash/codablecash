@@ -33,6 +33,8 @@ int SQLFrom::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->tableId->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -41,12 +43,16 @@ void SQLFrom::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_PART_FROM);
 	this->tableId->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLFrom::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsJoinPart(element);
 	this->tableId = dynamic_cast<AbstractJoinPart*>(element);
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

@@ -18,6 +18,7 @@ class ClassName : public CodeElement {
 public:
 	ClassName(const ClassName& inst);
 	ClassName();
+	ClassName(const wchar_t* fqn);
 	virtual ~ClassName();
 
 	void addStr(const char* str) noexcept;

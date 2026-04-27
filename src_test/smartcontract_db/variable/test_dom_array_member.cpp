@@ -125,7 +125,7 @@ TEST(TestDomArrayMemberGroup, case04_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayMemberGroup, case05_err){
@@ -147,7 +147,7 @@ TEST(TestDomArrayMemberGroup, case05_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::NAME));
+	CHECK(name->equals(ArrayOutOfBoundsExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayMemberGroup, case06_err){
@@ -169,7 +169,7 @@ TEST(TestDomArrayMemberGroup, case06_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(NullPointerExceptionClassDeclare::NAME));
+	CHECK(name->equals(NullPointerExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayMemberGroup, case07_err){
@@ -191,7 +191,7 @@ TEST(TestDomArrayMemberGroup, case07_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(TypeCastExceptionClassDeclare::NAME));
+	CHECK(name->equals(TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestDomArrayMemberGroup, case08_err){
@@ -213,6 +213,6 @@ TEST(TestDomArrayMemberGroup, case08_err){
 	CHECK(ex != nullptr);
 
 	const UnicodeString* name = ex->getClassName();
-	CHECK(name->equals(TypeCastExceptionClassDeclare::NAME));
+	CHECK(name->equals(TypeCastExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 

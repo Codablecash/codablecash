@@ -9,8 +9,14 @@
 #define INSTANCE_EXCEPTION_CLASS_VMEXCEPTIONINSTANCE_H_
 
 #include "instance/VmClassInstance.h"
+#include "instance/IInstanceContainer.h"
+
+#include "instance/instance_parts/VMemList.h"
 
 namespace alinous {
+
+class StackTraceElement;
+class VmString;
 
 class VmExceptionInstance : public VmClassInstance {
 public:
@@ -20,16 +26,20 @@ public:
 	void setCodeElement(const CodeElement* element) noexcept;
 	const CodeElement* getElement() const noexcept;
 
-	void setMessage(const UnicodeString* message) noexcept;
-	const UnicodeString* getMessage() const noexcept {
+	virtual AbstractExtObject* toClassExtObject(const UnicodeString* name, VTableRegistory* reg);
+
+	void addStacktrace(StackTraceElement* stack);
+
+	void setMessage(const UnicodeString* message, VirtualMachine* vm);
+	const VmString* getMessage() const noexcept {
 		return this->message;
 	}
 
-	virtual AbstractExtObject* toClassExtObject(const UnicodeString* name, VTableRegistory* reg);
-	virtual const UnicodeString* toString() noexcept;
 private:
 	const CodeElement* element;
-	UnicodeString* message;
+	VmString* message;
+
+	VMemList<StackTraceElement>* stacktrace;
 
 };
 

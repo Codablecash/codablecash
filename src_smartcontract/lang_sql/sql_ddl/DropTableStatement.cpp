@@ -57,6 +57,8 @@ int DropTableStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->tableId->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -65,12 +67,16 @@ void DropTableStatement::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_DROP_TABLE);
 	this->tableId->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void DropTableStatement::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkKind(element, CodeElement::SQL_EXP_TABLE_ID);
 	this->tableId = dynamic_cast<TableIdentifier*>(element);
+
+	positionFromBinary(in);
 }
 
 void DropTableStatement::interpret(VirtualMachine* vm) {

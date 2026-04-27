@@ -98,9 +98,12 @@ public:
 	Block* __fetechScheduledBlock();
 	Block* __getScheduledBlock();
 
+	void requestPosVote(uint16_t zone, uint64_t calculatedNonceHeight);
+
 	const VoterEntry* getVoterEntry(const NodeIdentifier* nodeId);
 
 	bool registerBlockHeader4Limit(uint16_t zone, const BlockHeader* header, const CodablecashSystemParam* param);
+	SystemTimestamp* getPosVoteLimit(uint16_t zone, uint64_t lastHeight);
 
 	ISystemLogger* getLogger() const noexcept {
 		return this->logger;

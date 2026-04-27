@@ -63,6 +63,8 @@ int ClassExtends::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->className->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -71,6 +73,8 @@ void ClassExtends::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::CLASS_EXTENDS);
 	this->className->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void ClassExtends::fromBinary(ByteBuffer* in) {
@@ -78,6 +82,8 @@ void ClassExtends::fromBinary(ByteBuffer* in) {
 	CodeElement::checkKind(element, CodeElement::CLASS_NAME);
 
 	this->className = dynamic_cast<ClassName*>(element);
+
+	positionFromBinary(in);
 }
 
 ClassExtends* ClassExtends::generateGenericsImplement(HashMap<UnicodeString, AbstractType>* input) const {

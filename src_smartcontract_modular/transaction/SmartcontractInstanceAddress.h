@@ -30,6 +30,7 @@ public:
 
 	virtual IBlockObject* copyData() const noexcept;
 
+	static SmartcontractInstanceAddress* createAddress(uint16_t zone);
 	static SmartcontractInstanceAddress* createAddress(uint16_t zone, const ScPublicKey* publicKey);
 };
 

@@ -12,6 +12,7 @@
 #include "engine/sc_analyze/AnalyzedType.h"
 #include "engine/sc_analyze/TypeResolver.h"
 
+#include "engine/sc_analyze/ValidationError.h"
 namespace alinous {
 
 ClassImplements::ClassImplements() : CodeElement(CodeElement::CLASS_IMPLEMENTS) {
@@ -48,6 +49,10 @@ void ClassImplements::analyzeTypeRef(AnalyzeContext* actx) {
 		const UnicodeString* name = n->getName();
 
 		AnalyzedType* type = res->findClassType(this, name);
+
+		actx->addValidationError(!type->isInterface(), ValidationError::CODE_WRONG_CLASS_NAME, this, L"The {0} is not type.", {name});
+		actx->addValidationError(!type->isInterface(), ValidationError::CODE_CLASS_IMPLEMENTS_NOT_INTERFACE_CLASS, this, L"The {0} must be interface.", {name});
+
 		this->typelist.addElement(type);
 	}
 }
@@ -62,6 +67,8 @@ int ClassImplements::binarySize() const {
 		total += n->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -75,6 +82,8 @@ void ClassImplements::toBinary(ByteBuffer* out) const {
 		ClassName* n = this->list.get(i);
 		n->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ClassImplements::fromBinary(ByteBuffer* in) {
@@ -86,6 +95,8 @@ void ClassImplements::fromBinary(ByteBuffer* in) {
 		ClassName* n = dynamic_cast<ClassName*>(element);
 		this->list.addElement(n);
 	}
+
+	positionFromBinary(in);
 }
 
 ClassImplements* ClassImplements::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {

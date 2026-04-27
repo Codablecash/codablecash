@@ -9,6 +9,11 @@
 
 #include "base/UnicodeString.h"
 
+#include "bc_base/BinaryUtils.h"
+
+#include "base_io/ByteBuffer.h"
+
+#include "ext_arguments/StringArgument.h"
 
 namespace codablecash {
 
@@ -46,6 +51,31 @@ bool JsonStringValue::equals(const AbstractJsonObject *other) const noexcept {
 	}
 
 	return otherString != nullptr && this->value->equals(str);
+}
+
+int JsonStringValue::binarySize() const {
+	BinaryUtils::checkNotNull(this->value);
+
+	int total = sizeof(uint8_t);
+	total += BinaryUtils::stringSize(this->value);
+
+	return total;
+}
+
+void JsonStringValue::toBinary(ByteBuffer *out) const {
+	BinaryUtils::checkNotNull(this->value);
+
+	out->put(getType());
+	BinaryUtils::putString(out, this->value);
+}
+
+void JsonStringValue::fromBinary(ByteBuffer *in) {
+	this->value = BinaryUtils::getString(in);
+	BinaryUtils::checkNotNull(this->value);
+}
+
+AbstractFunctionExtArguments* JsonStringValue::toFunctionExtArgument() const {
+	return new StringArgument(this->value);
 }
 
 } /* namespace codablecash */

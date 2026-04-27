@@ -54,7 +54,7 @@ int BlockHeaderHeightIndexKey::compareTo(const AbstractBtreeKey *key) const noex
 
 	const BlockHeaderHeightIndexKey* ulkey = dynamic_cast<const BlockHeaderHeightIndexKey*>(key);
 
-	return this->value - ulkey->value;
+	return this->value == ulkey->value ? 0 : (this->value > ulkey->value ? 1 : -1);
 }
 
 AbstractBtreeKey* BlockHeaderHeightIndexKey::clone() const noexcept {

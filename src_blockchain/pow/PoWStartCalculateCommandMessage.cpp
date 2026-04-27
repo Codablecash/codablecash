@@ -20,17 +20,20 @@
 #include "bc_block_generator/BlockGenerator.h"
 
 #include "bc_memorypool/MemoryPool.h"
+#include "bc_memorypool/MemPoolTransaction.h"
 
 #include "base/StackRelease.h"
-
-#include "bc_memorypool/MemPoolTransaction.h"
 
 #include "base_timestamp/SystemTimestamp.h"
 
 #include "osenv/funcs.h"
 
 #include "bc_block_body/BlockBody.h"
+
+#include "bc_status_cache/BlockchainController.h"
+
 using alinous::BigInteger;
+using alinous::Os;
 namespace codablecash {
 
 PoWStartCalculateCommandMessage::PoWStartCalculateCommandMessage() {
@@ -63,6 +66,22 @@ void PoWStartCalculateCommandMessage::process(PoWManager *manager) {
 		targetLastBlock = dynamic_cast<BlockHeader*>(lastHeader->copyData());
 	}
 	__STP(targetLastBlock);
+
+	// [consensus] wait for Pos Limit
+	BlockchainController* ctrl = generator->getBlockchainController();
+	if(ctrl != nullptr){
+		uint64_t lastBlockHeight = targetLastBlock->getHeight();
+		uint16_t zone = targetLastBlock->getZone();
+
+		SystemTimestamp* limit = ctrl->getPosVoteLimit(zone, lastBlockHeight); __STP(limit);
+		SystemTimestamp now;
+		if(limit != nullptr && limit->compareTo(&now) > 0){
+			// [Consensusu] Wait
+			Os::usleep(200 * 1000);
+			manager->resendMinerRequest();
+			return;
+		}
+	}
 
 	// gnerate new Block to mine
 	const BlockHeaderId* lastBlockHeaderId = targetLastBlock->getId();

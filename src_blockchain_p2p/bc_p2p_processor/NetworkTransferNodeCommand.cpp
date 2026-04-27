@@ -49,7 +49,7 @@ void NetworkTransferNodeCommand::execute(ICommandParameter *param) {
 	if(response != nullptr){
 		UnicodeString* message = response->toString(); __STP(message);
 
-		logger->debugLog(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE, message, __FILE__, __LINE__);
+		logger->debugLog(ISystemLogger::DEBUG_POOL_TRANSFER_RESPONSE, message, __FILE__, __LINE__);
 	}
 }
 

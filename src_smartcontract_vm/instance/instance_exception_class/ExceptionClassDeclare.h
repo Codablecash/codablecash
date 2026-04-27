@@ -16,7 +16,8 @@ class AnalyzedClass;
 
 class ExceptionClassDeclare : public AbstractExceptionClassDeclare {
 public:
-	static UnicodeString NAME;
+	const static UnicodeString NAME;
+	const static UnicodeString FULL_QUALIFIED_NAME;
 	static AnalyzedClass* createAnalyzedClass() noexcept;
 
 	ExceptionClassDeclare();
@@ -25,9 +26,6 @@ public:
 	virtual uint16_t getClassType() const noexcept {
 		return TYPE_EXCEPTION;
 	}
-
-	virtual const UnicodeString* getName() const noexcept;
-	virtual const UnicodeString* getFullQualifiedName() noexcept;
 
 	virtual ClassDeclare* getBaseClass() const noexcept;
 

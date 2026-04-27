@@ -53,6 +53,8 @@ int AlterAddColumnCommand::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->columnDescriptor->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -61,6 +63,8 @@ void AlterAddColumnCommand::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::DDL_ALTER_ADD_COLUMN);
 	this->columnDescriptor->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void AlterAddColumnCommand::fromBinary(ByteBuffer* in) {
@@ -68,6 +72,8 @@ void AlterAddColumnCommand::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::DDL_COLMUN_DESC);
 
 	this->columnDescriptor = dynamic_cast<DdlColumnDescriptor*>(element);
+
+	positionFromBinary(in);
 }
 
 AbstractAlterCommandLog* AlterAddColumnCommand::getCommandLog(VirtualMachine* vm) {

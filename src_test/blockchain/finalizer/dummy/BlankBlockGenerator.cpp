@@ -61,7 +61,7 @@ void BlankBlockGenerator::doNonceCalculated(uint64_t lastBlockHeight, const Bloc
 	{
 		UnicodeString* bidstr = bid->toString(); __STP(bidstr);
 
-		message.append(L"Last Height :").append((int)lastBlockHeight);
+		message.append(L"Last Height :").append((int64_t)lastBlockHeight);
 		message.append(L" Last Block Id : ").append(bidstr);
 	}
 
@@ -82,7 +82,7 @@ void BlankBlockGenerator::doNonceCalculated(uint64_t lastBlockHeight, const Bloc
 		{
 			UnicodeString* bidstr = block.getHeader()->getId()->toString(); __STP(bidstr);
 			message.append(L"\n");
-			message.append(L"        --> Height: ").append((int)block.getHeight());
+			message.append(L"        --> Height: ").append((int64_t)block.getHeight());
 			message.append(L" Header Id: ").append(bidstr);
 
 			BlockBody* body = block.getBody();

@@ -13,6 +13,7 @@
 
 #include "base/UnicodeString.h"
 
+#include "instance/instance_ref/PrimitiveReference.h"
 namespace alinous {
 
 ExtPrimitiveObject::ExtPrimitiveObject(const UnicodeString* name, uint8_t type) : AbstractExtObject(name, type) {
@@ -128,10 +129,39 @@ const UnicodeString* ExtPrimitiveObject::toString() const noexcept {
 	delete this->str;
 	this->str = new UnicodeString(L"");
 
-	this->str->append((int)getLongValue());
+	this->str->append((int64_t)getLongValue());
 
 	return this->str;
 }
 
+AbstractVmInstance* ExtPrimitiveObject::toVmInstance(VirtualMachine *vm) {
+	PrimitiveReference* ref = nullptr;
+
+	switch(this->type){
+	case VmInstanceTypesConst::REF_BOOL:
+		ref = PrimitiveReference::createBoolReference(vm, (uint8_t)*((int32_t*)this->data));
+		break;
+	case VmInstanceTypesConst::REF_BYTE:
+		ref = PrimitiveReference::createByteReference(vm, getByteValue());
+		break;
+	case VmInstanceTypesConst::REF_CHAR:
+		ref = PrimitiveReference::createCharReference(vm, getCharValue());
+		break;
+	case VmInstanceTypesConst::REF_SHORT:
+		ref = PrimitiveReference::createShortReference(vm, getShortValue());
+		break;
+	case VmInstanceTypesConst::REF_INT:
+		ref = PrimitiveReference::createIntReference(vm, getIntValue());
+		break;
+	case VmInstanceTypesConst::REF_LONG:
+		ref = PrimitiveReference::createLongReference(vm, getLongValue());
+		break;
+	default:
+		break;
+	}
+
+	return ref;
+	// FIXME toVmInstance
+}
 
 } /* namespace alinous */

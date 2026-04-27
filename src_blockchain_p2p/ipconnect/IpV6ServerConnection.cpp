@@ -18,6 +18,7 @@
 #include "osenv/memory.h"
 
 #include "sys/socket.h"
+
 using alinous::Mem;
 
 namespace codablecash {
@@ -32,7 +33,7 @@ IpV6ServerConnection::~IpV6ServerConnection() {
 
 void IpV6ServerConnection::initAddress(const UnicodeString* host, int port) {
 	UnicodeString strPort(L"");
-	strPort.append(port);
+	strPort.append((int64_t)port);
 
 	this->context = IPV6::socket(host, &strPort);
 }

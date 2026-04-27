@@ -46,16 +46,22 @@ int OrExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractBinaryExpression::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void OrExpression::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::EXP_OR);
 	AbstractBinaryExpression::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void OrExpression::fromBinary(ByteBuffer* in) {
 	AbstractBinaryExpression::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType OrExpression::getType(AnalyzeContext* actx) {

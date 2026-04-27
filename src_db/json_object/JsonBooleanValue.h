@@ -33,6 +33,12 @@ public:
 	virtual AbstractJsonObject* copy() const noexcept;
 	virtual bool equals(const AbstractJsonObject* other) const noexcept;
 
+	virtual int binarySize() const;
+	virtual void toBinary(ByteBuffer *out) const;
+	virtual void fromBinary(ByteBuffer *in);
+
+	virtual AbstractFunctionExtArguments* toFunctionExtArgument() const;
+
 private:
 	bool value;
 };

@@ -33,7 +33,7 @@ TEST_GROUP(TestSmartcontractAddressGroup) {
 TEST(TestSmartcontractAddressGroup, case01) {
 	HdWalletSeed* seed = HdWalletSeed::newSeed(); __STP(seed);
 	BigInteger* bigInt = seed->toBigInteger(); __STP(bigInt);
-	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 0); __STP(privateKey);
+	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 1); __STP(privateKey);
 
 	ScPublicKey publicKey = privateKey->generatePublicKey();
 
@@ -57,7 +57,7 @@ TEST(TestSmartcontractAddressGroup, case01) {
 TEST(TestSmartcontractAddressGroup, case02) {
 	HdWalletSeed* seed = HdWalletSeed::newSeed(); __STP(seed);
 	BigInteger* bigInt = seed->toBigInteger(); __STP(bigInt);
-	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 0); __STP(privateKey);
+	ScPrivateKey* privateKey = new ScPrivateKey(bigInt, 1); __STP(privateKey);
 
 	ScPublicKey publicKey = privateKey->generatePublicKey();
 

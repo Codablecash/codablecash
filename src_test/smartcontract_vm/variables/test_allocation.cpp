@@ -211,7 +211,7 @@ TEST(TestAllocationStmtGroup, primitiveArrayAllocation09){
 
 
 	const UnicodeString* str = e->toString();
-	CHECK(str->equals(L"@Exception"));
+	CHECK(str->equals(L"@lang.Exception"));
 }
 
 TEST(TestAllocationStmtGroup, primitiveArrayAllocation10){

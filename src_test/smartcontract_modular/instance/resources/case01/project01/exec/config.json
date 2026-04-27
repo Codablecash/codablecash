@@ -9,7 +9,8 @@
 			"method" : "main",
 			"args" : []
 		},
-		"exportMethods" : []
+		"libExport" : [],
+		"directAccess" : []
 	},
 	
 	"dependencies": []

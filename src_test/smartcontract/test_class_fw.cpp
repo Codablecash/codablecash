@@ -79,6 +79,22 @@ TEST(TestClassFwGroup, exceptions04){
 	delete ex;
 }
 
+TEST(TestClassFwGroup, exceptions04_1){
+	CompilationUnit* element = new CompilationUnit();
+
+	Exception* ex = nullptr;
+	try{
+		short KINDS[1] = {CodeElement::ARGUMENTS_LIST_DECLARE};
+		CodeElement::checkKind(element, KINDS, 1);
+	}
+	catch(Exception* e){
+		ex = e;
+	}
+	CHECK(ex != nullptr)
+
+	delete ex;
+}
+
 TEST(TestClassFwGroup, exceptions05){
 	ByteBuffer* buff = ByteBuffer::allocateWithEndian(10, true); __STP(buff);
 	buff->putShort(0xffff);

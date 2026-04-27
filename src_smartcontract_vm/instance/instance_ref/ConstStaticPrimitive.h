@@ -14,7 +14,7 @@ namespace alinous {
 
 class ConstStaticPrimitive : public PrimitiveReference {
 public:
-	ConstStaticPrimitive(PrimitiveReference* primitiveObj);
+	ConstStaticPrimitive(PrimitiveReference* primitiveObj, uint64_t serial);
 	virtual ~ConstStaticPrimitive();
 
 	virtual bool isStaticConst() const noexcept;

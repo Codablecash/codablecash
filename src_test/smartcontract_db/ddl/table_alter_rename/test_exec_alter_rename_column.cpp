@@ -34,6 +34,7 @@
 
 #include "ext_binary/ExtExceptionObject.h"
 
+
 TEST_GROUP(TestExecAlterRenameColumnGroup) {
 	TEST_SETUP() {
 		env->setup();
@@ -124,7 +125,7 @@ TEST(TestExecAlterRenameColumnGroup, renameColumn02){
 	const ExtExceptionObject* ex = tester.checkUncaughtException();
 	CHECK(ex != nullptr);
 
-	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 /**
@@ -160,6 +161,6 @@ TEST(TestExecAlterRenameColumnGroup, renameColumn03){
 	const ExtExceptionObject* ex = tester.checkUncaughtException();
 	CHECK(ex != nullptr);
 
-	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::NAME));
+	CHECK(ex->getClassName()->equals(&DatabaseExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 

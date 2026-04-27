@@ -120,6 +120,8 @@ int VariableIdentifier::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += stringSize(this->name);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -128,10 +130,14 @@ void VariableIdentifier::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::EXP_VARIABLE_ID);
 	putString(out, this->name);
+
+	positionToBinary(out);
 }
 
 void VariableIdentifier::fromBinary(ByteBuffer* in) {
 	this->name = getString(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType VariableIdentifier::getType(AnalyzeContext* actx) {

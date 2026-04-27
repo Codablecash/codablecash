@@ -44,6 +44,9 @@ public:
 	void loadSession(const File* undoDir);
 	void newSession(const CdbDatabaseSessionId* sessionId) noexcept;
 	void undoSession(const CdbDatabaseSessionId* sessionId) noexcept;
+	CdbDatabaseSession* getDatabaseSession() const noexcept {
+		return this->dbsession;
+	}
 
 	virtual void schemaLoaded(SchemaManager* sc);
 	virtual void onCreateTable(SchemaManager* mgr, const CdbTable* table);

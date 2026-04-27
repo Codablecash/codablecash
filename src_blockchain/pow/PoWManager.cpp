@@ -21,11 +21,16 @@
 
 #include "bc/DebugDefaultLogger.h"
 
+#include "bc_block_generator/MiningConfig.h"
+
+
 namespace codablecash {
 
 const UnicodeString PoWManager::THREAD_NAME(L"PoW_Main");
 
-PoWManager::PoWManager(ISystemLogger* logger) {
+PoWManager::PoWManager(ISystemLogger* logger, const MiningConfig *config) {
+	this->miningConfig = new MiningConfig(*config);
+
 	this->processor = nullptr;
 	this->calculator = nullptr;
 	this->lastBlockId = nullptr;
@@ -41,16 +46,20 @@ PoWManager::~PoWManager() {
 	delete this->mutexBlockId;
 
 	this->generator = nullptr;
+	delete this->miningConfig;
 }
 
 void PoWManager::start() {
-	this->calculator = new PoWCalculator();
+	this->calculator = this->miningConfig->getPoWCalculator(this);
+
 	this->calculator->setPowManager(this);
 	this->calculator->init(this->logger);
 
 	this->processor = new MessageProcessor(&THREAD_NAME, this->logger);
 	this->processor->setParam(this);
 	this->processor->start();
+
+	this->calculator->startNetwork();
 }
 
 void PoWManager::shutdown() {
@@ -72,6 +81,11 @@ void PoWManager::requestNewHeaderId() {
 	this->processor->addCommandMessage(cmd);
 }
 
+void PoWManager::resendMinerRequest() {
+	PoWStartCalculateCommandMessage* cmd = new PoWStartCalculateCommandMessage();
+	this->processor->addCommandMessage(cmd);
+}
+
 void PoWManager::onNonceCalculated(uint64_t height, const BlockHeaderId *bid, const PoWNonce *nonce) {
 	bool isNonceCalculated = false;
 	{
@@ -81,7 +95,7 @@ void PoWManager::onNonceCalculated(uint64_t height, const BlockHeaderId *bid, co
 
 	UnicodeString dmsg(L"processing onNonceCalculated.");
 	dmsg.append(L"At height ");
-	dmsg.append((int)height);
+	dmsg.append((int64_t)height);
 
 	dmsg.append(L" isNonceCalculated ");
 	isNonceCalculated ? dmsg.append(L"true") : dmsg.append(L"false");

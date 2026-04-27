@@ -13,7 +13,7 @@ namespace alinous {
 
 const UnicodeString AbstractReference::NULL_STR(L"null");
 
-AbstractReference::AbstractReference(IAbstractVmInstanceSubstance* owner, uint8_t type) : AbstractVmInstance(type), owner(owner) {
+AbstractReference::AbstractReference(IAbstractVmInstanceSubstance* owner, uint8_t type, uint64_t serial) : AbstractVmInstance(type, serial), owner(owner) {
 
 }
 

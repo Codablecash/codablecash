@@ -68,4 +68,14 @@ AddressDescriptor* AbstractAddress::toAddressDescriptor() const noexcept {
 	return new AddressDescriptor(prefix, zonech, charstr, length);
 }
 
+UnicodeString* AbstractAddress::toString() const noexcept {
+	AddressDescriptor* desc = toAddressDescriptor(); __STP(desc);
+
+	const char* ch = desc->toCString();
+
+	UnicodeString* str = new UnicodeString(ch);
+	delete [] ch;
+	return str;
+}
+
 } /* namespace codablecash */

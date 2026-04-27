@@ -62,6 +62,8 @@ int ShiftExpression::binarySize() const {
 		total += sizeof(uint8_t);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -76,6 +78,8 @@ void ShiftExpression::toBinary(ByteBuffer* out) const {
 		uint8_t op = this->operations.get(i);
 		out->put(op);
 	}
+
+	positionToBinary(out);
 }
 
 void ShiftExpression::fromBinary(ByteBuffer* in) {
@@ -86,6 +90,8 @@ void ShiftExpression::fromBinary(ByteBuffer* in) {
 		uint8_t op = in->get();
 		this->operations.addElement(op);
 	}
+
+	positionFromBinary(in);
 }
 
 AnalyzedType ShiftExpression::getType(AnalyzeContext* actx) {

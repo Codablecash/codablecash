@@ -40,6 +40,8 @@ int TableList::binarySize() const {
 		total += tableId->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -53,6 +55,8 @@ void TableList::toBinary(ByteBuffer* out) const {
 		AbstractJoinPart* tableId = this->list.get(i);
 		tableId->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void TableList::fromBinary(ByteBuffer* in) {
@@ -64,6 +68,8 @@ void TableList::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(tableId);
 	}
+
+	positionFromBinary(in);
 }
 
 void TableList::preAnalyze(AnalyzeContext* actx) {

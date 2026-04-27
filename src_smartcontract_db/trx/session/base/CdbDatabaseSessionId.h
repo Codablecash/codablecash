@@ -20,10 +20,11 @@ public:
 	virtual ~CdbDatabaseSessionId();
 
 	static CdbDatabaseSessionId* createRandomId();
+	static CdbDatabaseSessionId* from32BytesId(const Abstract32BytesId* id);
 
 	virtual int binarySize() const;
 	virtual void toBinary(ByteBuffer* out) const;
-	static CdbDatabaseSessionId* fromBinary(ByteBuffer* in);
+	static CdbDatabaseSessionId* createFromBinary(ByteBuffer* in);
 
 	virtual IBlockObject* copyData() const noexcept;
 

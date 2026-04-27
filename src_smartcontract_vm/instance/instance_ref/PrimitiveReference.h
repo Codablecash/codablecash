@@ -15,7 +15,7 @@ namespace alinous {
 
 class PrimitiveReference : public AbstractReference, public IAbstractVmInstanceSubstance {
 public:
-	explicit PrimitiveReference(uint8_t type);
+	PrimitiveReference(uint8_t type, uint64_t serial);
 	virtual ~PrimitiveReference();
 
 	static PrimitiveReference* createBoolReference(VirtualMachine* vm, int8_t value);

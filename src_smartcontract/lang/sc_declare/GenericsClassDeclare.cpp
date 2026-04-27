@@ -27,6 +27,10 @@
 
 namespace alinous {
 
+GenericsClassDeclare::GenericsClassDeclare(short kind) : ClassDeclare(kind) {
+	this->genericsParams = new ArrayList<GenericsParameter>();
+}
+
 // GENERICS_CLASS_DECLARE
 GenericsClassDeclare::GenericsClassDeclare() : ClassDeclare(GENERICS_CLASS_DECLARE) {
 	this->genericsParams = new ArrayList<GenericsParameter>();
@@ -142,7 +146,7 @@ const GenericsParameter* GenericsClassDeclare::findGenericsType(const UnicodeStr
 	return retParam;
 }
 
-ClassDeclare* GenericsClassDeclare::generateClassDeclare(HashMap<UnicodeString, AbstractType>* input) {
+ClassDeclare* GenericsClassDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType>* input) {
 	GenericsGeneratedClassDeclare* clazz = new GenericsGeneratedClassDeclare();
 	clazz->copyCodePositions(this);
 	clazz->setGenericsClassDeclare(this);

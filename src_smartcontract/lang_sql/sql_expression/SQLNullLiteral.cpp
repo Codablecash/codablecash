@@ -34,14 +34,19 @@ SQLNullLiteral::~SQLNullLiteral() {
 int SQLNullLiteral::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void SQLNullLiteral::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_EXP_NULL_LITERAL);
+
+	positionToBinary(out);
 }
 
 void SQLNullLiteral::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void SQLNullLiteral::preAnalyze(AnalyzeContext* actx) {

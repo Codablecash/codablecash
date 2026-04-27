@@ -1,5 +1,7 @@
 
 set(testsrc
+	test_argument_binary.cpp
+	test_argument_type.cpp
 	test_call_maininst.cpp
 	test_function_call_arg.cpp
 	test_function_call.cpp

@@ -202,6 +202,8 @@ int SelectStatement::binarySize() const {
 		total += this->limitOffset->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -232,6 +234,8 @@ void SelectStatement::toBinary(ByteBuffer* out) const {
 	if(this->limitOffset != nullptr){
 		this->limitOffset->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SelectStatement::fromBinary(ByteBuffer* in) {
@@ -270,6 +274,8 @@ void SelectStatement::fromBinary(ByteBuffer* in) {
 		 checkKind(element, CodeElement::SQL_PART_LIMIT_OFFSET);
 		 this->limitOffset = dynamic_cast<SQLLimitOffset*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void SelectStatement::init(VirtualMachine* vm) {

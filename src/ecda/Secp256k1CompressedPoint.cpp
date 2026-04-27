@@ -133,4 +133,13 @@ IBlockObject* Secp256k1CompressedPoint::copyData() const noexcept {
 	return new Secp256k1CompressedPoint(this->x, this->prefix);
 }
 
+int Secp256k1CompressedPoint::compareTo(const Secp256k1CompressedPoint *other) {
+	int cmp = this->prefix - other->prefix;
+	if(cmp != 0){
+		return cmp;
+	}
+
+	return this->x.compareTo(other->x);
+}
+
 } /* namespace codablecash */

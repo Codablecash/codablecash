@@ -44,7 +44,7 @@ public:
 	}
 
 private:
-	NodeIdentifier* nodeId;
+	NodeIdentifier* nodeId; // Stake pool
 	AddressDescriptor* addressDesc; // registered ticket address
 	BalanceUnit amount;
 };

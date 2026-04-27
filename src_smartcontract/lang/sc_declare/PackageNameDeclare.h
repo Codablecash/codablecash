@@ -24,6 +24,8 @@ public:
 	PackageNameDeclare();
 	virtual ~PackageNameDeclare();
 
+	static PackageNameDeclare* makeFromString(const UnicodeString* str);
+
 	void addSegment(UnicodeString* seg);
 
 	const UnicodeString* getName() noexcept;

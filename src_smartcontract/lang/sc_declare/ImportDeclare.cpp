@@ -65,16 +65,22 @@ int ImportDeclare::binarySize() const {
 
 	total += stringSize(this->className);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void ImportDeclare::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::IMPORT_DECLARE);
 	putString(out, this->className);
+
+	positionToBinary(out);
 }
 
 void ImportDeclare::fromBinary(ByteBuffer* in) {
 	this->className = getString(in);
+
+	positionFromBinary(in);
 }
 
 ImportDeclare* ImportDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) const {

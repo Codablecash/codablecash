@@ -93,7 +93,7 @@ void MuSigBuilder::calcX() {
 		Secp256k1Point* Xi = this->XiList->get(i);
 
 		MuSigHashBuilder hashBuilder;
-		hashBuilder.add(&this->L);
+		hashBuilder.addBigInteger(&this->L);
 		hashBuilder.add(Xi);
 		hashBuilder.buildHash();
 
@@ -132,7 +132,7 @@ void MuSigBuilder::calcs(const char *data, int length) {
 		MuSigHashBuilder hashBuilder;
 		hashBuilder.add(&this->X);
 		hashBuilder.add(&this->R);
-		hashBuilder.add(data, length);
+		hashBuilder.addArray(data, length);
 		hashBuilder.buildHash();
 
 		HXRm = hashBuilder.getResultAsBigInteger(); //.mod(Secp256k1Point::n);

@@ -34,6 +34,8 @@ int PackageDeclare::binarySize() const {
 	checkNotNull(this->name);
 	total += this->name->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -41,6 +43,8 @@ void PackageDeclare::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::PACKAGE_DECLARE);
 
 	this->name->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void PackageDeclare::fromBinary(ByteBuffer* in) {
@@ -48,6 +52,8 @@ void PackageDeclare::fromBinary(ByteBuffer* in) {
 	checkKind(nm, CodeElement::PACKAGE_NAME_DECLARE);
 
 	this->name = dynamic_cast<PackageNameDeclare*>(nm);
+
+	positionFromBinary(in);
 }
 
 PackageDeclare* PackageDeclare::generateGenericsImplement(HashMap<UnicodeString, AbstractType> *input) {

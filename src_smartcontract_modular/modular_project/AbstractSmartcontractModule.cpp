@@ -20,6 +20,7 @@
 #include "json_object/JsonArrayObject.h"
 #include "json_object/JsonStringValue.h"
 
+#include "smartcontract_instance/AbstractExecutableModuleInstance.h"
 
 namespace codablecash {
 
@@ -39,6 +40,8 @@ AbstractSmartcontractModule::~AbstractSmartcontractModule() {
 
 	this->sourceFolders->deleteElements();
 	delete this->sourceFolders;
+
+	delete this->instance;
 
 	delete this->version;
 
@@ -107,6 +110,24 @@ void AbstractSmartcontractModule::analyzeJsonObject(const JsonObject *object) {
 		}
 	}
 
+}
+
+void AbstractSmartcontractModule::setupInstance(AbstractExecutableModuleInstance *inst) const {
+	{
+		inst->setProjectRelativePath(this->projectRelativePath);
+	}
+
+
+	int maxLoop = this->sourceFolders->size();
+	for(int i = 0; i != maxLoop; ++i){
+		UnicodeString* path = this->sourceFolders->get(i);
+		inst->addSourceFolders(path);
+	}
+
+	inst->setSoftwareVersion(this->version);
+
+	inst->setInstanceConfig(this->instance);
+	inst->setDependencyConfig(this->dependencies);
 }
 
 } /* namespace codablecash */

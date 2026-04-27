@@ -28,14 +28,19 @@ void alinous::BlankStatement::init(VirtualMachine* vm) {
 int BlankStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void BlankStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_BLANK);
+
+	positionToBinary(out);
 }
 
 void BlankStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void BlankStatement::interpret(VirtualMachine* vm) {

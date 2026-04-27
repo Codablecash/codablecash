@@ -93,18 +93,17 @@ void P2pClient::connect(int protocol, const UnicodeString *hostName, int port) {
 
 void P2pClient::connectIpV4(const UnicodeString *hostName, int port) {
 	close();
-	__connectIpV4(hostName, port);
 
+	__connectIpV4(hostName, port);
+}
+
+void P2pClient::__connectIpV4(const UnicodeString *hostName, int port) {
 	this->psId = PubSubId::createNewId();
 	this->handshake = new P2pHandshake(this->psId, this->logger);
 
 	this->handshake->connectIpV4(hostName, port, this, true);
 
 	__connectLogin(hostName, port);
-}
-
-void P2pClient::__connectIpV4(const UnicodeString *hostName, int port) {
-
 }
 
 void P2pClient::connectIpV6(const UnicodeString* hostName, int port) {

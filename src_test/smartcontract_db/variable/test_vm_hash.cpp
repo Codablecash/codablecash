@@ -77,7 +77,7 @@ TEST(TestVmHashGroup, put02){
 }
 
 TEST(TestVmHashGroup, put03){
-	VirtualMachine* vm = new VirtualMachine(1024 * 10); __STP(vm);
+	VirtualMachine* vm = new VirtualMachine(1024 * 1024); __STP(vm);
 
 	UnicodeString strkey(L"key");
 	UnicodeString strkey2(L"key");
@@ -104,16 +104,16 @@ TEST(TestVmHashGroup, put03){
 }
 
 TEST(TestVmHashGroup, keySet){
-	VirtualMachine* vm = new VirtualMachine(1024 * 1024); __STP(vm);
+	VirtualMachine* vm = new VirtualMachine(1024 * 1024 * 2); __STP(vm);
 
 	VMemHashmap<VmStringInstance, VmStringInstance>* map = new(vm) VMemHashmap<VmStringInstance, VmStringInstance>(vm);
 
 	for(int i = 0; i != 1000; ++i){
 		UnicodeString keystr(L"key");
-		keystr.append(i);
+		keystr.append((int64_t)i);
 
 		UnicodeString valuestr(L"value");
-		valuestr.append(i);
+		valuestr.append((int64_t)i);
 
 		VmStringInstance* key = new(vm) VmStringInstance(vm, &keystr); __STP(key);
 		VmStringInstance* value = new(vm) VmStringInstance(vm, &valuestr);
@@ -148,7 +148,7 @@ TEST(TestVmHashGroup, keySet02){
 		PrimitiveReference* key = PrimitiveReference::createIntReference(vm, i);
 
 		UnicodeString valuestr(L"value");
-		valuestr.append(i);
+		valuestr.append((int64_t)i);
 
 		VmStringInstance* value = new(vm) VmStringInstance(vm, &valuestr);
 
@@ -178,7 +178,7 @@ TEST(TestVmHashGroup, keySetWithNull){
 		PrimitiveReference* key = PrimitiveReference::createIntReference(vm, i);
 
 		UnicodeString valuestr(L"value");
-		valuestr.append(i);
+		valuestr.append((int64_t)i);
 
 		VmStringInstance* value = new(vm) VmStringInstance(vm, &valuestr);
 

@@ -106,7 +106,7 @@ void BlockchainStatusCache::open() {
 	loadConfig();
 
 	for(int i = 0; i != this->numZones; ++i){
-		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, this->logger, i != this->zoneSelf);
+		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, this->logger, i != this->zoneSelf, this->config);
 		this->zoneList.addElement(cache);
 
 		cache->open();
@@ -185,12 +185,6 @@ void BlockchainStatusCache::postBlockAdded(const Block *block, CodablecashBlockc
 			report2PowManager(chain, cache);
 		}
 	}
-
-	// report to finalizing pool(PoS)
-	{
-		StackUnlocker __lock(this->memberLock, __FILE__, __LINE__);
-		report2Finelizer(zone, chain, cache, block);
-	}
 }
 
 void BlockchainStatusCache::onBlockHeaderAdded(MemPoolTransaction *memTrx, const BlockHeader *header, CodablecashBlockchain *chain) {
@@ -261,26 +255,6 @@ void BlockchainStatusCache::reportFinalizing(uint16_t zone, const Block *block, 
 		// Request Finalize
 		CentralProcessor* processor = chain->getProcessor();
 		processor->requestFinalizing(zone, finalizingHeight, finalizedheader->getId());
-	}
-}
-
-/**
- * Filalizer must use cache, becasue invalid fork must be ignored.
- * @param zone
- * @param blockchain
- * @param cache
- */
-void BlockchainStatusCache::report2Finelizer(uint16_t zone, CodablecashBlockchain* blockchain, ZoneStatusCache* cache, const Block *block) noexcept {
-	const BlockHead* head = cache->getHead();
-	const BlockHeader* header = head->getRealHeadHeader();
-	const BlockHeaderId* id = header->getId();
-	uint64_t height = header->getHeight();
-
-	uint64_t newBlockHeight = block->getHeight();
-
-	if(this->finalizer != nullptr && this->lastVoted < height){
-		this->finalizer->requestCheckVoting(zone, id, height);
-		this->lastVoted = height;
 	}
 }
 
@@ -481,10 +455,33 @@ bool BlockchainStatusCache::registerBlockHeader4Limit(uint16_t zone, const Block
 	return cache->registerBlockHeader4Limit(header, param);
 }
 
+SystemTimestamp* BlockchainStatusCache::getPosVoteLimit(uint16_t zone, uint64_t lastHeight) {
+	ZoneStatusCache* cache = this->zoneList.get(zone);
+
+	return cache->getPosVoteLimit(lastHeight);
+}
+
 LockinManager* BlockchainStatusCache::getLockInManager(uint16_t zone) const noexcept {
 	ZoneStatusCache* cache = this->zoneList.get(zone);
 
 	return cache->getLockinManager();
 }
+
+void BlockchainStatusCache::requestPosVote(uint16_t zone, uint64_t calculatedNonceHeight, CodablecashBlockchain *blockchain) {
+	ZoneStatusCache* cache = this->zoneList.get(zone);
+
+	const BlockHead* head = cache->getHead();
+	const BlockHeader* header = head->getRealHeadHeader();
+	const BlockHeaderId* id = header->getId();
+	uint64_t height = header->getHeight();
+
+	if(this->finalizer != nullptr && this->lastVoted < height){
+		this->finalizer->requestCheckVoting(zone, id, height);
+		this->lastVoted = height;
+	}
+}
+
+
+
 
 } /* namespace codablecash */

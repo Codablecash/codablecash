@@ -207,7 +207,12 @@ bool AnalyzedType::equals(AnalyzedType* other) const noexcept {
 		return this->aclazz->equals(other->aclazz);
 	}
 
-	return true;
+	bool ret = true;
+	if(this->genericsType != nullptr){
+		ret = other->genericsType != nullptr && other->genericsType->equals(this->genericsType);
+	}
+
+	return ret;
 }
 
 void AnalyzedType::setAnalyzedClass(AnalyzedClass *aclass) noexcept {

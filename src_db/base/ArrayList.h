@@ -312,7 +312,7 @@ public:
 	T* search(const T* value) noexcept
 	{
 		if(this->numArray == 0){
-			return 0;
+			return nullptr;
 		}
 
 		if(!this->sorted){

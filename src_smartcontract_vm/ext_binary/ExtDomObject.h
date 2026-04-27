@@ -26,6 +26,7 @@ public:
 	virtual AbstractExtObject* copy() const noexcept;
 
 	virtual const UnicodeString* toString() const noexcept;
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm);
 
 private:
 	HashMap<UnicodeString, AbstractExtObject>* properties;

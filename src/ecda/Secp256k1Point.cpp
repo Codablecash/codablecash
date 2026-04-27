@@ -184,4 +184,16 @@ bool Secp256k1Point::isO() const noexcept {
 	return x.equals(&Zero) && y.equals(&Zero);
 }
 
+UnicodeString* Secp256k1Point::toString(int radix) const noexcept {
+	UnicodeString xstr = this->x.toString(radix);
+	UnicodeString ystr = this->y.toString(radix);
+
+	UnicodeString* ret = new UnicodeString(L"");
+	ret->append(&xstr);
+	ret->append(L", ");
+	ret->append(&ystr);
+
+	return ret;
+}
+
 } /* namespace codablecash */

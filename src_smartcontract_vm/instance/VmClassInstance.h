@@ -29,6 +29,7 @@ public:
 
 	static VmClassInstance* createObject(AnalyzedClass* clazz, VirtualMachine* vm);
 	void init(VirtualMachine* vm);
+	void addMember(GcManager* gc, AbstractReference* ref);
 
 	virtual IAbstractVmInstanceSubstance* getInstance() noexcept;
 	virtual AbstractReference* wrap(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm);

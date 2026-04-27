@@ -32,11 +32,13 @@
 #include "bc/CodablecashSystemParam.h"
 namespace codablecash {
 
-VoteManager::VoteManager(const File* baseDir) {
+VoteManager::VoteManager(const File* baseDir, const CodablecashSystemParam* config) {
 	this->baseDir = baseDir->get(VOTE_HEIGHT_DATA);
 	this->mutex = new SysMutex();
 	this->cacheManager = new DiskCacheManager();
 	this->heightVoteDataIndex = nullptr;
+
+	this->config = config;
 }
 
 VoteManager::~VoteManager() {
@@ -91,16 +93,28 @@ bool VoteManager::registerBlockHeader(const BlockHeader *header, const Codableca
 
 	uint64_t currentHeight = header->getHeight();
 
-	uint64_t voteBeforeNBlocks = param->getVoteBeforeNBlocks(currentHeight);
-
-	uint64_t votedHeight = currentHeight - 1 - voteBeforeNBlocks;
-
 	bool updated = false;
-	if(votedHeight > 0){
-		HeightVoteData* data = getHeightVoteData(votedHeight); __STP(data);
+	if(currentHeight > 0){
+		HeightVoteData* data = getHeightVoteData(currentHeight); __STP(data);
 		const SystemTimestamp* tm = header->getNonceGeneratedtimestamp();
 
-		updated = updateLimitTime(votedHeight, data, tm);
+		updated = updateLimitTime(currentHeight, data, tm);
+	}
+
+	return updated;
+}
+
+bool VoteManager::updateLimitTime(uint64_t height, HeightVoteData *data, const SystemTimestamp *limit) {
+	bool updated = false;
+
+	const SystemTimestamp* current = data->getNonceCalculatedTimestamp();
+	if(current == nullptr || current->compareTo(limit) > 0){
+		ULongKey key(height);
+
+		data->setTimestamp(limit);
+
+		this->heightVoteDataIndex->putData(&key, data);
+		updated = true;
 	}
 
 	return updated;
@@ -125,21 +139,22 @@ HeightVoteData* VoteManager::getHeightVoteData(uint64_t height) {
 	return ret;
 }
 
-bool VoteManager::updateLimitTime(uint64_t height, HeightVoteData *data, const SystemTimestamp *limit) {
-	bool updated = false;
+SystemTimestamp* VoteManager::getPosVoteLimit(uint64_t lastHeight) {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
-	const SystemTimestamp* current = data->getTimestamp();
-	if(current == nullptr || current->compareTo(limit) > 0){
-		ULongKey key(height);
+	SystemTimestamp* ret = nullptr;
+	uint32_t consensusPosVoteLimitMillis = this->config->getConsensusPosVoteLimitMillis();
 
-		data->setTimestamp(limit);
-		data->validateTransactions();
+	SystemTimestamp mills(0, consensusPosVoteLimitMillis * 1000);
 
-		this->heightVoteDataIndex->putData(&key, data);
-		updated = true;
+	HeightVoteData* data = getHeightVoteData(lastHeight);
+	const SystemTimestamp* tm = data->getNonceCalculatedTimestamp();
+	if(tm != nullptr){
+		SystemTimestamp lim = *tm + mills;
+		ret = dynamic_cast<SystemTimestamp*>(lim.copyData());
 	}
 
-	return updated;
+	return ret;
 }
 
 } /* namespace codablecash */

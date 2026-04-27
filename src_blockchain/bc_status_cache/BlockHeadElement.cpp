@@ -80,10 +80,10 @@ UnicodeString* BlockHeadElement::toString() const noexcept {
 	UnicodeString* message = new UnicodeString(id);
 	message->append(L" [");
 
-	message->append(L"height: ").append((int)height);
-	message->append(L" voted: ").append(this->votedScore);
-	message->append(L" voting: ").append(this->votingScore);
-	message->append(L" mev: ").append(this->mevHealthScore);
+	message->append(L"height: ").append((int64_t)height);
+	message->append(L" voted: ").append((int64_t)this->votedScore);
+	message->append(L" voting: ").append((int64_t)this->votingScore);
+	message->append(L" mev: ").append((int64_t)this->mevHealthScore);
 
 	message->append(L"]");
 

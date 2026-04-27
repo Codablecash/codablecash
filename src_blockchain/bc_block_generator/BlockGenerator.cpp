@@ -115,7 +115,7 @@ Block* BlockGenerator::generateBlock(uint64_t lastBlockHeight,	const BlockHeader
 	{
 		UnicodeString* bidstr = lastBlockId->toString(); __STP(bidstr);
 
-		message.append(L"Last Height :").append((int)lastBlockHeight);
+		message.append(L"Last Height :").append((int64_t)lastBlockHeight);
 		message.append(L" Last Block Id : ").append(bidstr);
 	}
 
@@ -147,7 +147,7 @@ Block* BlockGenerator::generateBlock(uint64_t lastBlockHeight,	const BlockHeader
 		{
 			UnicodeString* bidstr = block->getHeader()->getId()->toString(); __STP(bidstr);
 			message.append(L"\n");
-			message.append(L"        --> Height: ").append((int)block->getHeight());
+			message.append(L"        --> Height: ").append((int64_t)block->getHeight());
 			message.append(L" Header Id: ").append(bidstr);
 
 			BlockBody* body = block->getBody();
@@ -376,8 +376,6 @@ void BlockGenerator::addRevokeMissVotedTicket(MemPoolTransaction *memTrx, IStatu
 		ref.setUtxoId(utxoId, desc);
 
 		revokeTrx->setTicketVotedUtxoReference(&ref);
-
-		assert(votedUtxo->getAddress() == nullptr);
 	}
 
 	{

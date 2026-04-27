@@ -9,6 +9,11 @@
 #define JSON_OBJECT_ABSTRACTJSONOBJECT_H_
 #include <cstdint>
 
+namespace alinous {
+class ByteBuffer;
+}
+using namespace alinous;
+
 namespace codablecash {
 
 class AbstractJsonObject {
@@ -26,6 +31,11 @@ public:
 	virtual uint8_t getType() const noexcept = 0;
 	virtual AbstractJsonObject* copy() const noexcept = 0;
 	virtual bool equals(const AbstractJsonObject* other) const noexcept = 0;
+
+	virtual int binarySize() const = 0;
+	virtual void toBinary(ByteBuffer *out) const = 0;
+	virtual void fromBinary(ByteBuffer *in) = 0;
+	static AbstractJsonObject* createFromBinary(ByteBuffer* in);
 };
 
 } /* namespace codablecash */

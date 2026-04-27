@@ -52,6 +52,8 @@ int FinallyStatement::binarySize() const {
 
 	total += this->block->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -61,6 +63,8 @@ void FinallyStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::STMT_FINALLY);
 
 	this->block->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void FinallyStatement::fromBinary(ByteBuffer* in) {
@@ -68,6 +72,8 @@ void FinallyStatement::fromBinary(ByteBuffer* in) {
 	checkKind(element, CodeElement::STMT_BLOCK);
 
 	this->block = dynamic_cast<StatementBlock*>(element);
+
+	positionFromBinary(in);
 }
 
 void FinallyStatement::setBlock(StatementBlock* block) noexcept {

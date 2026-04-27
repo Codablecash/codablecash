@@ -15,15 +15,17 @@
 
 #include "ext_binary/ExtNullPtrObject.h"
 
+#include "engine/sc_analyze/AnalyzedType.h"
 namespace alinous {
 
-ArrayReference::ArrayReference(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm) : AbstractReference(owner, VmInstanceTypesConst::REF_ARRAY) {
+ArrayReference::ArrayReference(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm)
+		: AbstractReference(owner, VmInstanceTypesConst::REF_ARRAY, vm->publishInstanceSerial()) {
 	this->instArray = nullptr;
 }
 
 
 ArrayReference::ArrayReference(IAbstractVmInstanceSubstance* owner,	VirtualMachine* vm, VmArrayInstance* instArray)
-					: AbstractReference(owner, VmInstanceTypesConst::REF_ARRAY){
+					: AbstractReference(owner, VmInstanceTypesConst::REF_ARRAY, vm->publishInstanceSerial()){
 	this->instArray = instArray;
 }
 
@@ -74,7 +76,7 @@ int ArrayReference::valueCompare(const IAbstractVmInstanceSubstance* right) cons
 AbstractExtObject* ArrayReference::toClassExtObject(const UnicodeString* name, VTableRegistory* table) {
 	return this->instArray != nullptr
 			? this->instArray->instToClassExtObject(name, table)
-			: new ExtNullPtrObject(name, VmInstanceTypesConst::INST_ARRAY);
+			: new ExtNullPtrObject(name, AnalyzedType::TYPE_OBJECT_ARRAY);
 }
 
 void ArrayReference::resetOnGc() noexcept {

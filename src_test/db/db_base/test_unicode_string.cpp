@@ -236,9 +236,9 @@ TEST(TestUnicodeStringTestGroup, appendInt){
 	UnicodeString str2(L"test123");
 	UnicodeString str3(L"test123-123");
 
-	str.append(123);
+	str.append((int64_t)123);
 	CHECK(str.equals(&str2));
-	str.append(-123);
+	str.append((int64_t)-123);
 	CHECK(str.equals(&str3));
 }
 

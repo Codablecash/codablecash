@@ -41,6 +41,8 @@ public:
 	virtual ByteBuffer* getBodyPart() const noexcept = 0;
 	AddressDescriptor* toAddressDescriptor() const noexcept;
 
+	UnicodeString* toString() const noexcept;
+
 protected:
 	uint16_t zone;
 };

@@ -36,14 +36,19 @@ void CommitStatement::analyze(AnalyzeContext* actx) {
 int CommitStatement::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
 void CommitStatement::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::DML_STMT_COMMIT);
+
+	positionToBinary(out);
 }
 
 void CommitStatement::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 void CommitStatement::interpret(VirtualMachine* vm) {

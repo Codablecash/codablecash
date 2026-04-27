@@ -28,6 +28,8 @@ int SQLOrderBy::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->list->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -36,12 +38,16 @@ void SQLOrderBy::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::SQL_PART_ORDER_BY);
 	this->list->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLOrderBy::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkKind(element, CodeElement::SQL_PART_COLUMN_LIST);
 	this->list = dynamic_cast<SQLColumnsList*>(element);
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

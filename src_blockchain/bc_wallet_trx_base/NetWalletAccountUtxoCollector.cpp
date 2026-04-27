@@ -15,8 +15,17 @@
 #include "bc_trx_balance/BalanceUtxo.h"
 
 #include "bc_wallet_net_data_management/ManagementAccountsCollection.h"
+
+#include "base_thread/SysMutex.h"
+
+#include "base_thread/StackUnlocker.h"
 namespace codablecash {
 
+
+/**
+ * managementAccount is mempool version, which includes FINALIZED, UNFINALIZED, and MAMPOOL
+ * @param managementAccount
+ */
 NetWalletAccountUtxoCollector::NetWalletAccountUtxoCollector(const ManagementAccount* managementAccount) {
 	this->managementAccount = managementAccount;
 	this->list = new ArrayList<NetWalletAccountUtxoArray>();
@@ -42,6 +51,9 @@ NetWalletAccountUtxoCollector::~NetWalletAccountUtxoCollector() {
 }
 
 void NetWalletAccountUtxoCollector::init() {
+	SysMutex* mutex = this->managementAccount->getMutex();
+	StackUnlocker __lock(mutex, __FILE__, __LINE__);
+
 	const ArrayList<ManagedUtxoCacheRecord>* utxolist = this->managementAccount->getUtxoList();
 
 	int maxLoop = utxolist->size();

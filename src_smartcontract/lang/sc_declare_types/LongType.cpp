@@ -25,16 +25,22 @@ int LongType::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += AbstractType::binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
-void LongType::toBinary(ByteBuffer* out) {
+void LongType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_LONG);
 	AbstractType::toBinary(out);
+
+	positionToBinary(out);
 }
 
 void LongType::fromBinary(ByteBuffer* in) {
 	AbstractType::fromBinary(in);
+
+	positionFromBinary(in);
 }
 
 const UnicodeString* LongType::toString() noexcept {

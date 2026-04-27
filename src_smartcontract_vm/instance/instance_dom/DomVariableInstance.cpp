@@ -29,7 +29,7 @@
 #include "instance/instance_parts/VMemHashMapKeySet.h"
 namespace alinous {
 
-DomVariableInstance::DomVariableInstance(VirtualMachine* vm) : AbstractDomInstance(vm, VmInstanceTypesConst::INST_DOM) {
+DomVariableInstance::DomVariableInstance(VirtualMachine* vm) : AbstractDomInstance(vm, VmInstanceTypesConst::INST_DOM, vm->publishInstanceSerial()) {
 	this->properties = new(vm) VMemHashmap<VmStringInstance, DomRuntimeReference>(vm);
 	this->list = new(vm) VMemList<AbstractReference>(vm);
 	this->str = nullptr;

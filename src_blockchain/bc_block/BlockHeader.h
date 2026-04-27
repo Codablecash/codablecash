@@ -98,6 +98,8 @@ public:
 		return this->votePart;
 	}
 
+	void setLastNouceCalculated(const SystemTimestamp* tm) noexcept;
+
 	void buildVoteTransactionIdCertificate(const Block* block, IVoteTransactionIdCertificateBuilder* callback) const;
 	void visitVoteTransactionIdCertificate(IVoteTransactionIdCertificatevisitor* visitor) const;
 
@@ -117,6 +119,7 @@ private:
 	PoWNonce* nonce;
 
 	VotePart* votePart;
+	SystemTimestamp* lastNouceCalculated;
 };
 
 class IVoteTransactionIdCertificateBuilder {

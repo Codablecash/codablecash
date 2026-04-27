@@ -51,7 +51,7 @@ void TestnetInstanceWrapper::init(const wchar_t* name, int port, const File *zon
 	this->logger = logger;
 
 	UnicodeString seg(L"");
-	seg.append((int)this->index);
+	seg.append((int64_t)this->index);
 
 	this->baseDir = zoneBaseDir->get(&seg);
 

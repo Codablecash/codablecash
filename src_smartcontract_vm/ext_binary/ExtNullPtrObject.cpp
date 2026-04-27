@@ -7,11 +7,17 @@
 
 #include "ext_binary/ExtNullPtrObject.h"
 
+#include "instance/VmInstanceTypesConst.h"
+#include "instance/VmNullprtInstance.h"
+
 #include "base/UnicodeString.h"
+
+#include "vm/VirtualMachine.h"
 
 namespace alinous {
 
-ExtNullPtrObject::ExtNullPtrObject(const UnicodeString* name, uint8_t type) : AbstractExtObject(name, type){
+ExtNullPtrObject::ExtNullPtrObject(const UnicodeString* name, uint8_t atype) : AbstractExtObject(name, VmInstanceTypesConst::INST_NULL){
+	this->atype = atype;
 }
 
 ExtNullPtrObject::~ExtNullPtrObject() {
@@ -22,7 +28,7 @@ bool ExtNullPtrObject::isNull() const noexcept {
 }
 
 AbstractExtObject* ExtNullPtrObject::copy() const noexcept {
-	return new ExtNullPtrObject(this->name, this->type);
+	return new ExtNullPtrObject(this->name, this->atype);
 }
 
 const UnicodeString* ExtNullPtrObject::toString() const noexcept {
@@ -30,6 +36,10 @@ const UnicodeString* ExtNullPtrObject::toString() const noexcept {
 	this->str = new UnicodeString(L"null");
 
 	return this->str;
+}
+
+AbstractVmInstance* ExtNullPtrObject::toVmInstance(VirtualMachine *vm) {
+	return new(vm) VmNullprtInstance(vm->publishInstanceSerial(), this->atype);
 }
 
 } /* namespace alinous */

@@ -32,9 +32,6 @@ public:
 	void setPowAllowedSceduledDiffMevScore(uint16_t powAllowedSceduledDiffMevScore) noexcept;
 
 
-	uint64_t getPowVoteWaitingIntervalMills(uint64_t height) const noexcept;
-	void setPowVoteWaitingIntervalMills(uint64_t powVoteWaitingInterval) noexcept;
-
 	uint16_t getVoteDefaultCapacity(uint64_t height) const noexcept;
 
 	uint16_t getVoteMissingLimit(uint64_t height) const noexcept;
@@ -110,6 +107,10 @@ public:
 	uint32_t getConsensusTrxAllowedDelayMillis() const noexcept {
 		return this->consensusTrxAllowedDelayMillis;
 	}
+	void setConsensusPosVoteLimitMillis(uint32_t consensusPosVoteLimitMillis) noexcept;
+	uint32_t getConsensusPosVoteLimitMillis() const noexcept {
+		return this->consensusPosVoteLimitMillis;
+	}
 
 private:
 	// pow
@@ -125,7 +126,7 @@ private:
 
 	uint16_t voteLockinIntervalHeight;
 
-	// voting timing
+	// voting block timing
 	uint16_t voteBeforeNBlocks;
 	uint16_t voteBlockIncludeAfterNBlocks;
 
@@ -156,6 +157,8 @@ private:
 	uint16_t consensusTrxMaxHops;
 	uint32_t consensusTrxAllowedDelayMillis;
 
+	// Pos Vote Limit
+	uint32_t consensusPosVoteLimitMillis;
 
 };
 

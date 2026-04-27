@@ -67,6 +67,8 @@ int TableIdentifier::binarySize() const {
 		total += stringSize(this->alias);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -85,6 +87,8 @@ void TableIdentifier::toBinary(ByteBuffer* out) const {
 	if(this->alias != nullptr){
 		putString(out, this->alias);
 	}
+
+	positionToBinary(out);
 }
 
 void TableIdentifier::fromBinary(ByteBuffer* in) {
@@ -99,6 +103,8 @@ void TableIdentifier::fromBinary(ByteBuffer* in) {
 	if(bl == 1){
 		this->alias = getString(in);
 	}
+
+	positionFromBinary(in);
 }
 
 void TableIdentifier::preAnalyze(AnalyzeContext* actx) {

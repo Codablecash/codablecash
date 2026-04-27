@@ -458,7 +458,7 @@ void JsonParser::checkTokenType(const AbstractJsonToken *token, TokenType type, 
 		UnicodeString msg(L"Unexpected token. ");
 		msg.append(required);
 		msg.append(L" is required, at line : ");
-		msg.append(token->getLine());
+		msg.append((int64_t)token->getLine());
 
 		throw new JsonParseException(msg.towString(), __FILE__, __LINE__);
 	}

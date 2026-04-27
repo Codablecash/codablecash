@@ -19,7 +19,7 @@ public:
 	static constexpr int WARN_PRECISION{1};
 	static constexpr int INCOMPATIBLE{2};
 
-	static int analyzeCompatibility(AnalyzedType* leftType, AnalyzedType* rightType);
+	static int analyzeCompatibility(AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly);
 
 
 private:
@@ -27,7 +27,7 @@ private:
 
 	static int checkDomValue(AnalyzedType* leftType, AnalyzedType* rightType);
 	static int checkDomObject(AnalyzedType* leftType, AnalyzedType* rightType);
-	static int checkObject(AnalyzedType* leftType, AnalyzedType* rightType);
+	static int checkObject(AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly);
 	static int checkBool(AnalyzedType* leftType, AnalyzedType* rightType);
 	static int checkPrimitive(AnalyzedType* leftType, AnalyzedType* rightType);
 	static int checkString(AnalyzedType* leftType, AnalyzedType* rightType);

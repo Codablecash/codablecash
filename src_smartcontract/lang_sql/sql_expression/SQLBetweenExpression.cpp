@@ -61,6 +61,8 @@ int SQLBetweenExpression::binarySize() const {
 	total += this->start->binarySize();
 	total += this->end->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -73,6 +75,8 @@ void SQLBetweenExpression::toBinary(ByteBuffer* out) const {
 	this->left->toBinary(out);
 	this->start->toBinary(out);
 	this->end->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLBetweenExpression::fromBinary(ByteBuffer* in) {
@@ -87,6 +91,8 @@ void SQLBetweenExpression::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkIsSQLExp(element);
 	this->end = dynamic_cast<AbstractSQLExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void SQLBetweenExpression::preAnalyze(AnalyzeContext* actx) {

@@ -201,6 +201,42 @@ const char* IPV6::inet_ntop(int __af, const void* __cp, char* __buf, socklen_t _
 	return ::inet_ntop(__af, __cp, __buf, __len);
 }
 
+IPV6Context IPV4::socket(const UnicodeString* hostname, const UnicodeString* port) {
+	return socket(hostname, port, 0);
+}
+
+IPV6Context IPV4::socket(const UnicodeString* hostname, const UnicodeString* port, int protocol) {
+	IPV6Context context;
+
+	const char* host = hostname != nullptr ? hostname->toCString() : nullptr;
+	StackArrayRelease<const char> hostrel(host);
+
+	const char* portStr = port->toCString();
+	StackArrayRelease<const char> portrel(portStr);
+
+	struct addrinfo hints;
+	::memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_flags = AI_NUMERICSERV | AI_PASSIVE;
+	hints.ai_socktype = SOCK_STREAM;
+
+	context.error = ::getaddrinfo(host, portStr, &hints, &context.info);
+	if(context.error != 0){
+		return context;
+	}
+
+	context.sockId = ::socket(context.info->ai_family, context.info->ai_socktype, protocol);
+	if(context.sockId < 0){
+		return context;
+	}
+
+	int yes = 1;
+	::setsockopt(context.sockId,
+	   SOL_SOCKET, SO_REUSEADDR, (const char *)&yes, sizeof(yes));
+
+	return context;
+}
+
 SOCKET_ID IPV4::connect(const UnicodeString *hostname, const UnicodeString *port) {
 	const char* host = hostname != nullptr ? hostname->toCString() : nullptr;
 	StackArrayRelease<const char> hostrel(host);

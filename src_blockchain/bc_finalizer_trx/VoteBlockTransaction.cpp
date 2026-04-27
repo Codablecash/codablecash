@@ -278,6 +278,7 @@ void VoteBlockTransaction::setTicketUtxoId(const UtxoId *utxoId, const BalanceUn
 
 	delete this->votedUtxo;
 	this->votedUtxo = new TicketVotedUtxo();
+	this->votedUtxo->setAddress(desc);
 	this->votedUtxo->setVotedUtxoId(utxoId);
 	this->votedUtxo->setAmount(amount);
 }

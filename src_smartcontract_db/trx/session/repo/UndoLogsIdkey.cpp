@@ -57,7 +57,7 @@ void UndoLogsIdkey::toBinary(ByteBuffer *out) const {
 UndoLogsIdkey* UndoLogsIdkey::fromBinary(ByteBuffer *in) {
 	UndoLogsIdkey* key = new UndoLogsIdkey();
 
-	key->sessionId = CdbDatabaseSessionId::fromBinary(in);
+	key->sessionId = CdbDatabaseSessionId::createFromBinary(in);
 	BinaryUtils::checkNotNull(key->sessionId);
 
 	key->undoLogSerial = CdbOid::fromBinary(in);

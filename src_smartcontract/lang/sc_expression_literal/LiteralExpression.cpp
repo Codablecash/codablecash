@@ -60,6 +60,8 @@ int LiteralExpression::binarySize() const {
 	total += sizeof(uint8_t);
 	total += stringSize(this->str);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -68,12 +70,16 @@ void LiteralExpression::toBinary(ByteBuffer* out) const {
 
 	out->put(this->dquote ? 1 : 0);
 	putString(out, this->str);
+
+	positionToBinary(out);
 }
 
 void LiteralExpression::fromBinary(ByteBuffer* in) {
 	char bl = in->get();
 	this->dquote = (bl == 1);
 	this->str = getString(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType LiteralExpression::getType(AnalyzeContext* actx) {

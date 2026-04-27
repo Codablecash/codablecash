@@ -14,7 +14,9 @@ namespace alinous {
 
 class DatabaseExceptionClassDeclare : public AbstractExceptionClassDeclare {
 public:
-	static UnicodeString NAME;
+	static const UnicodeString NAME;
+	static const UnicodeString FULL_QUALIFIED_NAME;
+
 	static AnalyzedClass* createAnalyzedClass() noexcept;
 	static void throwException(const UnicodeString* msg, VirtualMachine* vm, const CodeElement* element) noexcept;
 
@@ -24,9 +26,6 @@ public:
 	virtual uint16_t getClassType() const noexcept {
 		return TYPE_DATABASE_EXCEPTION;
 	}
-
-	virtual const UnicodeString* getName() const noexcept;
-	virtual const UnicodeString* getFullQualifiedName() noexcept;
 
 	virtual ClassDeclare* getBaseClass() const noexcept;
 

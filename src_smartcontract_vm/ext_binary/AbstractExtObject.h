@@ -12,6 +12,8 @@
 namespace alinous {
 
 class UnicodeString;
+class AbstractVmInstance;
+class VirtualMachine;
 
 class AbstractExtObject {
 public:
@@ -27,6 +29,9 @@ public:
 	virtual AbstractExtObject* copy() const noexcept = 0;
 
 	virtual const UnicodeString* toString() const noexcept = 0;
+
+	virtual AbstractVmInstance* toVmInstance(VirtualMachine* vm) = 0;
+
 protected:
 	uint8_t type;
 	UnicodeString* name;

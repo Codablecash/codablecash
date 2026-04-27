@@ -1,0 +1,39 @@
+package sample;
+
+import sample.ISampleDirect;
+import lang.ModularProxyListner;
+import modsample.export.IExportMethods;
+
+class Sample01 implements ISampleDirect, ModularProxyListner {
+	public Sample01() {
+		this.count = 3 * 2;
+		stcount++;
+	}
+	
+	public int main(){
+
+	}
+	
+	public int setCount(int count) {
+		this.count = count;
+		return this.count;
+	}
+	
+	public void moduleDetected(Object module, String ifname){
+		// modsample.export.Module01ProxyIExportMethods
+		boolean bl = ifname.equals("modsample.export.Module01ProxyIExportMethods");
+		if(bl){
+			connector = (IExportMethods)module;
+		}
+	}
+	
+	public int callConnector(){
+		connector.doubleup();
+		return connector.getCount();
+	}
+	
+	private int count = 0;
+	public static int stcount = 10;
+	
+	public IExportMethods connector;	
+}

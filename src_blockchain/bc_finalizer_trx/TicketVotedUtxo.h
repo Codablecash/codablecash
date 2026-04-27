@@ -31,6 +31,8 @@ public:
 	virtual void build();
 	virtual const AddressDescriptor* getAddress() const noexcept;
 
+	void setAddress(const AddressDescriptor* desc);
+
 	void setVotedUtxoId(const UtxoId* votedUtxoId) noexcept;
 	void setAmount(BalanceUnit amount) noexcept;
 	virtual BalanceUnit getAmount() const noexcept;
@@ -39,6 +41,7 @@ public:
 		return this->votedUtxoId;
 	}
 private:
+	AddressDescriptor* address;
 	UtxoId* votedUtxoId;
 	BalanceUnit amount;
 };

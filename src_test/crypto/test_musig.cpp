@@ -31,6 +31,14 @@ TEST(MuSigTestGroup, case01){
 	int length = ::strlen(data);
 
 	MuSig sig = builder.sign(data, length);
+	{
+		/**
+		 * 	"R : 1a21a6225240c09d8e9406a53e280a35eff647e45576fecf6281691c0e930129,
+		 * 	fd6663a0e4016dad1b2a14ed7eef644c154c3acef437d8ebc49011cb1d3261b9"
+		 *
+		 */
+		UnicodeString* str = sig.toString(); __STP(str);
+	}
 
 	ArrayList<IMuSigSigner>* list = builder.getSigners();
 	int maxLoop = list->size();

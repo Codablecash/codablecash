@@ -54,7 +54,7 @@ AbstractReference* RefereceFactory::createReferenceFromDefinition(IAbstractVmIns
 	case CodeElement::TYPE_LONG:
 		ref = PrimitiveReference::createLongReference(vm, 0);
 		break;
-	case AnalyzedType::TYPE_DOM:
+	case CodeElement::TYPE_DOM:
 		ref = new(vm) DomRuntimeReference(owner, vm);
 		break;
 	case CodeElement::TYPE_OBJECT:
@@ -74,9 +74,9 @@ AbstractReference* RefereceFactory::createObjectReferenceFromDefinition(IAbstrac
 
 	ObjectReference* ref = nullptr;
 	if(type == AnalyzedType::TYPE_STRING){
-		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE);
+		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE, vm->publishInstanceSerial());
 	}else{
-		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE);
+		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE, vm->publishInstanceSerial());
 	}
 
 	return ref;
@@ -111,14 +111,14 @@ AbstractReference* RefereceFactory::createReferenceFromAnalyzedType(IAbstractVmI
 		ref = PrimitiveReference::createLongReference(vm, 0);
 		break;
 	case AnalyzedType::TYPE_STRING:
-		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE);
+		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::STRING_INSTANCE, vm->publishInstanceSerial());
 		break;
 	case AnalyzedType::TYPE_DOM:
 		ref = new(vm) DomRuntimeReference(owner, vm);
 		break;
 	case AnalyzedType::TYPE_OBJECT:
 	default:
-		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE);
+		ref = new(vm) ObjectReference(owner, VmInstanceTypesConst::REF_OBJ, ObjectReference::CLASS_INSTANCE, vm->publishInstanceSerial());
 		break;
 	}
 
@@ -148,6 +148,5 @@ PrimitiveReference* RefereceFactory::createNumericReference(int64_t value, uint8
 
 	return ref;
 }
-
 
 } /* namespace alinous */

@@ -28,7 +28,7 @@ void AbstractColumnParam::buildNameList(ArrayList<UnicodeString>* list, const Sc
 
 	int index = list->size();
 	UnicodeString* nstr = new UnicodeString(PREFIX);
-	nstr->append(index);
+	nstr->append((int64_t)index);
 
 	list->addElement(nstr);
 }

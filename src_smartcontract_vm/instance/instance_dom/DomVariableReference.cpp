@@ -20,7 +20,7 @@
 namespace alinous {
 
 DomVariableReference::DomVariableReference(IAbstractVmInstanceSubstance* owner, VirtualMachine* vm, AbstractDomInstance* inst)
-			: AbstractReference(owner, VmInstanceTypesConst::REF_DOM) {
+			: AbstractReference(owner, VmInstanceTypesConst::REF_DOM, vm->publishInstanceSerial()) {
 	this->inst = inst;
 }
 

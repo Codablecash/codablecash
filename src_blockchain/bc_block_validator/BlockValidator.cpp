@@ -70,6 +70,7 @@
 
 #include "transaction/AbstractSmartcontractTransaction.h"
 
+#include "base_timestamp/SystemTimestamp.h"
 
 namespace codablecash {
 
@@ -122,6 +123,12 @@ void BlockValidator::validateLastHeader() {
 	Block* lastBlock = this->ctrl->getBlockHeightAt(zone, lastBlockHeight, lastHeaderId); __STP(lastBlock);
 	ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(lastBlock == nullptr
 			, L"Invalid last block id.", __FILE__, __LINE__);
+
+	const SystemTimestamp* nonceTm = header->getNonceGeneratedtimestamp();
+	const SystemTimestamp* tm = header->getTimestamp();
+	ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(tm->compareTo(nonceTm) > 0
+			, L"The block Timestamp must be before nonce calculated time.", __FILE__, __LINE__);
+
 }
 
 void BlockValidator::validateTransactionsInBlock(MemPoolTransaction *memTrx) {

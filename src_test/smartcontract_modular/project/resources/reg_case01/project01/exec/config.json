@@ -1,0 +1,20 @@
+{
+	"sourceFolders" : ["src/"],
+	"version" : "1.0.0",
+	
+	"instance" : {
+		"mainPackage": "sample",
+		"mainClass" : "Sample01",
+		"initializer" : {
+			"method" : "main",
+			"args" : []
+		},
+		"libExport" : [],
+		"directAccess" : []
+	},
+	
+	"dependencies": [
+		{"name" : "module_01", "localloc": "mod01", "version" : "^1.0.0"}
+	]
+}
+

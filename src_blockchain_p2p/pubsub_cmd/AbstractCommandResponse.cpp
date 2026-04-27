@@ -38,7 +38,8 @@
 
 #include "ipconnect/IClientSocket.h"
 
-
+#include "pow_pool_client_cmd/PoWPoolStatusCommandResponse.h"
+#include "pow_pool_client_cmd/PoWPoolCheckDataCommandResponse.h"
 
 namespace codablecash {
 
@@ -108,6 +109,13 @@ AbstractCommandResponse* AbstractCommandResponse::createFromBinary(ByteBuffer *b
 		break;
 	case TYPE_RES_CLIENT_SYNC_HEADER:
 		ret = new ClientSyncHeaderCommandResponse();
+		break;
+
+	case TYPE_RES_POW_POOL_CLIENT_STATUS:
+		ret = new PoWPoolStatusCommandResponse();
+		break;
+	case TYPE_RES_POW_POOL_CLIENT_CHECK_DATA:
+		ret = new PoWPoolCheckDataCommandResponse();
 		break;
 	default:
 		throw new PubsubCommandException(L"Wrong command response type.", __FILE__, __LINE__);

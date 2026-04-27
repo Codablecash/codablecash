@@ -9,6 +9,8 @@
 #include "modular_project/ModularSmartcontractProject.h"
 #include "modular_project/ModularConfigException.h"
 
+#include "smartcontract_instance/ModularSmartcontractInstance.h"
+
 #include "../utils/ModularProjectUtils.h"
 
 

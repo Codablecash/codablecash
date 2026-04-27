@@ -20,10 +20,15 @@ using namespace alinous;
 
 namespace codablecash {
 
+class ISystemLogger;
+
 class Abstract32BytesId : public IBlockObject {
 protected:
 	Abstract32BytesId();
 public:
+	static const BigInteger Q;
+	static const BigInteger G;
+
 	explicit Abstract32BytesId(const Abstract32BytesId& inst);
 	Abstract32BytesId(const char* binary, int length);
 	virtual ~Abstract32BytesId();
@@ -54,6 +59,11 @@ public:
 	public:
 		int operator () (const Abstract32BytesId* const a, const Abstract32BytesId* const b) const;
 	};
+
+	void debugLog(ISystemLogger* logger) const;
+
+protected:
+	static ByteBuffer* makeRandom16Bytes();
 
 protected:
 	ByteBuffer* id; // 32 bytes

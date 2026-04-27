@@ -52,6 +52,8 @@ int SQLSetPair::binarySize() const {
 	total += this->colId->binarySize();
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -62,6 +64,8 @@ void SQLSetPair::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::SQL_PART_SET_PAIR);
 	this->colId->toBinary(out);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void SQLSetPair::fromBinary(ByteBuffer* in) {
@@ -72,6 +76,8 @@ void SQLSetPair::fromBinary(ByteBuffer* in) {
 	element = createFromBinary(in);
 	checkIsSQLExp(element);
 	this->exp = dynamic_cast<AbstractSQLExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 void SQLSetPair::preAnalyze(AnalyzeContext* actx) {

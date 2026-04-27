@@ -23,10 +23,10 @@ RightType::~RightType() {
 
 }
 
-int RightType::checkTypeCompatibility(AnalyzeContext* actx,	LeftType* leftType) {
+int RightType::checkTypeCompatibility(AnalyzeContext* actx,	LeftType* leftType, bool downCastOnly) {
 	AnalyzedType* aleftType = leftType->getAnalyzedType();
 
-	return InternalTypeChecker::analyzeCompatibility(this->atype, aleftType);
+	return InternalTypeChecker::analyzeCompatibility(this->atype, aleftType, downCastOnly);
 }
 
 } /* namespace alinous */

@@ -42,7 +42,7 @@ private:
 public:
 	UnicodeString& append(const wchar_t ch) noexcept;
 	UnicodeString& append(const UnicodeString* str) noexcept;
-	UnicodeString& append(const int value) noexcept;
+	UnicodeString& append(const int64_t value) noexcept;
 	UnicodeString& append(const wchar_t* str) noexcept;
 	UnicodeString& append(const wchar_t* str, int len) noexcept;
 	UnicodeString& append(const int16_t* str, int offset, int len) noexcept;

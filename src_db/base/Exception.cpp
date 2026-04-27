@@ -54,7 +54,7 @@ UnicodeString* Exception::getFileInfo() const noexcept {
 	str->append(&file);
 
 	str->append(L" line ");
-	str->append(getSourceLine());
+	str->append((int64_t)getSourceLine());
 	str->append(L"\n");
 
 	return str;

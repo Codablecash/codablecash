@@ -71,6 +71,8 @@ int NumberLiteral::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += stringSize(this->str);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -79,10 +81,14 @@ void NumberLiteral::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::EXP_NUMBER_LITERAL);
 	putString(out, this->str);
+
+	positionToBinary(out);
 }
 
 void NumberLiteral::fromBinary(ByteBuffer* in) {
 	this->str = getString(in);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType NumberLiteral::getType(AnalyzeContext* actx) {

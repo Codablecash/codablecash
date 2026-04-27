@@ -117,6 +117,8 @@ int DeleteStatement::binarySize() const {
 		total += this->where->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -130,6 +132,8 @@ void DeleteStatement::toBinary(ByteBuffer* out) const {
 	if(this->where != nullptr){
 		this->where->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void DeleteStatement::fromBinary(ByteBuffer* in) {
@@ -143,6 +147,8 @@ void DeleteStatement::fromBinary(ByteBuffer* in) {
 		 checkKind(element, CodeElement::SQL_PART_WHERE);
 		 this->where = dynamic_cast<SQLWhere*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void DeleteStatement::init(VirtualMachine* vm) {

@@ -149,6 +149,8 @@ int TryStatement::binarySize() const {
 		total += this->finallyStmt->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -172,6 +174,8 @@ void TryStatement::toBinary(ByteBuffer* out) const {
 	if(bl){
 		this->finallyStmt->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void TryStatement::fromBinary(ByteBuffer* in) {
@@ -196,6 +200,8 @@ void TryStatement::fromBinary(ByteBuffer* in) {
 
 		 this->finallyStmt = dynamic_cast<FinallyStatement*>(element);
 	}
+
+	positionFromBinary(in);
 }
 
 void TryStatement::setBlock(StatementBlock* block) noexcept {

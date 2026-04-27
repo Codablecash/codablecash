@@ -50,7 +50,7 @@ TEST(TestLocalVariablesGroup, intVariable){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	vm->createScInstance();
+	vm->createScInstance(nullptr);
 	vm->destroy();
 }
 
@@ -73,7 +73,7 @@ TEST(TestLocalVariablesGroup, intaccess){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	VmClassInstance* mainInst = vm->createScInstance();
+	VmClassInstance* mainInst = vm->createScInstance(nullptr);
 
 	{
 		AnalyzeContext* actx = sc->getAnalyzeContext();
@@ -111,7 +111,7 @@ TEST(TestLocalVariablesGroup, intaccessWithMember){
 	vm->loadSmartContract(sc);
 
 	vm->analyze();
-	VmClassInstance* mainInst = vm->createScInstance();
+	VmClassInstance* mainInst = vm->createScInstance(nullptr);
 
 	{
 		AnalyzeContext* actx = sc->getAnalyzeContext();

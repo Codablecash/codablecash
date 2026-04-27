@@ -78,7 +78,7 @@ TEST(TestSuperConstructorGroup, case03){
 	ExtExceptionObject* exobj = util.vm->getUncaughtException(); __STP(exobj);
 	const UnicodeString* exname = exobj->getClassName();
 
-	CHECK(exname->equals(ExceptionClassDeclare::NAME));
+	CHECK(exname->equals(ExceptionClassDeclare::FULL_QUALIFIED_NAME));
 }
 
 TEST(TestSuperConstructorGroup, case04_err){

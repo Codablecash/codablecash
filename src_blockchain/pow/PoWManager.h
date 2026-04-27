@@ -29,12 +29,14 @@ class PoWNonce;
 class BlockHeaderId;
 class BlockGenerator;
 class ISystemLogger;
+class MiningConfig;
+
 
 class PoWManager : public ICommandParameter {
 public:
 	static const UnicodeString THREAD_NAME;
 
-	explicit PoWManager(ISystemLogger* logger);
+	explicit PoWManager(ISystemLogger* logger, const MiningConfig *config);
 	virtual ~PoWManager();
 
 	void setBlockGenerator(BlockGenerator* generator) noexcept {
@@ -52,6 +54,7 @@ public:
 	bool isSuspendStatus() const noexcept;
 
 	void requestNewHeaderId();
+	void resendMinerRequest();
 
 	void onNonceCalculated(uint64_t height, const BlockHeaderId *bid, const PoWNonce *nonce);
 
@@ -63,6 +66,8 @@ private:
 	void fireNonceCalculated(uint64_t height, const BlockHeaderId *bid, const PoWNonce *nonce);
 
 private:
+	MiningConfig* miningConfig;
+
 	ISystemLogger* logger;
 	MessageProcessor* processor;
 	AbstractPoWCalculator* calculator;

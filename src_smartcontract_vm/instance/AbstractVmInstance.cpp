@@ -13,8 +13,9 @@
 
 namespace alinous {
 
-AbstractVmInstance::AbstractVmInstance(uint8_t type) {
+AbstractVmInstance::AbstractVmInstance(uint8_t type, uint64_t serial) {
 	this->type = type;
+	this->serial = serial;
 }
 
 AbstractVmInstance::~AbstractVmInstance() {
@@ -25,8 +26,9 @@ uint8_t AbstractVmInstance::getType() const noexcept {
 }
 
 int AbstractVmInstance::hashCode() const noexcept {
-	uint64_t addr = (uint64_t)this;
-	return (int)(addr >> 2);
+	// inst hash code
+	uint64_t addr = (uint64_t)serial;
+	return (int)(addr % 1024);
 }
 
 const VMemList<AbstractReference>* AbstractVmInstance::getReferences() const noexcept {

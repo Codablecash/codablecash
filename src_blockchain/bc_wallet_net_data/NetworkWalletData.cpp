@@ -263,7 +263,7 @@ void NetworkWalletData::__doFinalize(const BlockHeader *header) {
 			UnicodeString* strId = id->toString(); __STP(strId);
 
 			UnicodeString message(L"  [Wallet Finalize Header] Height: ");
-			message.append((int)finalizingHeight);
+			message.append((int64_t)finalizingHeight);
 			message.append(L" Header Id: ").append(strId);
 
 			this->logger->log(&message);

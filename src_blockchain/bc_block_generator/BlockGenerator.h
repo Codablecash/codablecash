@@ -63,6 +63,10 @@ public:
 	}
 	virtual BlockHeader* getTopBlockHeader() const;
 
+	BlockchainController* getBlockchainController() const noexcept {
+		return this->ctrl;
+	}
+
 
 protected:
 	void importTransactions2Block(MemPoolTransaction* memTrx, Block* block);

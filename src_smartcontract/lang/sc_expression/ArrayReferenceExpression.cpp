@@ -145,6 +145,8 @@ int ArrayReferenceExpression::binarySize() const {
 		total += ex->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -161,6 +163,8 @@ void ArrayReferenceExpression::toBinary(ByteBuffer* out) const {
 		AbstractExpression* ex = this->list.get(i);
 		ex->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void ArrayReferenceExpression::fromBinary(ByteBuffer* in) {
@@ -178,6 +182,8 @@ void ArrayReferenceExpression::fromBinary(ByteBuffer* in) {
 		AbstractExpression* ex = dynamic_cast<AbstractExpression*>(element);
 		this->list.addElement(ex);
 	}
+
+	positionFromBinary(in);
 }
 
 AnalyzedType ArrayReferenceExpression::getType(AnalyzeContext* actx) {

@@ -42,6 +42,8 @@ int SQLSelectTargetList::binarySize() const {
 		total += target->binarySize();
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -55,6 +57,8 @@ void SQLSelectTargetList::toBinary(ByteBuffer* out) const {
 		SQLSelectTarget* target = this->list.get(i);
 		target->toBinary(out);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLSelectTargetList::fromBinary(ByteBuffer* in) {
@@ -66,6 +70,8 @@ void SQLSelectTargetList::fromBinary(ByteBuffer* in) {
 
 		this->list.addElement(target);
 	}
+
+	positionFromBinary(in);
 }
 
 void SQLSelectTargetList::preAnalyze(AnalyzeContext* actx) {

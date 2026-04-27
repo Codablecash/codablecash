@@ -25,14 +25,19 @@ VoidType::~VoidType() {
 int VoidType::binarySize() const {
 	int total = sizeof(uint16_t);
 
+	total += positionBinarySize();
+
 	return total;
 }
 
-void VoidType::toBinary(ByteBuffer* out) {
+void VoidType::toBinary(ByteBuffer* out) const {
 	out->putShort(CodeElement::TYPE_VOID);
+
+	positionToBinary(out);
 }
 
 void VoidType::fromBinary(ByteBuffer* in) {
+	positionFromBinary(in);
 }
 
 const UnicodeString* VoidType::toString() noexcept {

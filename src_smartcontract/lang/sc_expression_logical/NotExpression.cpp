@@ -55,6 +55,8 @@ int NotExpression::binarySize() const {
 	int total = sizeof(uint16_t);
 	total += this->exp->binarySize();
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -63,12 +65,16 @@ void NotExpression::toBinary(ByteBuffer* out) const {
 
 	out->putShort(CodeElement::EXP_CND_NOT);
 	this->exp->toBinary(out);
+
+	positionToBinary(out);
 }
 
 void NotExpression::fromBinary(ByteBuffer* in) {
 	CodeElement* element = createFromBinary(in);
 	checkIsExp(element);
 	this->exp = dynamic_cast<AbstractExpression*>(element);
+
+	positionFromBinary(in);
 }
 
 AnalyzedType NotExpression::getType(AnalyzeContext* actx) {

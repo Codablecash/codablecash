@@ -35,6 +35,7 @@ public:
 	void setImports(ImportsDeclare* imports) noexcept;
 	void addClassDeclare(ClassDeclare* clazz);
 	ClassDeclare* getClassDeclare(int pos) const noexcept;
+	ClassDeclare* getClassDeclare(const UnicodeString* name) const noexcept;
 
 	const UnicodeString* getPackageName() noexcept;
 
@@ -44,12 +45,21 @@ public:
 	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
+	CompilationUnit* copy() const;
+
 	CompilationUnit* generateGenericsImplement(HashMap<UnicodeString, AbstractType>* input);
+
+	void setProjectRelativePath(const UnicodeString* path) noexcept;
+	const UnicodeString* getProjectRelativePath() const noexcept {
+		return this->projectRelativePath;
+	}
 
 private:
 	PackageDeclare* package;
 	ImportsDeclare* imports;
 	ArrayList<ClassDeclare> classes;
+
+	UnicodeString* projectRelativePath;
 };
 
 } /* namespace alinous */

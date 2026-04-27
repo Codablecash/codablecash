@@ -21,10 +21,10 @@ public:
 	AnalyzedTypeChecker();
 	virtual ~AnalyzedTypeChecker();
 
-	bool checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp);
-	bool checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool compare);
+	bool checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool downCastOnly);
+	bool checkCompatibility(AnalyzeContext* actx, AbstractExpression* leftExp, AbstractExpression* rightExp, bool compare, bool downCastOnly);
 
-	int checkCompatibility(AnalyzeContext* actx, AnalyzedType* leftType, AnalyzedType* rightType);
+	int checkCompatibility(AnalyzeContext* actx, AnalyzedType* leftType, AnalyzedType* rightType, bool downCastOnly);
 private:
 	LeftType* left;
 	RightType* right;

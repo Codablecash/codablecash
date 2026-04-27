@@ -104,6 +104,8 @@ int SQLSelectTarget::binarySize() const {
 		total += stringSize(this->asName);
 	}
 
+	total += positionBinarySize();
+
 	return total;
 }
 
@@ -120,6 +122,8 @@ void SQLSelectTarget::toBinary(ByteBuffer* out) const {
 	if(this->asName != nullptr){
 		putString(out, this->asName);
 	}
+
+	positionToBinary(out);
 }
 
 void SQLSelectTarget::fromBinary(ByteBuffer* in) {
@@ -139,6 +143,8 @@ void SQLSelectTarget::fromBinary(ByteBuffer* in) {
 	if(bl == 1){
 		this->asName = getString(in);
 	}
+
+	positionFromBinary(in);
 }
 
 } /* namespace alinous */

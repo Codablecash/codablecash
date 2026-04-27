@@ -45,6 +45,9 @@ public:
 	static const constexpr uint32_t TYPE_RES_CLIENT_SYNC_HEADER{110};
 
 
+	static const constexpr uint32_t TYPE_RES_POW_POOL_CLIENT_STATUS{201};
+	static const constexpr uint32_t TYPE_RES_POW_POOL_CLIENT_CHECK_DATA{202};
+
 	explicit AbstractCommandResponse(uint32_t type);
 	virtual ~AbstractCommandResponse();
 

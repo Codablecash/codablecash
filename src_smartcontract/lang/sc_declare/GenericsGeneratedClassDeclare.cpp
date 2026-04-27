@@ -9,23 +9,28 @@
 #include "lang/sc_declare/GenericsClassDeclare.h"
 
 #include "engine/sc_analyze/AnalyzeContext.h"
-
 #include "engine/sc_analyze/AnalyzedClass.h"
-
 #include "engine/sc_analyze/ValidationError.h"
-
 #include "engine/sc_analyze/PackageSpace.h"
 
 #include "engine/sc/CompilationUnit.h"
+
+
 namespace alinous {
 
-// GENERICS_GENERATED_CLASS_DECLARE
+GenericsGeneratedClassDeclare::GenericsGeneratedClassDeclare(short kind) : ClassDeclare(kind) {
+	this->genericsClass = nullptr;
+	this->factory = nullptr;
+}
+
 GenericsGeneratedClassDeclare::GenericsGeneratedClassDeclare() : ClassDeclare(GENERICS_GENERATED_CLASS_DECLARE) {
 	this->genericsClass = nullptr;
+	this->factory = nullptr;
 }
 
 GenericsGeneratedClassDeclare::~GenericsGeneratedClassDeclare() {
 	this->genericsClass = nullptr;
+	this->factory = nullptr; // factory is singleton
 }
 
 void GenericsGeneratedClassDeclare::setGenericsClassDeclare(GenericsClassDeclare* clazz) {

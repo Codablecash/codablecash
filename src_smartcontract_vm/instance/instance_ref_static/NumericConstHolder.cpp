@@ -54,7 +54,7 @@ PrimitiveReference* NumericConstHolder::newNumericConstReferenece(int64_t value,
 ConstStaticPrimitive* NumericConstHolder::makeConstStaticPrimitive(int64_t value, uint8_t type, VirtualMachine* vm) {
 	PrimitiveReference* referene = RefereceFactory::createNumericReference(value, type, vm); __STP(referene);
 
-	return new(vm) ConstStaticPrimitive(referene);
+	return new(vm) ConstStaticPrimitive(referene, vm->publishInstanceSerial());
 }
 
 void NumericConstHolder::removeInnerReferences(VmRootReference* rootRef, VirtualMachine* vm) noexcept {

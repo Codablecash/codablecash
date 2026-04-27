@@ -47,6 +47,15 @@ CdbDatabaseSessionId* CdbDatabaseSessionId::createRandomId() {
 	return id;
 }
 
+CdbDatabaseSessionId* CdbDatabaseSessionId::from32BytesId(const Abstract32BytesId *id) {
+	ByteBuffer* buff = id->getByteBuffer();
+
+	char *binary = (char*)buff->array();
+	int length = buff->capacity();
+
+	return new CdbDatabaseSessionId(binary, length);
+}
+
 int CdbDatabaseSessionId::binarySize() const {
 	return Abstract32BytesId::binarySize();
 }
@@ -55,7 +64,7 @@ void CdbDatabaseSessionId::toBinary(ByteBuffer *out) const {
 	Abstract32BytesId::toBinary(out);
 }
 
-CdbDatabaseSessionId* CdbDatabaseSessionId::fromBinary(ByteBuffer *in) {
+CdbDatabaseSessionId* CdbDatabaseSessionId::createFromBinary(ByteBuffer *in) {
 	CdbDatabaseSessionId* sessionId = new CdbDatabaseSessionId();
 
 	int cap = in->getInt();

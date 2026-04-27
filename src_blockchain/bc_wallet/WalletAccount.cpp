@@ -100,7 +100,7 @@ void WalletAccount::setEncryptedSeed(HdWalletSeed *encrypted) noexcept {
 WalletAccount* WalletAccount::newAccount(const File* baseDir, const HdWalletSeed *rootSeed, int accountIndex, uint16_t zone
 		, const IWalletDataEncoder* encoder, int maxAddress) {
 	UnicodeString seg(L"");
-	seg.append(accountIndex);
+	seg.append((int64_t)accountIndex);
 	File* accountBase = baseDir->get(&seg); __STP(accountBase);
 
 	WalletAccount* account = new WalletAccount(accountBase);
@@ -122,7 +122,7 @@ WalletAccount* WalletAccount::newAccount(const File* baseDir, const HdWalletSeed
 
 WalletAccount* WalletAccount::loadAccount(const File *baseDir, int accountIndex, const IWalletDataEncoder *encoder) {
 	UnicodeString seg(L"");
-	seg.append(accountIndex);
+	seg.append((int64_t)accountIndex);
 	File* accountBase = baseDir->get(&seg); __STP(accountBase);
 
 	WalletAccount* account = new WalletAccount(accountBase);

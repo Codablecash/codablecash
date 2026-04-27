@@ -39,6 +39,8 @@ public:
 
 	void setPowManager(PoWManager* powManager) noexcept;
 
+	virtual void startNetwork(){};
+
 protected:
 	PoWManager* powManager;
 };

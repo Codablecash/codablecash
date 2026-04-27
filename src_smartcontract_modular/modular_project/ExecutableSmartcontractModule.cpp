@@ -8,6 +8,8 @@
 #include "modular_project/ExecutableSmartcontractModule.h"
 #include "modular_project/ModularConfigException.h"
 
+#include "smartcontract_instance/ExecutableModuleInstance.h"
+
 #include "json/JsonHandler.h"
 
 #include "json_object/AbstractJsonObject.h"
@@ -42,6 +44,13 @@ void ExecutableSmartcontractModule::load(const File *modulePath) {
 	ExceptionThrower<ModularConfigException>::throwExceptionIfCondition(root == nullptr, L"Config file must be json format.", __FILE__, __LINE__);
 
 	analyzeJsonObject(root);
+}
+
+AbstractExecutableModuleInstance* ExecutableSmartcontractModule::toInstance() const {
+	ExecutableModuleInstance* inst = new ExecutableModuleInstance(); __STP(inst);
+	setupInstance(inst);
+
+	return __STP_MV(inst);
 }
 
 } /* namespace codablecash */

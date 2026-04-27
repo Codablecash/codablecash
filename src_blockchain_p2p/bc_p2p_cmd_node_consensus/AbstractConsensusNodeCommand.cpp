@@ -42,6 +42,12 @@ bool AbstractConsensusNodeCommand::validateCommand(CodablecashNodeInstance *inst
 	SystemTimestamp firstTm = getFirstTimestamp();
 	SystemTimestamp tm = firstTm;
 
+	// [Consensus] firstTm must be more than now
+	SystemTimestamp tmnow;
+	if(firstTm.compareTo(&tmnow) > 0){
+		return false;
+	}
+
 	int maxLoop = this->history->size();
 	for(int i = 0; i != maxLoop; ++i){
 		NodeNetworkInfo* his = this->history->get(i);
