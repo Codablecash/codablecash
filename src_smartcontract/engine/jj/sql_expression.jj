@@ -21,16 +21,21 @@ AbstractSQLExpression* sqlOrExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlAndExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t=<OR> {
 			if(exp == nullptr){
 				exp = new SQLOrExpression();
 				exp->addOperand(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 
 			exp->setPosition(t);
@@ -42,8 +47,7 @@ AbstractSQLExpression* sqlOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -52,16 +56,21 @@ AbstractSQLExpression* sqlAndExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlNotExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t=<SQLAND> {
 			if(exp == nullptr){
 				exp = new SQLAndExpression();
 				exp->addOperand(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 
 			exp->setPosition(t);
@@ -73,8 +82,7 @@ AbstractSQLExpression* sqlAndExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -83,18 +91,20 @@ AbstractSQLExpression* sqlNotExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	[
 		t=<SQL_NOT> {
 			exp = new SQLNotExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=sqlLikeExpression() {
 		if(left == nullptr){
-			left = right;
+			left = right;  __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -103,8 +113,7 @@ AbstractSQLExpression* sqlNotExpression() : {
 	}
 	
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -113,9 +122,14 @@ AbstractSQLExpression* sqlLikeExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	SQLLiteral* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlIsNullExpression()
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		t=<LIKE> {
 			exp = new SQLLikeExpression();
@@ -123,7 +137,7 @@ AbstractSQLExpression* sqlLikeExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		right=sqlLiteral() {
@@ -143,8 +157,7 @@ AbstractSQLExpression* sqlLikeExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}	
 }
 
@@ -153,9 +166,14 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlBetweenExpression()
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		t=<IS> {
 			exp = new SQLIsNullExpression();
@@ -163,7 +181,7 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		[
@@ -179,8 +197,7 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -189,9 +206,14 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlInExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		t=<BETWEEN> {
 			exp = new SQLBetweenExpression();
@@ -199,7 +221,7 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		right=sqlAdditiveExpression() {
@@ -218,8 +240,7 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -228,10 +249,15 @@ AbstractSQLExpression* sqlInExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	SQLExpressionList* list = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	
 	left=sqlRelationalExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		t=<IN> {
 			exp = new SQLInExpression();
@@ -239,7 +265,7 @@ AbstractSQLExpression* sqlInExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		t="(" {
 			exp->setPosition(t);
@@ -255,8 +281,7 @@ AbstractSQLExpression* sqlInExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -265,9 +290,14 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlEqualityExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="<" {
@@ -277,7 +307,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t=">" {
@@ -287,7 +317,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="<=" {
@@ -297,7 +327,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t=">=" {
@@ -307,7 +337,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		)
 		right=sqlEqualityExpression() {
@@ -317,8 +347,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -327,9 +356,14 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlAdditiveExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="=" {
@@ -339,7 +373,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="<>" {
@@ -349,7 +383,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="!=" {
@@ -359,7 +393,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		)
 		right=sqlAdditiveExpression() {
@@ -369,8 +403,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -379,9 +412,14 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlMultiplicativeExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="+" {
@@ -389,7 +427,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 					exp = new SQLAdditiveExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SQLAdditiveExpression::ADD);
 				exp->setPosition(t);
@@ -400,7 +438,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 					exp = new SQLAdditiveExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SQLAdditiveExpression::SUB);
 				exp->setPosition(t);
@@ -413,8 +451,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -423,9 +460,14 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlPrimitiveExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="*" {
@@ -433,7 +475,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::MUL);
 				exp->setPosition(t);
@@ -444,7 +486,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::DIV);
 				exp->setPosition(t);
@@ -455,7 +497,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::MOD);
 				exp->setPosition(t);
@@ -468,8 +510,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -494,7 +535,7 @@ AbstractSQLExpression* sqlPrimitiveExpression() : {
 }
 
 SQLNullLiteral* sqlNullLiteral() : {
-	SQLNullLiteral* exp = new SQLNullLiteral();
+	SQLNullLiteral* exp = new SQLNullLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -502,13 +543,12 @@ SQLNullLiteral* sqlNullLiteral() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLWildCard* sqlWildCard() : {
-	SQLWildCard* exp = new SQLWildCard();
+	SQLWildCard* exp = new SQLWildCard(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -516,13 +556,12 @@ SQLWildCard* sqlWildCard() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLFunctionCall* sqlFunctionCall() : {
-	SQLFunctionCall* exp = new SQLFunctionCall();
+	SQLFunctionCall* exp = new SQLFunctionCall(); __STP(exp);
 	Token* t = nullptr;
 	VariableIdentifier* name = nullptr;
 }
@@ -542,8 +581,7 @@ SQLFunctionCall* sqlFunctionCall() : {
 	}
 	
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -573,13 +611,17 @@ void sqlFunctionCallArguments(SQLFunctionCall* exp) : {
 
 AbstractSQLExpression* sqlDistinctArgument() : {
 	SQLDistinctArgument* dist = nullptr;
+	StackRelease<SQLDistinctArgument> __dist;
+	
 	AbstractSQLExpression* ex = nullptr;
+	StackRelease<AbstractSQLExpression> __ex;
+	
 	Token* t = nullptr;
 }
 {
 	[LOOKAHEAD(2)
 		t=<DISTINCT> {
-			dist = new SQLDistinctArgument();
+			dist = new SQLDistinctArgument(); __dist.reset(dist);
 			dist->setPosition(t);
 		}
 	]
@@ -587,17 +629,20 @@ AbstractSQLExpression* sqlDistinctArgument() : {
 		if(t != nullptr){
 			dist->setPosition(ex);
 			dist->setExpression(ex);
-			ex = dist;
+			ex = __dist.move();  __ex.reset(ex);
+		}
+		else{
+			__ex.reset(ex);
 		}
 	}
 	{
-		return ex;
+		return __ex.move();
 	}
 	
 }
 
 SQLPlaceHolder* sqlPlaceHolder() : {
-	SQLPlaceHolder* exp = new SQLPlaceHolder();
+	SQLPlaceHolder* exp = new SQLPlaceHolder(); __STP(exp);
 	Token* t = nullptr;
 	AbstractExpression* ex = nullptr;
 }
@@ -626,14 +671,13 @@ SQLPlaceHolder* sqlPlaceHolder() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 
 SQLParenthesisExpression* sqlParenthesisExpression() : {
-	SQLParenthesisExpression* exp = new SQLParenthesisExpression();
+	SQLParenthesisExpression* exp = new SQLParenthesisExpression(); __STP(exp);
 	Token* t = nullptr;
 	AbstractSQLExpression* ex = nullptr;
 }
@@ -651,13 +695,12 @@ SQLParenthesisExpression* sqlParenthesisExpression() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLLiteral* sqlLiteral() : {
-	SQLLiteral* exp = new SQLLiteral();
+	SQLLiteral* exp = new SQLLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -679,13 +722,12 @@ SQLLiteral* sqlLiteral() : {
 	)
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLBooleanLiteral* sqlBooleanLiteral() : {
-	SQLBooleanLiteral* exp = new SQLBooleanLiteral();
+	SQLBooleanLiteral* exp = new SQLBooleanLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -702,13 +744,12 @@ SQLBooleanLiteral* sqlBooleanLiteral() : {
 	)
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLColumnIdentifier* sqlColumnIdentifier() : {
-	SQLColumnIdentifier* exp = new SQLColumnIdentifier();
+	SQLColumnIdentifier* exp = new SQLColumnIdentifier(); __STP(exp);
 	Token* t = nullptr;
 	Token* t1 = nullptr;
 	Token* t2 = nullptr;
@@ -749,8 +790,7 @@ SQLColumnIdentifier* sqlColumnIdentifier() : {
 		}
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -779,7 +819,7 @@ Token* sqlIdentifierName() : {
 */
 
 SQLExpressionList* sqlExpressionList() : {
-	SQLExpressionList* exp = new SQLExpressionList();
+	SQLExpressionList* exp = new SQLExpressionList(); __STP(exp);
 	Token* t = nullptr;
 	AbstractSQLExpression* ex = nullptr;
 }
@@ -800,8 +840,7 @@ SQLExpressionList* sqlExpressionList() : {
 	)*
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}	
 }
 

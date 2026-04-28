@@ -82,8 +82,8 @@ TEST(TestPendingRequestProcessorGroup, case01){
 	File* dirNode02 = projectFolder.get(L"node02"); __STP(dirNode02);
 
 	DebugDefaultLogger logger;
-	logger.setSection(DebugDefaultLogger::DEBUG_NODE_TRANSFER_RESPONSE);
-	logger.setSection(DebugDefaultLogger::DEBUG_TMP_INFO);
+	logger.addSection(DebugDefaultLogger::DEBUG_NODE_TRANSFER_RESPONSE);
+	logger.addSection(DebugDefaultLogger::DEBUG_TMP_INFO);
 
 	CodablecashSystemParam param;
 	DebugCodablecashSystemParamSetup::setupConfig02(param);
@@ -221,8 +221,8 @@ TEST(TestPendingRequestProcessorGroup, case01_02){
 	File* dirNode02 = projectFolder.get(L"node02"); __STP(dirNode02);
 
 	DebugDefaultLogger logger;
-	logger.setSection(DebugDefaultLogger::DEBUG_NODE_TRANSFER_RESPONSE);
-	logger.setSection(DebugDefaultLogger::DEBUG_TMP_INFO);
+	logger.addSection(DebugDefaultLogger::DEBUG_NODE_TRANSFER_RESPONSE);
+	logger.addSection(DebugDefaultLogger::DEBUG_TMP_INFO);
 
 	CodablecashSystemParam param;
 	DebugCodablecashSystemParamSetup::setupConfig02(param);

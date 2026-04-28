@@ -7,20 +7,33 @@ AbstractStatement* statement() : {
 	AbstractStatement* stmt = nullptr;
 }
 {
-	(
-		LOOKAHEAD(3) stmt=statementBlock() |
-		LOOKAHEAD(4) stmt=substitutionStatement() |
-		stmt=variableDeclareStatement() |
-		//stmt=expressionStatement() |
-		stmt=ctrlStatement() |
-		stmt=blankStatement() |
-		stmt=ddlStatement() |
-		stmt=sqlDmlStatement()
-	)
-	{}
-	{
-		return stmt;
+	try {
+		(
+			LOOKAHEAD(3) stmt=statementBlock() |
+			LOOKAHEAD(4) stmt=substitutionStatement() |
+			stmt=variableDeclareStatement() |
+			//stmt=expressionStatement() |
+			stmt=ctrlStatement() |
+			stmt=blankStatement() |
+			stmt=ddlStatement() |
+			stmt=sqlDmlStatement()
+		)
+		{}
+		{
+			return stmt;
+		}
 	}
+	catch(ParseException* e){
+		std::exception_ptr p = std::current_exception();
+		try{
+			std::rethrow_exception(p);
+		}catch(ParseException* e){
+			if(e != nullptr){
+				delete e;
+			}
+		}
+	}
+	
 }
 
 VariableDeclareStatement* variableDeclareStatement() : {
@@ -33,14 +46,13 @@ VariableDeclareStatement* variableDeclareStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
 		return stmt;
 	}
 }
 
 
 VariableDeclareStatement* __variableDeclareStatement() : {
-	VariableDeclareStatement* stmt = new VariableDeclareStatement();
+	VariableDeclareStatement* stmt = new VariableDeclareStatement(); __STP(stmt);
 	AbstractType* type = nullptr;
 	VariableIdentifier* valId = nullptr;
 	AbstractExpression* exp = nullptr;
@@ -68,8 +80,7 @@ VariableDeclareStatement* __variableDeclareStatement() : {
 	]
 	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
@@ -90,19 +101,25 @@ AbstractStatement* substitutionStatement() : {
 
 AbstractStatement* __substitutionStatement() : {
 	AbstractStatement* stmt = nullptr;
+	StackRelease<AbstractStatement> __stmt;
 	
 	AbstractExpression* first = nullptr;
+	StackRelease<AbstractExpression> __first;
+	
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
 {
 	first=expression()
+	{
+		__first.reset(first);
+	}
 	[
 		t="="		
 		exp=expression() {
 			SubstitutionStatement* sstmt = new SubstitutionStatement();
-			stmt = sstmt;
-			sstmt->setVariableId(first);
+			stmt = sstmt; __stmt.reset(stmt);
+			sstmt->setVariableId(__first.move());
 			sstmt->setPosition(first);
 			
 			sstmt->setExpression(exp);
@@ -112,19 +129,18 @@ AbstractStatement* __substitutionStatement() : {
 	{
 		if(stmt == nullptr){
 		 	ExpressionStatement* exstmt = new ExpressionStatement();
-			stmt = exstmt;
-			exstmt->setExpression(first);
+			stmt = exstmt; __stmt.reset(stmt);
+			exstmt->setExpression(__first.move());
 			exstmt->setPosition(first);
 		}
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __stmt.move();
 	}
 }
 
 BlankStatement* blankStatement() : {
-	BlankStatement* stmt = new BlankStatement();
+	BlankStatement* stmt = new BlankStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -134,13 +150,12 @@ BlankStatement* blankStatement() : {
 	}
 	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 StatementBlock* statementBlock() : {
-	StatementBlock* block = new StatementBlock();
+	StatementBlock* block = new StatementBlock(); __STP(block);
 	AbstractStatement* stmt = nullptr;
 	Token* t = nullptr;
 }
@@ -160,14 +175,13 @@ StatementBlock* statementBlock() : {
 		block->setPosition(t);
 	}
 	{
-	    __ONERROR(block);
-		return block;
+		return __STP_MV(block);
 	}
 }
 
 /*
 ExpressionStatement* expressionStatement() : {
-	ExpressionStatement* stmt = new ExpressionStatement();
+	ExpressionStatement* stmt = new ExpressionStatement(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractExpression* exp = nullptr;
 }
@@ -180,8 +194,7 @@ ExpressionStatement* expressionStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 */

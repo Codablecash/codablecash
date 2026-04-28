@@ -84,7 +84,7 @@ TEST(TestP2pCommandGroup, case01){
 	DummyClientListner listner;
 	{
 		DebugDefaultLogger* logger = driver.getLogger();
-		logger->setSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
+		logger->addSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
 
 		UnicodeString strLocal(L"::1");
 		P2pClient* client = ClientConnectUtils::connect(&strLocal, port, 0, logger); __STP(client);

@@ -25,7 +25,7 @@ AbstractStatement* ctrlStatement() : {
 }
 
 TryStatement* tryStatement() : {
-	TryStatement* stmt = new TryStatement();
+	TryStatement* stmt = new TryStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 	
@@ -56,13 +56,12 @@ TryStatement* tryStatement() : {
 	]
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 FinallyStatement* finallyStatement() : {
-	FinallyStatement* stmt = new FinallyStatement();
+	FinallyStatement* stmt = new FinallyStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 }
@@ -75,13 +74,12 @@ FinallyStatement* finallyStatement() : {
 		stmt->setPosition(block);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 CatchStatement* catchStatement() : {
-	CatchStatement* stmt = new CatchStatement();
+	CatchStatement* stmt = new CatchStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 	
@@ -110,13 +108,12 @@ CatchStatement* catchStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ThrowStatement* throwStatement() : {
-	ThrowStatement* stmt = new ThrowStatement();
+	ThrowStatement* stmt = new ThrowStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
@@ -133,13 +130,12 @@ ThrowStatement* throwStatement() : {
 		stmt->setPosition(t);
 	}	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ForStatement* forStatement() : {
-	ForStatement* stmt = new ForStatement();
+	ForStatement* stmt = new ForStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -182,8 +178,7 @@ ForStatement* forStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -197,13 +192,12 @@ AbstractStatement* forInnerStatement() : {
 		stmt=__variableDeclareStatement()
 	)
 	{
-		 __ONERROR(stmt);
 		return stmt;
 	}
 }
 
 DoWhileStatement* doWhileStatement() : {
-	DoWhileStatement* stmt = new DoWhileStatement();
+	DoWhileStatement* stmt = new DoWhileStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -232,13 +226,12 @@ DoWhileStatement* doWhileStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 WhileStatement* whileStatement() : {
-	WhileStatement* stmt = new WhileStatement();
+	WhileStatement* stmt = new WhileStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -265,13 +258,12 @@ WhileStatement* whileStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 ReturnStatement* returnStatement() : {
-	ReturnStatement* stmt = new ReturnStatement();
+	ReturnStatement* stmt = new ReturnStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
@@ -289,13 +281,12 @@ ReturnStatement* returnStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ContinueStatement* continueStatement() : {
-	ContinueStatement* stmt = new ContinueStatement();
+	ContinueStatement* stmt = new ContinueStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -306,14 +297,13 @@ ContinueStatement* continueStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 
 BreakStatement* breakStatement() : {
-	BreakStatement* stmt = new BreakStatement();
+	BreakStatement* stmt = new BreakStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -324,13 +314,12 @@ BreakStatement* breakStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 IfStatement* ifStatement() : {
-	IfStatement* ifstmt = new IfStatement();
+	IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
 	AbstractExpression* exp;
 	AbstractStatement* stmt;
 	Token* t = nullptr;
@@ -370,13 +359,12 @@ IfStatement* ifStatement() : {
 	]
 	
 	{
-		 __ONERROR(ifstmt);
-		return ifstmt;
+		return __STP_MV(ifstmt);
 	}
 }
 
 IfStatement* elseifStatement() : {
-	IfStatement* ifstmt = new IfStatement();
+	IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
 	AbstractExpression* exp;
 	AbstractStatement* stmt;
 	Token* t = nullptr;
@@ -398,8 +386,7 @@ IfStatement* elseifStatement() : {
 		ifstmt->setPosition(stmt);
 	}
 	{
-		 __ONERROR(ifstmt);
-		return ifstmt;
+		return __STP_MV(ifstmt);
 	}
 }
 

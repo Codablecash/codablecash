@@ -51,7 +51,7 @@ void DebugDefaultLogger::log(const UnicodeString *message) noexcept {
 	delete [] str;
 }
 
-void DebugDefaultLogger::setSection(int section) noexcept {
+void DebugDefaultLogger::addSection(int section) noexcept {
 	this->sections.addElement(section);
 }
 

@@ -16,7 +16,6 @@ AbstractType* typeDeclare() : {
 	{
 	}
 	{
-		__ONERROR(dec);
 		return dec;
 	}
 }
@@ -47,13 +46,12 @@ AbstractType* typeBody() : {
 		dec=objectType()
 	)
 	{
-		__ONERROR(dec);
 		return dec;
 	}
 }
 
 ObjectType* objectType() : {
-	ObjectType* dec = new ObjectType();
+	ObjectType* dec = new ObjectType(); __STP(dec);
 	PackageNameDeclare* packageName = nullptr;
 	Token* t=nullptr;
 	GenericsObjectType* geneticsObject = nullptr;
@@ -106,13 +104,12 @@ ObjectType* objectType() : {
 	 
 	 
 	 {
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	 }
 }
 
 BoolType* boolType() : {
-	BoolType* dec = new BoolType();
+	BoolType* dec = new BoolType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -120,13 +117,12 @@ BoolType* boolType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 ByteType* byteType() : {
-	ByteType* dec = new ByteType();
+	ByteType* dec = new ByteType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -134,13 +130,12 @@ ByteType* byteType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 CharType* charType() : {
-	CharType* dec = new CharType();
+	CharType* dec = new CharType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -148,13 +143,12 @@ CharType* charType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 ShortType* shortType() : {
-	ShortType* dec = new ShortType();
+	ShortType* dec = new ShortType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -162,13 +156,12 @@ ShortType* shortType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 IntType* intType() : {
-	IntType* dec = new IntType();
+	IntType* dec = new IntType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -176,13 +169,12 @@ IntType* intType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 LongType* longType() : {
-	LongType* dec = new LongType();
+	LongType* dec = new LongType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -190,13 +182,12 @@ LongType* longType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 StringType* stringType() : {
-	StringType* dec = new StringType();
+	StringType* dec = new StringType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -204,13 +195,12 @@ StringType* stringType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 VoidType* voidType() : {
-	VoidType* dec = new VoidType();
+	VoidType* dec = new VoidType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -218,13 +208,12 @@ VoidType* voidType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 DomType* domType() : {
-	DomType* dec = new DomType();
+	DomType* dec = new DomType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -232,8 +221,7 @@ DomType* domType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 

@@ -357,7 +357,7 @@ MORE:
 
 CompilationUnit* compilationUnit() :
 {
-	CompilationUnit* unit = new CompilationUnit();
+	CompilationUnit* unit = new CompilationUnit(); __STP(unit);
 	PackageDeclare* pkg = nullptr;
 	ImportsDeclare* imports = nullptr;
 	ClassDeclare* clazz = nullptr;
@@ -381,12 +381,12 @@ CompilationUnit* compilationUnit() :
 	)+
 	<EOF>
 	{
-		return unit;
+		return __STP_MV(unit);
 	}
 }
 
 ImportsDeclare* importsDeclare() : {
-	ImportsDeclare* importsDeclare = new ImportsDeclare();
+	ImportsDeclare* importsDeclare = new ImportsDeclare(); __STP(importsDeclare);
 	ImportDeclare* dec = nullptr;
 }
 {
@@ -400,12 +400,12 @@ ImportsDeclare* importsDeclare() : {
 	}
 	{
 	    __ONERROR(importsDeclare);
-		return importsDeclare;
+		return __STP_MV(importsDeclare);
 	}
 }
 
 ImportDeclare* importDeclare() : {
-	ImportDeclare* dec = new ImportDeclare();
+	ImportDeclare* dec = new ImportDeclare(); __STP(dec);
 	Token* t = nullptr;
 }
 {
@@ -432,19 +432,19 @@ ImportDeclare* importDeclare() : {
 		dec->setPosition(t);
 	}
 	{
-	    __ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 PackageDeclare* packageDeclare() : {
 	PackageDeclare* pkg = nullptr;
+	StackRelease<PackageDeclare> __pkg;
 	PackageNameDeclare* name = nullptr;
 	Token* t = nullptr;
 }
 {
 	t="package" {
-		pkg=new PackageDeclare();
+		pkg=new PackageDeclare(); __pkg.reset(pkg);
 		pkg->setPosition(t);
 	}
 
@@ -457,19 +457,19 @@ PackageDeclare* packageDeclare() : {
 		pkg->setPosition(t);
 	}
 	{
-	    __ONERROR(pkg);
-		return pkg;
+		return __pkg.move();
 	}
 }
 
 PackageNameDeclare* packageNameDeclare() :
 {
 	PackageNameDeclare* names = nullptr;
+	StackRelease<PackageNameDeclare> __names;
 	Token* t = nullptr;
 }
 {
 	t=< IDENTIFIER > {
-	    names = new PackageNameDeclare();
+	    names = new PackageNameDeclare(); __names.reset(names);
 		names->addSegment(_STR(t));
 		names->setPosition(t);
 	}
@@ -483,8 +483,7 @@ PackageNameDeclare* packageNameDeclare() :
 	{
 	}
 	{
-	    __ONERROR(names);
-		return names;
+		return __names.move();
 	}
 
 }
@@ -492,6 +491,8 @@ PackageNameDeclare* packageNameDeclare() :
 ClassDeclare* classDeclare() :
 {
 	ClassDeclare* clazz = nullptr;
+	StackRelease<ClassDeclare> __clazz;
+	
 	GenericsClassDeclare* gclazz = nullptr;
 	GenericsParameter* param = nullptr;
 	Token* cls = nullptr;
@@ -505,7 +506,7 @@ ClassDeclare* classDeclare() :
 {
 	(
 		cls="class" {
-			clazz = new ClassDeclare();
+			clazz = new ClassDeclare(); __clazz.reset(clazz);
 		}
 		|
 		cls="interface" {
@@ -591,14 +592,13 @@ ClassDeclare* classDeclare() :
 	    clazz->setBlock(block);
 	}
 	{
-	    __ONERROR(clazz);
-		return clazz;
+		return __clazz.move();
 	}
 }
 
 ClassExtends* classExtends() :
 {
-	ClassExtends* extends = new ClassExtends();
+	ClassExtends* extends = new ClassExtends(); __STP(extends);
 	ClassName* name = nullptr;
 	Token* t = nullptr;
 }
@@ -611,13 +611,12 @@ ClassExtends* classExtends() :
 		extends->setClassName(name);
 	}
 	{
-		__ONERROR(extends);
-		return extends;
+		return __STP_MV(extends);
 	}
 }
 
 ClassImplements* classImplements() :{
-	ClassImplements*  implements = new ClassImplements();
+	ClassImplements* implements = new ClassImplements(); __STP(implements);
 	ClassName* name = nullptr;
 	Token* t = nullptr;
 }
@@ -641,14 +640,13 @@ ClassImplements* classImplements() :{
 	{}
 	
 	{
-		__ONERROR(implements);
-		return implements;
+		return __STP_MV(implements);
 	}
 }
 
 ClassName* className() :
 {
-	ClassName* name = new ClassName();
+	ClassName* name = new ClassName(); __STP(name);
 	Token* t = nullptr;
 }
 {
@@ -668,14 +666,14 @@ ClassName* className() :
 	)*
 	{}
 	{
-		__ONERROR(name);
-		return name;
+		return __STP_MV(name);
 	}
 }
 
 ClassDeclareBlock* classDeclareBlock() :
 {
 	ClassDeclareBlock* block = nullptr;
+	StackRelease<ClassDeclareBlock> __block;
 	Token* begin, *end;
 	
 	MethodDeclare* method = nullptr;
@@ -688,7 +686,7 @@ ClassDeclareBlock* classDeclareBlock() :
 }
 {
 	begin="{" {
-		block = new ClassDeclareBlock();
+		block = new ClassDeclareBlock(); __block.reset(block);
 		block->setPosition(begin);
 	}
 
@@ -738,13 +736,12 @@ ClassDeclareBlock* classDeclareBlock() :
    		block->setPosition(end);
 	}
 	{
-		__ONERROR(block);
-		return block;
+		return __block.move();
 	}
 }
 
 MethodDeclare* methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) : {
-    MethodDeclare* method = new MethodDeclare();
+    MethodDeclare* method = new MethodDeclare(); __STP(method);
 
     method->setPosition(ctrl);
     
@@ -776,13 +773,12 @@ MethodDeclare* methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractT
 	{
 	}
 	{
-	    __ONERROR(method);
-		return method;
+		return __STP_MV(method);
 	}
 }
 
 MemberVariableDeclare* memberVariableDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) : {
-    MemberVariableDeclare* variable = new MemberVariableDeclare();
+    MemberVariableDeclare* variable = new MemberVariableDeclare(); __STP(variable);
 	Token* t = nullptr;
 	
 	variable->setPosition(ctrl);
@@ -810,14 +806,13 @@ MemberVariableDeclare* memberVariableDeclare(AccessControlDeclare* ctrl, bool _s
 	}
 	
 	{
-	    __ONERROR(variable);
-		return variable;
+		return __STP_MV(variable);
 	}
 }
 
 AccessControlDeclare* accessControlDeclare() : {
 	Token* t = nullptr;
-	AccessControlDeclare* ctrl = new AccessControlDeclare();
+	AccessControlDeclare* ctrl = new AccessControlDeclare(); __STP(ctrl);
 }
 {
     ( 
@@ -837,13 +832,12 @@ AccessControlDeclare* accessControlDeclare() : {
 		}
 	)
 	{
-	    __ONERROR(ctrl);
-		return ctrl;
+		return __STP_MV(ctrl);
 	}
 }
 
 ArgumentsListDeclare* argumentsListDeclare() : {
-    ArgumentsListDeclare* arguments = new ArgumentsListDeclare();
+    ArgumentsListDeclare* arguments = new ArgumentsListDeclare(); __STP(arguments);
 	Token* t = nullptr;
 	ArgumentDeclare* arg = nullptr;
 }
@@ -868,14 +862,13 @@ ArgumentsListDeclare* argumentsListDeclare() : {
 		arguments->setPosition(t);
 	}
 	{
-	    __ONERROR(arguments);
-		return arguments;
+		return __STP_MV(arguments);
 	}
 }
 
 
 ArgumentDeclare* argumentDeclare() : {
-	ArgumentDeclare* arg = new ArgumentDeclare();
+	ArgumentDeclare* arg = new ArgumentDeclare(); __STP(arg);
 	AbstractType* type = nullptr;
 	Token* t = nullptr;
 }
@@ -891,8 +884,7 @@ ArgumentDeclare* argumentDeclare() : {
     }
 
 	{
-	    __ONERROR(arg);
-		return arg;
+		return __STP_MV(arg);
 	}
 }
 
@@ -915,7 +907,6 @@ AbstractType* typeDeclare() : {
 	{
 	}
 	{
-		__ONERROR(dec);
 		return dec;
 	}
 }
@@ -946,13 +937,12 @@ AbstractType* typeBody() : {
 		dec=objectType()
 	)
 	{
-		__ONERROR(dec);
 		return dec;
 	}
 }
 
 ObjectType* objectType() : {
-	ObjectType* dec = new ObjectType();
+	ObjectType* dec = new ObjectType(); __STP(dec);
 	PackageNameDeclare* packageName = nullptr;
 	Token* t=nullptr;
 	GenericsObjectType* geneticsObject = nullptr;
@@ -1005,13 +995,12 @@ ObjectType* objectType() : {
 	 
 	 
 	 {
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	 }
 }
 
 BoolType* boolType() : {
-	BoolType* dec = new BoolType();
+	BoolType* dec = new BoolType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1019,13 +1008,12 @@ BoolType* boolType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 ByteType* byteType() : {
-	ByteType* dec = new ByteType();
+	ByteType* dec = new ByteType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1033,13 +1021,12 @@ ByteType* byteType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 CharType* charType() : {
-	CharType* dec = new CharType();
+	CharType* dec = new CharType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1047,13 +1034,12 @@ CharType* charType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 ShortType* shortType() : {
-	ShortType* dec = new ShortType();
+	ShortType* dec = new ShortType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1061,13 +1047,12 @@ ShortType* shortType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 IntType* intType() : {
-	IntType* dec = new IntType();
+	IntType* dec = new IntType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1075,13 +1060,12 @@ IntType* intType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 LongType* longType() : {
-	LongType* dec = new LongType();
+	LongType* dec = new LongType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1089,13 +1073,12 @@ LongType* longType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 StringType* stringType() : {
-	StringType* dec = new StringType();
+	StringType* dec = new StringType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1103,13 +1086,12 @@ StringType* stringType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 VoidType* voidType() : {
-	VoidType* dec = new VoidType();
+	VoidType* dec = new VoidType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1117,13 +1099,12 @@ VoidType* voidType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 DomType* domType() : {
-	DomType* dec = new DomType();
+	DomType* dec = new DomType(); __STP(dec);
 	Token* t=nullptr;
 }
 {
@@ -1131,8 +1112,7 @@ DomType* domType() : {
 		dec->setPositions(_P(t, t));
 	}
 	{
-		__ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
@@ -1147,20 +1127,33 @@ AbstractStatement* statement() : {
 	AbstractStatement* stmt = nullptr;
 }
 {
-	(
-		LOOKAHEAD(3) stmt=statementBlock() |
-		LOOKAHEAD(4) stmt=substitutionStatement() |
-		stmt=variableDeclareStatement() |
-		//stmt=expressionStatement() |
-		stmt=ctrlStatement() |
-		stmt=blankStatement() |
-		stmt=ddlStatement() |
-		stmt=sqlDmlStatement()
-	)
-	{}
-	{
-		return stmt;
+	try {
+		(
+			LOOKAHEAD(3) stmt=statementBlock() |
+			LOOKAHEAD(4) stmt=substitutionStatement() |
+			stmt=variableDeclareStatement() |
+			//stmt=expressionStatement() |
+			stmt=ctrlStatement() |
+			stmt=blankStatement() |
+			stmt=ddlStatement() |
+			stmt=sqlDmlStatement()
+		)
+		{}
+		{
+			return stmt;
+		}
 	}
+	catch(ParseException* e){
+		std::exception_ptr p = std::current_exception();
+		try{
+			std::rethrow_exception(p);
+		}catch(ParseException* e){
+			if(e != nullptr){
+				delete e;
+			}
+		}
+	}
+	
 }
 
 VariableDeclareStatement* variableDeclareStatement() : {
@@ -1173,14 +1166,13 @@ VariableDeclareStatement* variableDeclareStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
 		return stmt;
 	}
 }
 
 
 VariableDeclareStatement* __variableDeclareStatement() : {
-	VariableDeclareStatement* stmt = new VariableDeclareStatement();
+	VariableDeclareStatement* stmt = new VariableDeclareStatement(); __STP(stmt);
 	AbstractType* type = nullptr;
 	VariableIdentifier* valId = nullptr;
 	AbstractExpression* exp = nullptr;
@@ -1208,8 +1200,7 @@ VariableDeclareStatement* __variableDeclareStatement() : {
 	]
 	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
@@ -1230,19 +1221,25 @@ AbstractStatement* substitutionStatement() : {
 
 AbstractStatement* __substitutionStatement() : {
 	AbstractStatement* stmt = nullptr;
+	StackRelease<AbstractStatement> __stmt;
 	
 	AbstractExpression* first = nullptr;
+	StackRelease<AbstractExpression> __first;
+	
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
 {
 	first=expression()
+	{
+		__first.reset(first);
+	}
 	[
 		t="="		
 		exp=expression() {
 			SubstitutionStatement* sstmt = new SubstitutionStatement();
-			stmt = sstmt;
-			sstmt->setVariableId(first);
+			stmt = sstmt; __stmt.reset(stmt);
+			sstmt->setVariableId(__first.move());
 			sstmt->setPosition(first);
 			
 			sstmt->setExpression(exp);
@@ -1252,19 +1249,18 @@ AbstractStatement* __substitutionStatement() : {
 	{
 		if(stmt == nullptr){
 		 	ExpressionStatement* exstmt = new ExpressionStatement();
-			stmt = exstmt;
-			exstmt->setExpression(first);
+			stmt = exstmt; __stmt.reset(stmt);
+			exstmt->setExpression(__first.move());
 			exstmt->setPosition(first);
 		}
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __stmt.move();
 	}
 }
 
 BlankStatement* blankStatement() : {
-	BlankStatement* stmt = new BlankStatement();
+	BlankStatement* stmt = new BlankStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -1274,13 +1270,12 @@ BlankStatement* blankStatement() : {
 	}
 	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 StatementBlock* statementBlock() : {
-	StatementBlock* block = new StatementBlock();
+	StatementBlock* block = new StatementBlock(); __STP(block);
 	AbstractStatement* stmt = nullptr;
 	Token* t = nullptr;
 }
@@ -1300,14 +1295,13 @@ StatementBlock* statementBlock() : {
 		block->setPosition(t);
 	}
 	{
-	    __ONERROR(block);
-		return block;
+		return __STP_MV(block);
 	}
 }
 
 /*
 ExpressionStatement* expressionStatement() : {
-	ExpressionStatement* stmt = new ExpressionStatement();
+	ExpressionStatement* stmt = new ExpressionStatement(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractExpression* exp = nullptr;
 }
@@ -1320,8 +1314,7 @@ ExpressionStatement* expressionStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 */
@@ -1353,7 +1346,7 @@ AbstractStatement* ctrlStatement() : {
 }
 
 TryStatement* tryStatement() : {
-	TryStatement* stmt = new TryStatement();
+	TryStatement* stmt = new TryStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 	
@@ -1384,13 +1377,12 @@ TryStatement* tryStatement() : {
 	]
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 FinallyStatement* finallyStatement() : {
-	FinallyStatement* stmt = new FinallyStatement();
+	FinallyStatement* stmt = new FinallyStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 }
@@ -1403,13 +1395,12 @@ FinallyStatement* finallyStatement() : {
 		stmt->setPosition(block);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 CatchStatement* catchStatement() : {
-	CatchStatement* stmt = new CatchStatement();
+	CatchStatement* stmt = new CatchStatement(); __STP(stmt);
 	StatementBlock* block = nullptr;
 	Token* t = nullptr;
 	
@@ -1438,13 +1429,12 @@ CatchStatement* catchStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ThrowStatement* throwStatement() : {
-	ThrowStatement* stmt = new ThrowStatement();
+	ThrowStatement* stmt = new ThrowStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
@@ -1461,13 +1451,12 @@ ThrowStatement* throwStatement() : {
 		stmt->setPosition(t);
 	}	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ForStatement* forStatement() : {
-	ForStatement* stmt = new ForStatement();
+	ForStatement* stmt = new ForStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -1510,8 +1499,7 @@ ForStatement* forStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -1525,13 +1513,12 @@ AbstractStatement* forInnerStatement() : {
 		stmt=__variableDeclareStatement()
 	)
 	{
-		 __ONERROR(stmt);
 		return stmt;
 	}
 }
 
 DoWhileStatement* doWhileStatement() : {
-	DoWhileStatement* stmt = new DoWhileStatement();
+	DoWhileStatement* stmt = new DoWhileStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -1560,13 +1547,12 @@ DoWhileStatement* doWhileStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 WhileStatement* whileStatement() : {
-	WhileStatement* stmt = new WhileStatement();
+	WhileStatement* stmt = new WhileStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	AbstractStatement* st = nullptr;
 	Token* t = nullptr;
@@ -1593,13 +1579,12 @@ WhileStatement* whileStatement() : {
 	}
 	
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 ReturnStatement* returnStatement() : {
-	ReturnStatement* stmt = new ReturnStatement();
+	ReturnStatement* stmt = new ReturnStatement(); __STP(stmt);
 	AbstractExpression* exp = nullptr;
 	Token* t = nullptr;
 }
@@ -1617,13 +1602,12 @@ ReturnStatement* returnStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 ContinueStatement* continueStatement() : {
-	ContinueStatement* stmt = new ContinueStatement();
+	ContinueStatement* stmt = new ContinueStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -1634,14 +1618,13 @@ ContinueStatement* continueStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 
 BreakStatement* breakStatement() : {
-	BreakStatement* stmt = new BreakStatement();
+	BreakStatement* stmt = new BreakStatement(); __STP(stmt);
 	Token* t = nullptr;
 }
 {
@@ -1652,13 +1635,12 @@ BreakStatement* breakStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		 __ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 IfStatement* ifStatement() : {
-	IfStatement* ifstmt = new IfStatement();
+	IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
 	AbstractExpression* exp;
 	AbstractStatement* stmt;
 	Token* t = nullptr;
@@ -1698,13 +1680,12 @@ IfStatement* ifStatement() : {
 	]
 	
 	{
-		 __ONERROR(ifstmt);
-		return ifstmt;
+		return __STP_MV(ifstmt);
 	}
 }
 
 IfStatement* elseifStatement() : {
-	IfStatement* ifstmt = new IfStatement();
+	IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
 	AbstractExpression* exp;
 	AbstractStatement* stmt;
 	Token* t = nullptr;
@@ -1726,8 +1707,7 @@ IfStatement* elseifStatement() : {
 		ifstmt->setPosition(stmt);
 	}
 	{
-		 __ONERROR(ifstmt);
-		return ifstmt;
+		return __STP_MV(ifstmt);
 	}
 }
 
@@ -1755,9 +1735,15 @@ AbstractExpression* conditionalOrExpression() : {
 	ConditionalOrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=conditionalAndExpression()
+	{
+		__left.reset(left);
+	}
+	
 	(
 
 		t="||" {
@@ -1765,7 +1751,7 @@ AbstractExpression* conditionalOrExpression() : {
 				exp = new ConditionalOrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(exp);
 			}
 			
 			exp->setPosition(t);
@@ -1778,8 +1764,7 @@ AbstractExpression* conditionalOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1788,9 +1773,14 @@ AbstractExpression* conditionalAndExpression() : {
 	ConditionalAndExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=orExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="&&" {
@@ -1798,7 +1788,7 @@ AbstractExpression* conditionalAndExpression() : {
 				exp = new ConditionalAndExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -1811,8 +1801,7 @@ AbstractExpression* conditionalAndExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1821,9 +1810,14 @@ AbstractExpression* orExpression() : {
 	OrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=exclusiveOrExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="|" {
@@ -1831,7 +1825,7 @@ AbstractExpression* orExpression() : {
 				exp = new OrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -1844,8 +1838,7 @@ AbstractExpression* orExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1854,9 +1847,14 @@ AbstractExpression* exclusiveOrExpression() : {
 	ExclusiveOrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=andExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="^" {
@@ -1864,7 +1862,7 @@ AbstractExpression* exclusiveOrExpression() : {
 				exp = new ExclusiveOrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -1877,8 +1875,7 @@ AbstractExpression* exclusiveOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1887,9 +1884,14 @@ AbstractExpression* andExpression() : {
 	AndExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=equalityExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="&" {
@@ -1897,7 +1899,7 @@ AbstractExpression* andExpression() : {
 				exp = new AndExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -1910,8 +1912,7 @@ AbstractExpression* andExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1920,9 +1921,14 @@ AbstractExpression* equalityExpression() : {
 	EqualityExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=relationalExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="==" {
@@ -1939,7 +1945,7 @@ AbstractExpression* equalityExpression() : {
 				exp = new EqualityExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				exp->setPosition(t);
 				exp->setOp(EqualityExpression::NOT_EQ);
@@ -1953,8 +1959,7 @@ AbstractExpression* equalityExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -1964,17 +1969,21 @@ AbstractExpression* relationalExpression() : {
 	RelationalExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=shiftExpression()
-	
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t=">" {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				
 				exp->setPosition(t);
@@ -1985,7 +1994,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 				
 				exp->setPosition(t);
 				exp->setOp(RelationalExpression::GT_EQ);
@@ -1995,7 +2004,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				
 				exp->setPosition(t);
@@ -2006,7 +2015,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 				
 				exp->setPosition(t);
 				exp->setOp(RelationalExpression::LT_EQ);
@@ -2020,8 +2029,7 @@ AbstractExpression* relationalExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2030,9 +2038,14 @@ AbstractExpression* shiftExpression() : {
 	ShiftExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=additiveExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="<<" {
@@ -2040,7 +2053,7 @@ AbstractExpression* shiftExpression() : {
 					exp = new ShiftExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -2052,7 +2065,7 @@ AbstractExpression* shiftExpression() : {
 					exp = new ShiftExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -2067,8 +2080,7 @@ AbstractExpression* shiftExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2077,9 +2089,14 @@ AbstractExpression* additiveExpression() : {
 	AddExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=multiplicativeExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		(
 			t="+" {
@@ -2087,7 +2104,7 @@ AbstractExpression* additiveExpression() : {
 					exp = new AddExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -2099,7 +2116,7 @@ AbstractExpression* additiveExpression() : {
 					exp = new AddExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -2114,8 +2131,7 @@ AbstractExpression* additiveExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2124,9 +2140,14 @@ AbstractExpression* multiplicativeExpression() : {
 	MultiplicativeExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=negateExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="*" {
@@ -2134,7 +2155,7 @@ AbstractExpression* multiplicativeExpression() : {
 					exp = new MultiplicativeExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(MultiplicativeExpression::MUL);
 				exp->setPosition(t);
@@ -2156,7 +2177,7 @@ AbstractExpression* multiplicativeExpression() : {
 					exp = new MultiplicativeExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(MultiplicativeExpression::MOD);
 				exp->setPosition(t);
@@ -2170,8 +2191,7 @@ AbstractExpression* multiplicativeExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2180,18 +2200,20 @@ AbstractExpression* negateExpression() :{
 	NegateExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="-" {
 			exp = new NegateExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=postIncrementExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -2199,8 +2221,7 @@ AbstractExpression* negateExpression() :{
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2208,10 +2229,14 @@ AbstractExpression* postIncrementExpression() : {
 	Token* t = nullptr;
 	PostIncrementExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=preIncrementExpression()
-	
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		(
 			t="--" {
@@ -2220,7 +2245,7 @@ AbstractExpression* postIncrementExpression() : {
 				exp->setOpe(PostIncrementExpression::MINUS);
 				exp->setPosition(left);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="++" {
@@ -2229,14 +2254,13 @@ AbstractExpression* postIncrementExpression() : {
 				exp->setOpe(PostIncrementExpression::PLUS);
 				exp->setPosition(left);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}			
 		)
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 	
 }
@@ -2246,6 +2270,8 @@ AbstractExpression* preIncrementExpression() : {
 	PreIncrementExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
@@ -2254,20 +2280,20 @@ AbstractExpression* preIncrementExpression() : {
 				exp = new PreIncrementExpression();
 				exp->setOpe(PreIncrementExpression::MINUS);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="++" {
 				exp = new PreIncrementExpression();
 				exp->setOpe(PreIncrementExpression::PLUS);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}			
 		)
 	]
 	right=bitReverseExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -2275,8 +2301,7 @@ AbstractExpression* preIncrementExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2285,18 +2310,20 @@ AbstractExpression* bitReverseExpression() : {
 	BitReverseExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="~" {
 			exp = new BitReverseExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=notExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -2304,8 +2331,7 @@ AbstractExpression* bitReverseExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2314,18 +2340,20 @@ AbstractExpression* notExpression() : {
 	NotExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="!" {
 			exp = new NotExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=castExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -2333,8 +2361,7 @@ AbstractExpression* notExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2344,6 +2371,8 @@ AbstractExpression* castExpression() : {
 	AbstractType* type = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	(LOOKAHEAD(3)
@@ -2351,7 +2380,7 @@ AbstractExpression* castExpression() : {
 			t="(" {
 				exp = new CastExpression();
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			type=typeDeclare() {
@@ -2370,14 +2399,13 @@ AbstractExpression* castExpression() : {
 		|
 		(
 			right=memberReferenceExpression() {
-				left = right;
+				left = right; __left.reset(left);
 			}
 		)
 	)
 	
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2386,16 +2414,21 @@ AbstractExpression* memberReferenceExpression() :{
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
-	left=arrayReferenceExpression() 
+	left=arrayReferenceExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		"." right=arrayReferenceExpression() {
 			if(exp == nullptr){
 				exp = new MemberReferenceExpression();
 				exp->addExp(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->addExp(right);
@@ -2405,8 +2438,7 @@ AbstractExpression* memberReferenceExpression() :{
 	{
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 	
 }
@@ -2416,16 +2448,21 @@ AbstractExpression* arrayReferenceExpression() : {
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
-	left=functionCallExpression() 
+	left=functionCallExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t="[" {
 			if(exp == nullptr){
 				exp = new ArrayReferenceExpression();
 				exp->setExp(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		}
 		right=expression()
@@ -2436,8 +2473,7 @@ AbstractExpression* arrayReferenceExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2446,9 +2482,14 @@ AbstractExpression* functionCallExpression() : {
 	FunctionCallExpression* exp = nullptr;
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=primitive()
+	{
+		__left.reset(left);
+	}
 	
 	[LOOKAHEAD(2)
 		t="(" {
@@ -2457,7 +2498,7 @@ AbstractExpression* functionCallExpression() : {
 			exp->setPosition(left);
 			exp->setPosition(t);
 			
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		functionCallExpressionArg(exp)		
@@ -2468,8 +2509,7 @@ AbstractExpression* functionCallExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -2523,10 +2563,12 @@ AllocationExpression* allocationExpression() : {
 	Token* t = nullptr;
 	
 	AbstractType* type = nullptr;
+	
+	StackRelease<AllocationExpression> __exp;
 }
 {
 	t="new" {
-		exp = new AllocationExpression();
+		exp = new AllocationExpression(); __exp.reset(exp);
 		exp->setPosition(t);
 	}
 	
@@ -2549,15 +2591,14 @@ AllocationExpression* allocationExpression() : {
 		)
 	)
 
-	{	
-		 __ONERROR(exp);
-		return exp;
+	{
+		return __exp.move();
 	}
 }
 
 
 ConstructorArray* constructorArray(AbstractType* type) : {
-	ConstructorArray* exp = new ConstructorArray();
+	ConstructorArray* exp = new ConstructorArray(); __STP(exp);
 	Token* t = nullptr;
 	AbstractExpression* dim = nullptr;
 	
@@ -2583,13 +2624,12 @@ ConstructorArray* constructorArray(AbstractType* type) : {
 	
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 ConstructorCall* constructorCallExpression(AbstractType* type) : {
-	ConstructorCall* exp = new ConstructorCall();
+	ConstructorCall* exp = new ConstructorCall(); __STP(exp);
 	Token* t = nullptr;
 
 	exp->setName(type);
@@ -2606,8 +2646,7 @@ ConstructorCall* constructorCallExpression(AbstractType* type) : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -2636,7 +2675,7 @@ void constructorCallExpressionArg(ConstructorCall* exp) : {
 }
 
 ParenthesisExpression* parenthesisExpression() : {
-	ParenthesisExpression* exp = new ParenthesisExpression();
+	ParenthesisExpression* exp = new ParenthesisExpression(); __STP(exp);
 	AbstractExpression* e = nullptr;
 	Token* t = nullptr;
 }
@@ -2654,14 +2693,13 @@ ParenthesisExpression* parenthesisExpression() : {
 		exp->setPosition(t);
 	}
 	{
-		 __ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 
 VariableIdentifier* variableIdentifier() : {
-	VariableIdentifier* valId = new VariableIdentifier();
+	VariableIdentifier* valId = new VariableIdentifier(); __STP(valId);
 	Token* t = nullptr;
 }
 {
@@ -2669,8 +2707,7 @@ VariableIdentifier* variableIdentifier() : {
 		valId->setName(_STR(t));
 	}
 	{
-		 __ONERROR(valId);
-		return valId;
+		return __STP_MV(valId);
 	}
 }
 
@@ -2712,7 +2749,7 @@ AbstractExpression* literal() : {
 
 NullLiteral* nullLiteral() :
 {
-	NullLiteral* lit = new NullLiteral();
+	NullLiteral* lit = new NullLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -2720,13 +2757,12 @@ NullLiteral* nullLiteral() :
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 NumberLiteral* numberLiteral() : {
-	NumberLiteral* lit = new NumberLiteral();
+	NumberLiteral* lit = new NumberLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -2736,14 +2772,13 @@ NumberLiteral* numberLiteral() : {
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 
 BooleanLiteral* booleanLiteral() : {
-	BooleanLiteral* lit = new BooleanLiteral();
+	BooleanLiteral* lit = new BooleanLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -2760,14 +2795,13 @@ BooleanLiteral* booleanLiteral() : {
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 LiteralExpression* literalExpression() :
 {
-	LiteralExpression* lit = new LiteralExpression();
+	LiteralExpression* lit = new LiteralExpression(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -2783,8 +2817,7 @@ LiteralExpression* literalExpression() :
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
@@ -2810,7 +2843,7 @@ AbstractSQLStatement* ddlStatement() : {
 }
 
 AlterTableStatement* alterTableStatement() : {
-	AlterTableStatement* stmt = new AlterTableStatement();
+	AlterTableStatement* stmt = new AlterTableStatement(); __STP(stmt);
 	TableIdentifier* tableId = nullptr;
 	AbstractAlterDdlCommand* cmd = nullptr;
 	Token* t = null;
@@ -2838,8 +2871,7 @@ AlterTableStatement* alterTableStatement() : {
 		stmt->setPosition(t);
 	}	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -2857,7 +2889,6 @@ AbstractAlterDdlCommand* alterCommands() : {
 		cmd=alterRenameCommands()
 	)
 	{
-		__ONERROR(cmd);
 		return cmd;
 	}
 }
@@ -2874,13 +2905,12 @@ AbstractAlterDdlCommand* alterRenameCommands() : {
 		cmd=alterRenameTableCommand(t)
 	)
 	{
-		__ONERROR(cmd);
 		return cmd;
 	}
 }
 
 AlterRenameTableCommand* alterRenameTableCommand(Token* t) : {
-	AlterRenameTableCommand* cmd = new AlterRenameTableCommand();
+	AlterRenameTableCommand* cmd = new AlterRenameTableCommand(); __STP(cmd);
 	cmd->setPosition(t);
 	
 	TableIdentifier* tableId = nullptr;
@@ -2894,13 +2924,12 @@ AlterRenameTableCommand* alterRenameTableCommand(Token* t) : {
 		cmd->setNewName(tableId);
 	}
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterRenameColumnCommand* alterRenameColumnCommand(Token* t) : {
-	AlterRenameColumnCommand* cmd = new AlterRenameColumnCommand();
+	AlterRenameColumnCommand* cmd = new AlterRenameColumnCommand(); __STP(cmd);
 	cmd->setPosition(t);
 }
 {
@@ -2919,13 +2948,12 @@ AlterRenameColumnCommand* alterRenameColumnCommand(Token* t) : {
 	}
 	
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterModifyCommand* alterModifyCommand() : {
-	AlterModifyCommand* cmd = new AlterModifyCommand();
+	AlterModifyCommand* cmd = new AlterModifyCommand(); __STP(cmd);
 	DdlColumnDescriptor* desc = nullptr;
 	Token* t = nullptr;
 }
@@ -2938,8 +2966,7 @@ AlterModifyCommand* alterModifyCommand() : {
 		cmd->setColumnDescriptor(desc);
 	}
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
@@ -2957,13 +2984,12 @@ AbstractAlterDdlCommand* dropAlterCommands() : {
 		cmd=alterDropPrimaryKeyCommand(t)
 	)
 	{
-		__ONERROR(cmd);
 		return cmd;
 	}
 }
 
 AlterDropPrimaryKeyCommand* alterDropPrimaryKeyCommand(Token* t) : {
-	AlterDropPrimaryKeyCommand* cmd = new AlterDropPrimaryKeyCommand();
+	AlterDropPrimaryKeyCommand* cmd = new AlterDropPrimaryKeyCommand(); __STP(cmd);
 	cmd->setPosition(t);
 }
 {
@@ -2974,13 +3000,12 @@ AlterDropPrimaryKeyCommand* alterDropPrimaryKeyCommand(Token* t) : {
 		cmd->setPosition(t);
 	}
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterDropIndexCommand* alterDropIndexCommand(Token* t) : {
-	AlterDropIndexCommand* cmd = new AlterDropIndexCommand();
+	AlterDropIndexCommand* cmd = new AlterDropIndexCommand(); __STP(cmd);
 	cmd->setPosition(t);
 }
 {
@@ -2992,13 +3017,12 @@ AlterDropIndexCommand* alterDropIndexCommand(Token* t) : {
 		cmd->setName(_STR(t));
 	}
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterDropColumnCommand* alterDropColumnCommand(Token* t) : {
-	AlterDropColumnCommand* cmd = new AlterDropColumnCommand();
+	AlterDropColumnCommand* cmd = new AlterDropColumnCommand(); __STP(cmd);
 	cmd->setPosition(t);
 }
 {
@@ -3010,8 +3034,7 @@ AlterDropColumnCommand* alterDropColumnCommand(Token* t) : {
 		cmd->setName(_STR(t));
 	}
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
@@ -3029,13 +3052,12 @@ AbstractAlterDdlCommand* addAlterCommands() : {
 		cmd=alterAddPrimaryKeyCommand(t)
 	)
 	{
-		__ONERROR(cmd);
 		return cmd;
 	}
 }
 
 AlterAddPrimaryKeyCommand* alterAddPrimaryKeyCommand(Token* t) : {
-	AlterAddPrimaryKeyCommand* cmd = new AlterAddPrimaryKeyCommand();
+	AlterAddPrimaryKeyCommand* cmd = new AlterAddPrimaryKeyCommand(); __STP(cmd);
 	
 	cmd->setPosition(t);
 }
@@ -3071,13 +3093,12 @@ AlterAddPrimaryKeyCommand* alterAddPrimaryKeyCommand(Token* t) : {
 	}
 	
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterAddColumnCommand* alterAddColumnCommand(Token* __t) : {
-	AlterAddColumnCommand* cmd = new AlterAddColumnCommand();
+	AlterAddColumnCommand* cmd = new AlterAddColumnCommand(); __STP(cmd);
 	DdlColumnDescriptor* desc = nullptr;
 	cmd->setPosition(__t);
 	
@@ -3094,13 +3115,12 @@ AlterAddColumnCommand* alterAddColumnCommand(Token* __t) : {
 	}
 	
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 AlterAddIndexCommand* alterAddIndexCommand(Token* t) : {
-	AlterAddIndexCommand* cmd = new AlterAddIndexCommand();
+	AlterAddIndexCommand* cmd = new AlterAddIndexCommand(); __STP(cmd);
 	cmd->setPosition(t);
 }
 {
@@ -3142,14 +3162,13 @@ AlterAddIndexCommand* alterAddIndexCommand(Token* t) : {
 	}
 
 	{
-		__ONERROR(cmd);
-		return cmd;
+		return __STP_MV(cmd);
 	}
 }
 
 
 CreateTableStatement* createTableStatement() : {
-	CreateTableStatement* stmt = new CreateTableStatement();
+	CreateTableStatement* stmt = new CreateTableStatement(); __STP(stmt);
 	DdlColumnDescriptor* desc = nullptr;
 	Token* t = null;
 }
@@ -3223,14 +3242,13 @@ CreateTableStatement* createTableStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 DdlColumnDescriptor* ddlColumnDescriptor() :
 {
-	DdlColumnDescriptor* desc = new DdlColumnDescriptor();
+	DdlColumnDescriptor* desc = new DdlColumnDescriptor(); __STP(desc);
 	ColumnTypeDescriptor* typeDesc = nullptr;
 	AbstractSQLExpression* val = nullptr;
 	Token* t = nullptr;
@@ -3269,14 +3287,13 @@ DdlColumnDescriptor* ddlColumnDescriptor() :
 		}		
 	]
 	{
-		__ONERROR(desc);
-		return desc;
+		return __STP_MV(desc);
 	}	
 }
 
 ColumnTypeDescriptor* columnTypeDescriptor() :
 {
-	ColumnTypeDescriptor* typeDesc = new ColumnTypeDescriptor();
+	ColumnTypeDescriptor* typeDesc = new ColumnTypeDescriptor(); __STP(typeDesc);
 	AbstractSQLExpression* val = nullptr;
 	Token* t1 = nullptr;
 	Token* t2 = nullptr;
@@ -3301,13 +3318,12 @@ ColumnTypeDescriptor* columnTypeDescriptor() :
 		}
 	]
 	{
-		__ONERROR(typeDesc);
-		return typeDesc;
+		return __STP_MV(typeDesc);
 	}	
 }
 
 DropTableStatement* dropTableStatement() : {
-	DropTableStatement* stmt = new DropTableStatement();
+	DropTableStatement* stmt = new DropTableStatement(); __STP(stmt);
 	Token* t = null;
 	TableIdentifier* tableId = nullptr;
 }
@@ -3328,8 +3344,7 @@ DropTableStatement* dropTableStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
@@ -3357,7 +3372,7 @@ AbstractSQLStatement* sqlDmlStatement() : {
 }
 
 SelectStatement* selectStatement() : {
-	SelectStatement* stmt = new SelectStatement();
+	SelectStatement* stmt = new SelectStatement(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSelectTargetList* expList = nullptr;
 	SQLFrom* from = nullptr;
@@ -3414,13 +3429,12 @@ SelectStatement* selectStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSelectTargetList* sqlSelectTargetList() : {
-	SQLSelectTargetList* stmt = new SQLSelectTargetList();
+	SQLSelectTargetList* stmt = new SQLSelectTargetList(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSelectTarget* target = nullptr;
 }
@@ -3440,13 +3454,12 @@ SQLSelectTargetList* sqlSelectTargetList() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSelectTarget* sqlSelectTarget() : {
-	SQLSelectTarget* stmt = new SQLSelectTarget();
+	SQLSelectTarget* stmt = new SQLSelectTarget(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -3470,13 +3483,12 @@ SQLSelectTarget* sqlSelectTarget() : {
 	)
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLGroupBy* sqlGroupBy() : {
-	SQLGroupBy* stmt = new SQLGroupBy();
+	SQLGroupBy* stmt = new SQLGroupBy(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnsList* columns = nullptr;
 	SQLHaving* having = nullptr;
@@ -3501,8 +3513,7 @@ SQLGroupBy* sqlGroupBy() : {
 	]
 	{}	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -3526,7 +3537,7 @@ SQLHaving* sqlHaving() : {
 }
 
 SQLOrderBy* sqlOrderBy() : {
-	SQLOrderBy* stmt = new SQLOrderBy();
+	SQLOrderBy* stmt = new SQLOrderBy(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnsList* columns = nullptr;
 }
@@ -3542,13 +3553,12 @@ SQLOrderBy* sqlOrderBy() : {
 		stmt->setPosition(columns);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLLimitOffset* sqlLimitOffset() : {
-	SQLLimitOffset* stmt = new SQLLimitOffset();
+	SQLLimitOffset* stmt = new SQLLimitOffset(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -3573,13 +3583,12 @@ SQLLimitOffset* sqlLimitOffset() : {
 	]
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 UpdateStatement* updateStatement() : {
-	UpdateStatement* stmt = new UpdateStatement();
+	UpdateStatement* stmt = new UpdateStatement(); __STP(stmt);
 	Token* t = nullptr;
 	TableIdentifier* tableId = nullptr;
 	SQLSet* set = nullptr;
@@ -3608,13 +3617,12 @@ UpdateStatement* updateStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSet* sqlSet() : {
-	SQLSet* stmt = new SQLSet();
+	SQLSet* stmt = new SQLSet(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSetPair* pair = nullptr;
 }
@@ -3637,13 +3645,12 @@ SQLSet* sqlSet() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSetPair* sqlSetPair() : {
-	SQLSetPair* stmt = new SQLSetPair();
+	SQLSetPair* stmt = new SQLSetPair(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnIdentifier* colId = nullptr;
 	AbstractSQLExpression* ex = nullptr;
@@ -3663,13 +3670,12 @@ SQLSetPair* sqlSetPair() : {
 		stmt->setPosition(ex);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 InsertStatement* insertStatement() : {
-	InsertStatement* stmt = new InsertStatement();
+	InsertStatement* stmt = new InsertStatement(); __STP(stmt);
 	Token* t = nullptr;
 	TableIdentifier* tableId = nullptr;
 	SQLColumnsList* columns = nullptr;
@@ -3721,13 +3727,12 @@ InsertStatement* insertStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLColumnsList* sqlColumnsList() : {
-	SQLColumnsList* stmt = new SQLColumnsList();
+	SQLColumnsList* stmt = new SQLColumnsList(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnIdentifier* colId = nullptr;
 }
@@ -3747,13 +3752,12 @@ SQLColumnsList* sqlColumnsList() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 DeleteStatement* deleteStatement() : {
-	DeleteStatement* stmt = new DeleteStatement();
+	DeleteStatement* stmt = new DeleteStatement(); __STP(stmt);
 	Token* t = nullptr;
 	SQLFrom* from = nullptr;
 	SQLWhere* where = nullptr;
@@ -3777,13 +3781,12 @@ DeleteStatement* deleteStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLWhere* sqlWhere() : {
-	SQLWhere* stmt = new SQLWhere();
+	SQLWhere* stmt = new SQLWhere(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -3796,13 +3799,12 @@ SQLWhere* sqlWhere() : {
 		stmt->setPosition(exp);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLFrom* sqlFrom() : {
-	SQLFrom* stmt = new SQLFrom();
+	SQLFrom* stmt = new SQLFrom(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractJoinPart* tableId = nullptr;
 }
@@ -3815,13 +3817,12 @@ SQLFrom* sqlFrom() : {
 		stmt->setPosition(tableId);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 BeginStatement* beginStatement() : {
-	BeginStatement* stmt = new BeginStatement();
+	BeginStatement* stmt = new BeginStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -3833,13 +3834,12 @@ BeginStatement* beginStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 CommitStatement* commitStatement() : {
-	CommitStatement* stmt = new CommitStatement();
+	CommitStatement* stmt = new CommitStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -3850,13 +3850,12 @@ CommitStatement* commitStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 RollbackStatement* rollbackStatement() : {
-	RollbackStatement* stmt = new RollbackStatement();
+	RollbackStatement* stmt = new RollbackStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -3867,8 +3866,7 @@ RollbackStatement* rollbackStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -3894,16 +3892,21 @@ AbstractSQLExpression* sqlOrExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlAndExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t=<OR> {
 			if(exp == nullptr){
 				exp = new SQLOrExpression();
 				exp->addOperand(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 
 			exp->setPosition(t);
@@ -3915,8 +3918,7 @@ AbstractSQLExpression* sqlOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -3925,16 +3927,21 @@ AbstractSQLExpression* sqlAndExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlNotExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t=<SQLAND> {
 			if(exp == nullptr){
 				exp = new SQLAndExpression();
 				exp->addOperand(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 
 			exp->setPosition(t);
@@ -3946,8 +3953,7 @@ AbstractSQLExpression* sqlAndExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -3956,18 +3962,20 @@ AbstractSQLExpression* sqlNotExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	[
 		t=<SQL_NOT> {
 			exp = new SQLNotExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=sqlLikeExpression() {
 		if(left == nullptr){
-			left = right;
+			left = right;  __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -3976,8 +3984,7 @@ AbstractSQLExpression* sqlNotExpression() : {
 	}
 	
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -3986,9 +3993,14 @@ AbstractSQLExpression* sqlLikeExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	SQLLiteral* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlIsNullExpression()
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		t=<LIKE> {
 			exp = new SQLLikeExpression();
@@ -3996,7 +4008,7 @@ AbstractSQLExpression* sqlLikeExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		right=sqlLiteral() {
@@ -4016,8 +4028,7 @@ AbstractSQLExpression* sqlLikeExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}	
 }
 
@@ -4026,9 +4037,14 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlBetweenExpression()
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		t=<IS> {
 			exp = new SQLIsNullExpression();
@@ -4036,7 +4052,7 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		[
@@ -4052,8 +4068,7 @@ AbstractSQLExpression* sqlIsNullExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4062,9 +4077,14 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlInExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		t=<BETWEEN> {
 			exp = new SQLBetweenExpression();
@@ -4072,7 +4092,7 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		right=sqlAdditiveExpression() {
@@ -4091,8 +4111,7 @@ AbstractSQLExpression* sqlBetweenExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4101,10 +4120,15 @@ AbstractSQLExpression* sqlInExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	SQLExpressionList* list = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	
 	left=sqlRelationalExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		t=<IN> {
 			exp = new SQLInExpression();
@@ -4112,7 +4136,7 @@ AbstractSQLExpression* sqlInExpression() : {
 			
 			exp->setPosition(left);
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		t="(" {
 			exp->setPosition(t);
@@ -4128,8 +4152,7 @@ AbstractSQLExpression* sqlInExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4138,9 +4161,14 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlEqualityExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="<" {
@@ -4150,7 +4178,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t=">" {
@@ -4160,7 +4188,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="<=" {
@@ -4170,7 +4198,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t=">=" {
@@ -4180,7 +4208,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		)
 		right=sqlEqualityExpression() {
@@ -4190,8 +4218,7 @@ AbstractSQLExpression* sqlRelationalExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4200,9 +4227,14 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlAdditiveExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="=" {
@@ -4212,7 +4244,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="<>" {
@@ -4222,7 +4254,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="!=" {
@@ -4232,7 +4264,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 				exp->setPosition(left);
 				exp->setPosition(t);
 				
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		)
 		right=sqlAdditiveExpression() {
@@ -4242,8 +4274,7 @@ AbstractSQLExpression* sqlEqualityExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4252,9 +4283,14 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlMultiplicativeExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="+" {
@@ -4262,7 +4298,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 					exp = new SQLAdditiveExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SQLAdditiveExpression::ADD);
 				exp->setPosition(t);
@@ -4273,7 +4309,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 					exp = new SQLAdditiveExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SQLAdditiveExpression::SUB);
 				exp->setPosition(t);
@@ -4286,8 +4322,7 @@ AbstractSQLExpression* sqlAdditiveExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4296,9 +4331,14 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 	Token* t = nullptr;
 	AbstractSQLExpression* left = nullptr;
 	AbstractSQLExpression* right = nullptr;
+	
+	StackRelease<AbstractSQLExpression> __left;
 }
 {
 	left=sqlPrimitiveExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="*" {
@@ -4306,7 +4346,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::MUL);
 				exp->setPosition(t);
@@ -4317,7 +4357,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::DIV);
 				exp->setPosition(t);
@@ -4328,7 +4368,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 					exp = new SqlMultiplicativeExpression();
 					exp->addOperand(left);
 					exp->setPosition(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(SqlMultiplicativeExpression::MOD);
 				exp->setPosition(t);
@@ -4341,8 +4381,7 @@ AbstractSQLExpression* sqlMultiplicativeExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4367,7 +4406,7 @@ AbstractSQLExpression* sqlPrimitiveExpression() : {
 }
 
 SQLNullLiteral* sqlNullLiteral() : {
-	SQLNullLiteral* exp = new SQLNullLiteral();
+	SQLNullLiteral* exp = new SQLNullLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -4375,13 +4414,12 @@ SQLNullLiteral* sqlNullLiteral() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLWildCard* sqlWildCard() : {
-	SQLWildCard* exp = new SQLWildCard();
+	SQLWildCard* exp = new SQLWildCard(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -4389,13 +4427,12 @@ SQLWildCard* sqlWildCard() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLFunctionCall* sqlFunctionCall() : {
-	SQLFunctionCall* exp = new SQLFunctionCall();
+	SQLFunctionCall* exp = new SQLFunctionCall(); __STP(exp);
 	Token* t = nullptr;
 	VariableIdentifier* name = nullptr;
 }
@@ -4415,8 +4452,7 @@ SQLFunctionCall* sqlFunctionCall() : {
 	}
 	
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -4446,13 +4482,17 @@ void sqlFunctionCallArguments(SQLFunctionCall* exp) : {
 
 AbstractSQLExpression* sqlDistinctArgument() : {
 	SQLDistinctArgument* dist = nullptr;
+	StackRelease<SQLDistinctArgument> __dist;
+	
 	AbstractSQLExpression* ex = nullptr;
+	StackRelease<AbstractSQLExpression> __ex;
+	
 	Token* t = nullptr;
 }
 {
 	[LOOKAHEAD(2)
 		t=<DISTINCT> {
-			dist = new SQLDistinctArgument();
+			dist = new SQLDistinctArgument(); __dist.reset(dist);
 			dist->setPosition(t);
 		}
 	]
@@ -4460,17 +4500,20 @@ AbstractSQLExpression* sqlDistinctArgument() : {
 		if(t != nullptr){
 			dist->setPosition(ex);
 			dist->setExpression(ex);
-			ex = dist;
+			ex = __dist.move();  __ex.reset(ex);
+		}
+		else{
+			__ex.reset(ex);
 		}
 	}
 	{
-		return ex;
+		return __ex.move();
 	}
 	
 }
 
 SQLPlaceHolder* sqlPlaceHolder() : {
-	SQLPlaceHolder* exp = new SQLPlaceHolder();
+	SQLPlaceHolder* exp = new SQLPlaceHolder(); __STP(exp);
 	Token* t = nullptr;
 	AbstractExpression* ex = nullptr;
 }
@@ -4499,14 +4542,13 @@ SQLPlaceHolder* sqlPlaceHolder() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 
 SQLParenthesisExpression* sqlParenthesisExpression() : {
-	SQLParenthesisExpression* exp = new SQLParenthesisExpression();
+	SQLParenthesisExpression* exp = new SQLParenthesisExpression(); __STP(exp);
 	Token* t = nullptr;
 	AbstractSQLExpression* ex = nullptr;
 }
@@ -4524,13 +4566,12 @@ SQLParenthesisExpression* sqlParenthesisExpression() : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLLiteral* sqlLiteral() : {
-	SQLLiteral* exp = new SQLLiteral();
+	SQLLiteral* exp = new SQLLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -4552,13 +4593,12 @@ SQLLiteral* sqlLiteral() : {
 	)
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLBooleanLiteral* sqlBooleanLiteral() : {
-	SQLBooleanLiteral* exp = new SQLBooleanLiteral();
+	SQLBooleanLiteral* exp = new SQLBooleanLiteral(); __STP(exp);
 	Token* t = nullptr;
 }
 {
@@ -4575,13 +4615,12 @@ SQLBooleanLiteral* sqlBooleanLiteral() : {
 	)
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 SQLColumnIdentifier* sqlColumnIdentifier() : {
-	SQLColumnIdentifier* exp = new SQLColumnIdentifier();
+	SQLColumnIdentifier* exp = new SQLColumnIdentifier(); __STP(exp);
 	Token* t = nullptr;
 	Token* t1 = nullptr;
 	Token* t2 = nullptr;
@@ -4622,8 +4661,7 @@ SQLColumnIdentifier* sqlColumnIdentifier() : {
 		}
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -4652,7 +4690,7 @@ Token* sqlIdentifierName() : {
 */
 
 SQLExpressionList* sqlExpressionList() : {
-	SQLExpressionList* exp = new SQLExpressionList();
+	SQLExpressionList* exp = new SQLExpressionList(); __STP(exp);
 	Token* t = nullptr;
 	AbstractSQLExpression* ex = nullptr;
 }
@@ -4673,8 +4711,7 @@ SQLExpressionList* sqlExpressionList() : {
 	)*
 	{}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}	
 }
 
@@ -4688,9 +4725,14 @@ AbstractJoinPart* tableList() : {
 	TableList* tablelist = nullptr;
 	Token* t = nullptr;
 	TableIdentifier* table = nullptr;
+	
+	StackRelease<AbstractJoinPart> __left;
 }
 {
 	left=join()
+	{
+		__left.reset(left);
+	}
 	(
 		t="," {
 			if(tablelist == nullptr){
@@ -4698,7 +4740,7 @@ AbstractJoinPart* tableList() : {
 				tablelist->addTable(left);
 				tablelist->setPosition(left);
 				
-				left = tablelist;
+				left = tablelist; __left.reset(left);
 			}
 			
 			tablelist->setPosition(t);
@@ -4711,8 +4753,7 @@ AbstractJoinPart* tableList() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -4721,9 +4762,13 @@ AbstractJoinPart* join() : {
 	SQLJoinPart* right = nullptr;
 	SQLJoin* joinBody = nullptr;
 	
+	StackRelease<AbstractJoinPart> __left;
 }
 {
 	left=joinTarget()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			right=leftJoin()
@@ -4740,7 +4785,7 @@ AbstractJoinPart* join() : {
 				joinBody->setPosition(left);
 				joinBody->setFirst(left);
 				
-				left = joinBody;
+				left = joinBody; __left.reset(left);
 			}
 			
 			joinBody->addJoinPart(right);
@@ -4748,13 +4793,12 @@ AbstractJoinPart* join() : {
 	)*
 	
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
 SQLJoinPart* innerJoin() : {
-	SQLJoinPart* join = new SQLJoinPart();
+	SQLJoinPart* join = new SQLJoinPart(); __STP(join);
 	join->setJoinType(SQLJoinPart::INNER_JOIN);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
@@ -4783,14 +4827,13 @@ SQLJoinPart* innerJoin() : {
 	]
 	{}	
 	{
-		__ONERROR(join);
-		return join;
+		return __STP_MV(join);
 	}
 }
 
 
 SQLJoinPart* leftJoin() : {
-	SQLJoinPart* join = new SQLJoinPart();
+	SQLJoinPart* join = new SQLJoinPart(); __STP(join);
 	join->setJoinType(SQLJoinPart::LEFT_OUTER_JOIN);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
@@ -4823,13 +4866,12 @@ SQLJoinPart* leftJoin() : {
 	]
 	{}
 	{
-		__ONERROR(join);
-		return join;
+		return __STP_MV(join);
 	}
 }
 
 SQLJoinPart* rightJoin() : {
-	SQLJoinPart* join = new SQLJoinPart();
+	SQLJoinPart* join = new SQLJoinPart(); __STP(join);
 	join->setJoinType(SQLJoinPart::RIGHT_OUTER_JOIN);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
@@ -4862,13 +4904,12 @@ SQLJoinPart* rightJoin() : {
 	]
 	{}
 	{
-		__ONERROR(join);
-		return join;
+		return __STP_MV(join);
 	}
 }
 
 SQLJoinPart* crossJoin() : {
-	SQLJoinPart* join = new SQLJoinPart();
+	SQLJoinPart* join = new SQLJoinPart(); __STP(join);
 	join->setJoinType(SQLJoinPart::CROSS_JOIN);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
@@ -4897,8 +4938,7 @@ SQLJoinPart* crossJoin() : {
 	{}
 
 	{
-		__ONERROR(join);
-		return join;
+		return __STP_MV(join);
 	}
 }
 
@@ -4919,7 +4959,7 @@ AbstractJoinPart* joinTarget() : {
 }
 
 ParenthesisJoinPart* parenthesisJoinPart() : {
-	ParenthesisJoinPart* part = new ParenthesisJoinPart();
+	ParenthesisJoinPart* part = new ParenthesisJoinPart(); __STP(part);
 	Token* t = nullptr;
 	AbstractJoinPart* target = nullptr;
 }
@@ -4937,13 +4977,12 @@ ParenthesisJoinPart* parenthesisJoinPart() : {
 		part->setPosition(t);
 	}
 	{
-		__ONERROR(part);
-		return part;
+		return __STP_MV(part);
 	}
 }
 
 TableIdentifier* tableIdentifier() : {
-	TableIdentifier* exp = new TableIdentifier();
+	TableIdentifier* exp = new TableIdentifier(); __STP(exp);
 	Token* t = nullptr;
 	Token* t1 = nullptr;
 	Token* t2 = nullptr;
@@ -4980,8 +5019,7 @@ TableIdentifier* tableIdentifier() : {
 	]
 	
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -5002,14 +5040,13 @@ AbstractJsonExpression* jsonElement() : {
 		
 	)
 	{
-		 __ONERROR(jsonExp);
 		return jsonExp;
 	}
 }
 
 JsonInitializerExpression* jsonInitializerExpression() :
 {
-	JsonInitializerExpression* jsonExp = new JsonInitializerExpression();
+	JsonInitializerExpression* jsonExp = new JsonInitializerExpression(); __STP(jsonExp);
 	Token* t = nullptr;
 	JsonKeyValuePairExpression* element = nullptr;
 }
@@ -5037,14 +5074,13 @@ JsonInitializerExpression* jsonInitializerExpression() :
 		jsonExp->setPosition(t);
 	}
 	{
-		 __ONERROR(jsonExp);
-		return jsonExp;
+		return __STP_MV(jsonExp);
 	}
 }
 
 JsonArrayExpression* jsonArrayExpression() :
 {
-	JsonArrayExpression* jsonExp = new JsonArrayExpression();
+	JsonArrayExpression* jsonExp = new JsonArrayExpression(); __STP(jsonExp);
 	AbstractJsonExpression* element = nullptr;
 	Token* t = nullptr;
 	
@@ -5075,14 +5111,13 @@ JsonArrayExpression* jsonArrayExpression() :
 		jsonExp->setPosition(t);
 	}
 	{
-		 __ONERROR(jsonExp);
-		return jsonExp;
+		return __STP_MV(jsonExp);
 	}
 }
 
 JsonKeyValuePairExpression* jsonKeyValuePair() :
 {
-	JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression();
+	JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression(); __STP(pair);
 	Token* t = nullptr;
 	AbstractExpression* exp = nullptr;
 	LiteralExpression* lit = nullptr;
@@ -5115,7 +5150,6 @@ JsonKeyValuePairExpression* jsonKeyValuePair() :
 		}
 	)
 	{
-		 __ONERROR(pair);
-		return pair;
+		return __STP_MV(pair);
 	}
 }

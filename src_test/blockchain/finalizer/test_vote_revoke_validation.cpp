@@ -62,7 +62,7 @@ TEST(TestVoteRevokeTicketValidationGroup, case01){
 	File projectFolder = this->env->testCaseDir();
 	InstanceDriver driver(&projectFolder);
 
-	driver.getLogger()->setSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
+	driver.getLogger()->addSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
 
 	CodablecashSystemParam param;
 	DebugCodablecashSystemParamSetup::setupConfig01(param);
@@ -161,7 +161,7 @@ TEST(TestVoteRevokeTicketValidationGroup, case02){
 	File projectFolder = this->env->testCaseDir();
 	InstanceDriver driver(&projectFolder);
 
-	driver.getLogger()->setSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
+	driver.getLogger()->addSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
 
 	CodablecashSystemParam config;
 	DebugCodablecashSystemParamSetup::setupConfig01(config);

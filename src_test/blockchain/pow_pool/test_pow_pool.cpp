@@ -55,7 +55,7 @@ TEST(TestPoWPoolGroup, case01){
 
 
 	DebugDefaultLogger logger;
-	logger.setSection(ISystemLogger::DEBUG_POOL_TRANSFER_RESPONSE);
+	logger.addSection(ISystemLogger::DEBUG_POOL_TRANSFER_RESPONSE);
 	PoWManager manager(&logger, &mconfig);
 
 	File* memdir = projectFolder.get(L"mempool"); __STP(memdir);

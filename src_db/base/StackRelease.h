@@ -16,6 +16,7 @@ namespace alinous {
 template <typename T>
 class StackRelease {
 public:
+	StackRelease() : ptr(nullptr) {}
 	explicit StackRelease(T* ptr) : ptr(ptr){
 	}
 	~StackRelease(){

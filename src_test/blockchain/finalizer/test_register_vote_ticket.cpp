@@ -51,7 +51,7 @@ TEST(TestRegisterVoteTicketGroup, case01){
 	InstanceDriver driver(&projectFolder);
 
 	DebugDefaultLogger* logger = driver.getLogger();
-	logger->setSection(ISystemLogger::DEBUG_UTXO_ID);
+	logger->addSection(ISystemLogger::DEBUG_UTXO_ID);
 
 	CodablecashSystemParam param;
 	DebugCodablecashSystemParamSetup::setupConfig01(param);

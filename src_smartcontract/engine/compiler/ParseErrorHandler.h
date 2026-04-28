@@ -22,6 +22,7 @@ public:
 	virtual ~ParseErrorHandler();
 
 	virtual void handleUnexpectedToken(int expectedKind, const JJString& expectedToken, Token *actual, AlinousLang *parser);
+	virtual void handleParseError(Token *last, Token *unexpected, const JJSimpleString& production, AlinousLang *parser);
 
 	bool hasError() const noexcept;
 
@@ -31,6 +32,7 @@ public:
 
 private:
 	ArrayList<CompileError> list;
+	bool devMode;
 };
 
 } /* namespace alinous */

@@ -23,7 +23,7 @@ namespace alinouslang {
 
 
 CompilationUnit
-               * AlinousLang::compilationUnit() {CompilationUnit* unit = new CompilationUnit();
+               * AlinousLang::compilationUnit() {CompilationUnit* unit = new CompilationUnit(); __STP(unit);
         PackageDeclare* pkg = nullptr;
         ImportsDeclare* imports = nullptr;
         ClassDeclare* clazz = nullptr;
@@ -74,12 +74,12 @@ unit->setPosition(clazz);
     if (!hasError) {
     jj_consume_token(0);
     }
-return unit;
+return __STP_MV(unit);
 assert(false);
 }
 
 
-ImportsDeclare              * AlinousLang::importsDeclare() {ImportsDeclare* importsDeclare = new ImportsDeclare();
+ImportsDeclare              * AlinousLang::importsDeclare() {ImportsDeclare* importsDeclare = new ImportsDeclare(); __STP(importsDeclare);
         ImportDeclare* dec = nullptr;
     if (!hasError) {
     while (!hasError) {
@@ -106,12 +106,12 @@ importsDeclare->addImport(dec);
 
     }
 __ONERROR(importsDeclare);
-                return importsDeclare;
+                return __STP_MV(importsDeclare);
 assert(false);
 }
 
 
-ImportDeclare             * AlinousLang::importDeclare() {ImportDeclare* dec = new ImportDeclare();
+ImportDeclare             * AlinousLang::importDeclare() {ImportDeclare* dec = new ImportDeclare(); __STP(dec);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(IMPORT);
@@ -160,20 +160,20 @@ dec->setPosition(t);
     if (!hasError) {
 dec->setPosition(t);
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
 PackageDeclare              * AlinousLang::packageDeclare() {PackageDeclare* pkg = nullptr;
+        StackRelease<PackageDeclare> __pkg;
         PackageNameDeclare* name = nullptr;
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(PACKAGE);
     }
     if (!hasError) {
-pkg=new PackageDeclare();
+pkg=new PackageDeclare(); __pkg.reset(pkg);
                 pkg->setPosition(t);
     }
     if (!hasError) {
@@ -189,19 +189,19 @@ pkg->setName(name);
     if (!hasError) {
 pkg->setPosition(t);
     }
-__ONERROR(pkg);
-                return pkg;
+return __pkg.move();
 assert(false);
 }
 
 
 PackageNameDeclare                  * AlinousLang::packageNameDeclare() {PackageNameDeclare* names = nullptr;
+        StackRelease<PackageNameDeclare> __names;
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(IDENTIFIER);
     }
     if (!hasError) {
-names = new PackageNameDeclare();
+names = new PackageNameDeclare(); __names.reset(names);
                 names->addSegment(_STR(t));
                 names->setPosition(t);
     }
@@ -228,13 +228,14 @@ names->addSegment(_STR(t));
     if (!hasError) {
 
     }
-__ONERROR(names);
-                return names;
+return __names.move();
 assert(false);
 }
 
 
 ClassDeclare            * AlinousLang::classDeclare() {ClassDeclare* clazz = nullptr;
+        StackRelease<ClassDeclare> __clazz;
+
         GenericsClassDeclare* gclazz = nullptr;
         GenericsParameter* param = nullptr;
         Token* cls = nullptr;
@@ -251,7 +252,7 @@ ClassDeclare            * AlinousLang::classDeclare() {ClassDeclare* clazz = nul
       cls = jj_consume_token(CLASS);
       }
       if (!hasError) {
-clazz = new ClassDeclare();
+clazz = new ClassDeclare(); __clazz.reset(clazz);
       }
       break;
       }
@@ -425,13 +426,12 @@ clazz->setImplements(clsimplements);
 clazz->setPositions(cls, block);
             clazz->setBlock(block);
     }
-__ONERROR(clazz);
-                return clazz;
+return __clazz.move();
 assert(false);
 }
 
 
-ClassExtends            * AlinousLang::classExtends() {ClassExtends* extends = new ClassExtends();
+ClassExtends            * AlinousLang::classExtends() {ClassExtends* extends = new ClassExtends(); __STP(extends);
         ClassName* name = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -447,13 +447,12 @@ extends->setPosition(t);
 extends->setPosition(name);
                 extends->setClassName(name);
     }
-__ONERROR(extends);
-                return extends;
+return __STP_MV(extends);
 assert(false);
 }
 
 
-ClassImplements               * AlinousLang::classImplements() {ClassImplements*  implements = new ClassImplements();
+ClassImplements               * AlinousLang::classImplements() {ClassImplements* implements = new ClassImplements(); __STP(implements);
         ClassName* name = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -499,13 +498,12 @@ implements->setPosition(name);
     if (!hasError) {
 
     }
-__ONERROR(implements);
-                return implements;
+return __STP_MV(implements);
 assert(false);
 }
 
 
-ClassName         * AlinousLang::className() {ClassName* name = new ClassName();
+ClassName         * AlinousLang::className() {ClassName* name = new ClassName(); __STP(name);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(IDENTIFIER);
@@ -545,13 +543,13 @@ name->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(name);
-                return name;
+return __STP_MV(name);
 assert(false);
 }
 
 
 ClassDeclareBlock                 * AlinousLang::classDeclareBlock() {ClassDeclareBlock* block = nullptr;
+        StackRelease<ClassDeclareBlock> __block;
         Token* begin, *end;
 
         MethodDeclare* method = nullptr;
@@ -565,7 +563,7 @@ ClassDeclareBlock                 * AlinousLang::classDeclareBlock() {ClassDecla
     begin = jj_consume_token(L_BRACE);
     }
     if (!hasError) {
-block = new ClassDeclareBlock();
+block = new ClassDeclareBlock(); __block.reset(block);
                 block->setPosition(begin);
     }
     if (!hasError) {
@@ -721,13 +719,12 @@ _static = false;
     if (!hasError) {
 block->setPosition(end);
     }
-__ONERROR(block);
-                return block;
+return __block.move();
 assert(false);
 }
 
 
-MethodDeclare             * AlinousLang::methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) {MethodDeclare* method = new MethodDeclare();
+MethodDeclare             * AlinousLang::methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) {MethodDeclare* method = new MethodDeclare(); __STP(method);
 
     method->setPosition(ctrl);
 
@@ -776,13 +773,12 @@ method->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(method);
-                return method;
+return __STP_MV(method);
 assert(false);
 }
 
 
-MemberVariableDeclare                     * AlinousLang::memberVariableDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) {MemberVariableDeclare* variable = new MemberVariableDeclare();
+MemberVariableDeclare                     * AlinousLang::memberVariableDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) {MemberVariableDeclare* variable = new MemberVariableDeclare(); __STP(variable);
         Token* t = nullptr;
 
         variable->setPosition(ctrl);
@@ -822,14 +818,13 @@ variable->setPosition(exp);
     if (!hasError) {
 variable->setPosition(t);
     }
-__ONERROR(variable);
-                return variable;
+return __STP_MV(variable);
 assert(false);
 }
 
 
 AccessControlDeclare                    * AlinousLang::accessControlDeclare() {Token* t = nullptr;
-        AccessControlDeclare* ctrl = new AccessControlDeclare();
+        AccessControlDeclare* ctrl = new AccessControlDeclare(); __STP(ctrl);
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case PUBLIC:{
@@ -868,13 +863,12 @@ ctrl->setCtrl(AccessControlDeclare::PRIVATE);
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(ctrl);
-                return ctrl;
+return __STP_MV(ctrl);
 assert(false);
 }
 
 
-ArgumentsListDeclare                    * AlinousLang::argumentsListDeclare() {ArgumentsListDeclare* arguments = new ArgumentsListDeclare();
+ArgumentsListDeclare                    * AlinousLang::argumentsListDeclare() {ArgumentsListDeclare* arguments = new ArgumentsListDeclare(); __STP(arguments);
         Token* t = nullptr;
         ArgumentDeclare* arg = nullptr;
     if (!hasError) {
@@ -939,13 +933,12 @@ arguments->addArgument(arg);
     if (!hasError) {
 arguments->setPosition(t);
     }
-__ONERROR(arguments);
-                return arguments;
+return __STP_MV(arguments);
 assert(false);
 }
 
 
-ArgumentDeclare               * AlinousLang::argumentDeclare() {ArgumentDeclare* arg = new ArgumentDeclare();
+ArgumentDeclare               * AlinousLang::argumentDeclare() {ArgumentDeclare* arg = new ArgumentDeclare(); __STP(arg);
         AbstractType* type = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -962,8 +955,7 @@ arg->setType(type);
 arg->setName(_STR(t));
                 arg->setPosition(t);
     }
-__ONERROR(arg);
-                return arg;
+return __STP_MV(arg);
 assert(false);
 }
 
@@ -1000,8 +992,7 @@ dec->addDimension();
     if (!hasError) {
 
     }
-__ONERROR(dec);
-                return dec;
+return dec;
 assert(false);
 }
 
@@ -1075,13 +1066,12 @@ AbstractType            * AlinousLang::typeBody() {AbstractType* dec = nullptr;
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(dec);
-                return dec;
+return dec;
 assert(false);
 }
 
 
-ObjectType          * AlinousLang::objectType() {ObjectType* dec = new ObjectType();
+ObjectType          * AlinousLang::objectType() {ObjectType* dec = new ObjectType(); __STP(dec);
         PackageNameDeclare* packageName = nullptr;
         Token* t=nullptr;
         GenericsObjectType* geneticsObject = nullptr;
@@ -1174,13 +1164,12 @@ geneticsObject->setPosition(t);
       ;
     }
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-BoolType        * AlinousLang::boolType() {BoolType* dec = new BoolType();
+BoolType        * AlinousLang::boolType() {BoolType* dec = new BoolType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(BOOLEAN);
@@ -1188,13 +1177,12 @@ BoolType        * AlinousLang::boolType() {BoolType* dec = new BoolType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-ByteType        * AlinousLang::byteType() {ByteType* dec = new ByteType();
+ByteType        * AlinousLang::byteType() {ByteType* dec = new ByteType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(BYTE);
@@ -1202,13 +1190,12 @@ ByteType        * AlinousLang::byteType() {ByteType* dec = new ByteType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-CharType        * AlinousLang::charType() {CharType* dec = new CharType();
+CharType        * AlinousLang::charType() {CharType* dec = new CharType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(CHAR);
@@ -1216,13 +1203,12 @@ CharType        * AlinousLang::charType() {CharType* dec = new CharType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-ShortType         * AlinousLang::shortType() {ShortType* dec = new ShortType();
+ShortType         * AlinousLang::shortType() {ShortType* dec = new ShortType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(SHORT);
@@ -1230,13 +1216,12 @@ ShortType         * AlinousLang::shortType() {ShortType* dec = new ShortType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-IntType       * AlinousLang::intType() {IntType* dec = new IntType();
+IntType       * AlinousLang::intType() {IntType* dec = new IntType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(INT);
@@ -1244,13 +1229,12 @@ IntType       * AlinousLang::intType() {IntType* dec = new IntType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-LongType        * AlinousLang::longType() {LongType* dec = new LongType();
+LongType        * AlinousLang::longType() {LongType* dec = new LongType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(LONG);
@@ -1258,13 +1242,12 @@ LongType        * AlinousLang::longType() {LongType* dec = new LongType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-StringType          * AlinousLang::stringType() {StringType* dec = new StringType();
+StringType          * AlinousLang::stringType() {StringType* dec = new StringType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(STRING);
@@ -1272,13 +1255,12 @@ StringType          * AlinousLang::stringType() {StringType* dec = new StringTyp
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-VoidType        * AlinousLang::voidType() {VoidType* dec = new VoidType();
+VoidType        * AlinousLang::voidType() {VoidType* dec = new VoidType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(VOID);
@@ -1286,13 +1268,12 @@ VoidType        * AlinousLang::voidType() {VoidType* dec = new VoidType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
 
-DomType       * AlinousLang::domType() {DomType* dec = new DomType();
+DomType       * AlinousLang::domType() {DomType* dec = new DomType(); __STP(dec);
         Token* t=nullptr;
     if (!hasError) {
     t = jj_consume_token(VAR);
@@ -1300,8 +1281,7 @@ DomType       * AlinousLang::domType() {DomType* dec = new DomType();
     if (!hasError) {
 dec->setPositions(_P(t, t));
     }
-__ONERROR(dec);
-                return dec;
+return __STP_MV(dec);
 assert(false);
 }
 
@@ -1309,83 +1289,98 @@ assert(false);
 AbstractStatement
                  * AlinousLang::statement() {AbstractStatement* stmt = nullptr;
     if (!hasError) {
-    if (jj_2_6(3)) {
+    try {
       if (!hasError) {
-      stmt = statementBlock();
+      if (jj_2_6(3)) {
+        if (!hasError) {
+        stmt = statementBlock();
+        }
+      } else if (jj_2_7(4)) {
+        if (!hasError) {
+        stmt = substitutionStatement();
+        }
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+        case BOOLEAN:
+        case BYTE:
+        case CHAR:
+        case SHORT:
+        case INT:
+        case LONG:
+        case STRING:
+        case VAR:
+        case VOID:
+        case IDENTIFIER:{
+          if (!hasError) {
+          stmt = variableDeclareStatement();
+          }
+          break;
+          }
+        case BREAK:
+        case CONTINUE:
+        case DO:
+        case FOR:
+        case IF:
+        case RETURN:
+        case THROW:
+        case TRY:
+        case WHILE:{
+          if (!hasError) {
+          //stmt=expressionStatement() |
+                                  stmt = ctrlStatement();
+          }
+          break;
+          }
+        case SEMI_COLON:{
+          if (!hasError) {
+          stmt = blankStatement();
+          }
+          break;
+          }
+        case CREATE:
+        case DROP:
+        case ALTER:{
+          if (!hasError) {
+          stmt = ddlStatement();
+          }
+          break;
+          }
+        case SELECT:
+        case INSERT:
+        case UPDATE:
+        case DELETE:
+        case BEGIN:
+        case COMMIT:
+        case ROLLBACK:{
+          if (!hasError) {
+          stmt = sqlDmlStatement();
+          }
+          break;
+          }
+        default:
+          jj_la1[25] = jj_gen;
+          jj_consume_token(-1);
+          errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
+        }
       }
-    } else if (jj_2_7(4)) {
+      }
       if (!hasError) {
-      stmt = substitutionStatement();
-      }
-    } else {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case BOOLEAN:
-      case BYTE:
-      case CHAR:
-      case SHORT:
-      case INT:
-      case LONG:
-      case STRING:
-      case VAR:
-      case VOID:
-      case IDENTIFIER:{
-        if (!hasError) {
-        stmt = variableDeclareStatement();
-        }
-        break;
-        }
-      case BREAK:
-      case CONTINUE:
-      case DO:
-      case FOR:
-      case IF:
-      case RETURN:
-      case THROW:
-      case TRY:
-      case WHILE:{
-        if (!hasError) {
-        //stmt=expressionStatement() |
-                        stmt = ctrlStatement();
-        }
-        break;
-        }
-      case SEMI_COLON:{
-        if (!hasError) {
-        stmt = blankStatement();
-        }
-        break;
-        }
-      case CREATE:
-      case DROP:
-      case ALTER:{
-        if (!hasError) {
-        stmt = ddlStatement();
-        }
-        break;
-        }
-      case SELECT:
-      case INSERT:
-      case UPDATE:
-      case DELETE:
-      case BEGIN:
-      case COMMIT:
-      case ROLLBACK:{
-        if (!hasError) {
-        stmt = sqlDmlStatement();
-        }
-        break;
-        }
-      default:
-        jj_la1[25] = jj_gen;
-        jj_consume_token(-1);
-        errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
-      }
-    }
-    }
-    if (!hasError) {
 
-    }
+      }
+      if (!hasError) {
 return stmt;
+      }
+    } catch ( ...) {
+std::exception_ptr p = std::current_exception();
+                try{
+                        std::rethrow_exception(p);
+                }catch(ParseException* e){
+                        if(e != nullptr){
+                                delete e;
+                        }
+                }
+    }
+    }
 assert(false);
 }
 
@@ -1401,13 +1396,12 @@ VariableDeclareStatement                        * AlinousLang::variableDeclareSt
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return stmt;
 assert(false);
 }
 
 
-VariableDeclareStatement                        * AlinousLang::__variableDeclareStatement() {VariableDeclareStatement* stmt = new VariableDeclareStatement();
+VariableDeclareStatement                        * AlinousLang::__variableDeclareStatement() {VariableDeclareStatement* stmt = new VariableDeclareStatement(); __STP(stmt);
         AbstractType* type = nullptr;
         VariableIdentifier* valId = nullptr;
         AbstractExpression* exp = nullptr;
@@ -1449,8 +1443,7 @@ stmt->setInitExpression(exp);
       ;
     }
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -1473,12 +1466,18 @@ assert(false);
 
 
 AbstractStatement                 * AlinousLang::__substitutionStatement() {AbstractStatement* stmt = nullptr;
+        StackRelease<AbstractStatement> __stmt;
 
         AbstractExpression* first = nullptr;
+        StackRelease<AbstractExpression> __first;
+
         AbstractExpression* exp = nullptr;
         Token* t = nullptr;
     if (!hasError) {
     first = expression();
+    }
+    if (!hasError) {
+__first.reset(first);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -1491,8 +1490,8 @@ AbstractStatement                 * AlinousLang::__substitutionStatement() {Abst
       }
       if (!hasError) {
 SubstitutionStatement* sstmt = new SubstitutionStatement();
-                        stmt = sstmt;
-                        sstmt->setVariableId(first);
+                        stmt = sstmt; __stmt.reset(stmt);
+                        sstmt->setVariableId(__first.move());
                         sstmt->setPosition(first);
 
                         sstmt->setExpression(exp);
@@ -1508,18 +1507,17 @@ SubstitutionStatement* sstmt = new SubstitutionStatement();
     if (!hasError) {
 if(stmt == nullptr){
                         ExpressionStatement* exstmt = new ExpressionStatement();
-                        stmt = exstmt;
-                        exstmt->setExpression(first);
+                        stmt = exstmt; __stmt.reset(stmt);
+                        exstmt->setExpression(__first.move());
                         exstmt->setPosition(first);
                 }
     }
-__ONERROR(stmt);
-                return stmt;
+return __stmt.move();
 assert(false);
 }
 
 
-BlankStatement              * AlinousLang::blankStatement() {BlankStatement* stmt = new BlankStatement();
+BlankStatement              * AlinousLang::blankStatement() {BlankStatement* stmt = new BlankStatement(); __STP(stmt);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(SEMI_COLON);
@@ -1528,13 +1526,12 @@ BlankStatement              * AlinousLang::blankStatement() {BlankStatement* stm
 stmt->setPosition(t);
                 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-StatementBlock              * AlinousLang::statementBlock() {StatementBlock* block = new StatementBlock();
+StatementBlock              * AlinousLang::statementBlock() {StatementBlock* block = new StatementBlock(); __STP(block);
         AbstractStatement* stmt = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -1654,8 +1651,7 @@ block->addStatement(stmt);
     if (!hasError) {
 block->setPosition(t);
     }
-__ONERROR(block);
-                return block;
+return __STP_MV(block);
 assert(false);
 }
 
@@ -1732,7 +1728,7 @@ assert(false);
 }
 
 
-TryStatement            * AlinousLang::tryStatement() {TryStatement* stmt = new TryStatement();
+TryStatement            * AlinousLang::tryStatement() {TryStatement* stmt = new TryStatement(); __STP(stmt);
         StatementBlock* block = nullptr;
         Token* t = nullptr;
 
@@ -1789,13 +1785,12 @@ stmt->setFinallyStatement(finallyStmt);
       ;
     }
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-FinallyStatement                * AlinousLang::finallyStatement() {FinallyStatement* stmt = new FinallyStatement();
+FinallyStatement                * AlinousLang::finallyStatement() {FinallyStatement* stmt = new FinallyStatement(); __STP(stmt);
         StatementBlock* block = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -1811,13 +1806,12 @@ stmt->setPosition(t);
 stmt->setBlock(block);
                 stmt->setPosition(block);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-CatchStatement              * AlinousLang::catchStatement() {CatchStatement* stmt = new CatchStatement();
+CatchStatement              * AlinousLang::catchStatement() {CatchStatement* stmt = new CatchStatement(); __STP(stmt);
         StatementBlock* block = nullptr;
         Token* t = nullptr;
 
@@ -1854,13 +1848,12 @@ stmt->setPosition(t);
 stmt->setBlock(block);
                 stmt->setPosition(block);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-ThrowStatement              * AlinousLang::throwStatement() {ThrowStatement* stmt = new ThrowStatement();
+ThrowStatement              * AlinousLang::throwStatement() {ThrowStatement* stmt = new ThrowStatement(); __STP(stmt);
         AbstractExpression* exp = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -1882,13 +1875,12 @@ stmt->setExpression(exp);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-ForStatement            * AlinousLang::forStatement() {ForStatement* stmt = new ForStatement();
+ForStatement            * AlinousLang::forStatement() {ForStatement* stmt = new ForStatement(); __STP(stmt);
         AbstractExpression* exp = nullptr;
         AbstractStatement* st = nullptr;
         Token* t = nullptr;
@@ -1950,8 +1942,7 @@ stmt->setPosition(t);
 stmt->setStatement(st);
                 stmt->setPosition(st);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -1986,13 +1977,12 @@ AbstractStatement                 * AlinousLang::forInnerStatement() {AbstractSt
       }
     }
     }
-__ONERROR(stmt);
-                return stmt;
+return stmt;
 assert(false);
 }
 
 
-DoWhileStatement                * AlinousLang::doWhileStatement() {DoWhileStatement* stmt = new DoWhileStatement();
+DoWhileStatement                * AlinousLang::doWhileStatement() {DoWhileStatement* stmt = new DoWhileStatement(); __STP(stmt);
         AbstractExpression* exp = nullptr;
         AbstractStatement* st = nullptr;
         Token* t = nullptr;
@@ -2034,13 +2024,12 @@ stmt->setExpression(exp);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-WhileStatement              * AlinousLang::whileStatement() {WhileStatement* stmt = new WhileStatement();
+WhileStatement              * AlinousLang::whileStatement() {WhileStatement* stmt = new WhileStatement(); __STP(stmt);
         AbstractExpression* exp = nullptr;
         AbstractStatement* st = nullptr;
         Token* t = nullptr;
@@ -2076,13 +2065,12 @@ stmt->setPosition(t);
 stmt->setStatement(st);
                 stmt->setPosition(st);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-ReturnStatement               * AlinousLang::returnStatement() {ReturnStatement* stmt = new ReturnStatement();
+ReturnStatement               * AlinousLang::returnStatement() {ReturnStatement* stmt = new ReturnStatement(); __STP(stmt);
         AbstractExpression* exp = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -2171,13 +2159,12 @@ stmt->setExpression(exp);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-ContinueStatement                 * AlinousLang::continueStatement() {ContinueStatement* stmt = new ContinueStatement();
+ContinueStatement                 * AlinousLang::continueStatement() {ContinueStatement* stmt = new ContinueStatement(); __STP(stmt);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(CONTINUE);
@@ -2191,13 +2178,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-BreakStatement              * AlinousLang::breakStatement() {BreakStatement* stmt = new BreakStatement();
+BreakStatement              * AlinousLang::breakStatement() {BreakStatement* stmt = new BreakStatement(); __STP(stmt);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(BREAK);
@@ -2211,13 +2197,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-IfStatement           * AlinousLang::ifStatement() {IfStatement* ifstmt = new IfStatement();
+IfStatement           * AlinousLang::ifStatement() {IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
         AbstractExpression* exp;
         AbstractStatement* stmt;
         Token* t = nullptr;
@@ -2285,13 +2270,12 @@ ifstmt->setElseStatement(stmt);
       ;
     }
     }
-__ONERROR(ifstmt);
-                return ifstmt;
+return __STP_MV(ifstmt);
 assert(false);
 }
 
 
-IfStatement           * AlinousLang::elseifStatement() {IfStatement* ifstmt = new IfStatement();
+IfStatement           * AlinousLang::elseifStatement() {IfStatement* ifstmt = new IfStatement(); __STP(ifstmt);
         AbstractExpression* exp;
         AbstractStatement* stmt;
         Token* t = nullptr;
@@ -2333,8 +2317,7 @@ ifstmt->setPosition(t);
 ifstmt->setStatement(stmt);
                 ifstmt->setPosition(stmt);
     }
-__ONERROR(ifstmt);
-                return ifstmt;
+return __STP_MV(ifstmt);
 assert(false);
 }
 
@@ -2358,8 +2341,13 @@ AbstractExpression                  * AlinousLang::conditionalOrExpression() {To
         ConditionalOrExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = conditionalAndExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2380,7 +2368,7 @@ if(exp == nullptr){
                                 exp = new ConditionalOrExpression();
                                 exp->setPosition(left);
                                 exp->addExp(left);
-                                left = exp;
+                                left = exp; __left.reset(exp);
                         }
 
                         exp->setPosition(t);
@@ -2398,8 +2386,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2408,8 +2395,13 @@ AbstractExpression                  * AlinousLang::conditionalAndExpression() {T
         ConditionalAndExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = orExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2430,7 +2422,7 @@ if(exp == nullptr){
                                 exp = new ConditionalAndExpression();
                                 exp->setPosition(left);
                                 exp->addExp(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -2448,8 +2440,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2458,8 +2449,13 @@ AbstractExpression                  * AlinousLang::orExpression() {Token* t = nu
         OrExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = exclusiveOrExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2480,7 +2476,7 @@ if(exp == nullptr){
                                 exp = new OrExpression();
                                 exp->setPosition(left);
                                 exp->addExp(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -2498,8 +2494,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2508,8 +2503,13 @@ AbstractExpression                  * AlinousLang::exclusiveOrExpression() {Toke
         ExclusiveOrExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = andExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2530,7 +2530,7 @@ if(exp == nullptr){
                                 exp = new ExclusiveOrExpression();
                                 exp->setPosition(left);
                                 exp->addExp(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -2548,8 +2548,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2558,8 +2557,13 @@ AbstractExpression                  * AlinousLang::andExpression() {Token* t = n
         AndExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = equalityExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2580,7 +2584,7 @@ if(exp == nullptr){
                                 exp = new AndExpression();
                                 exp->setPosition(left);
                                 exp->addExp(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -2598,8 +2602,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2608,8 +2611,13 @@ AbstractExpression                  * AlinousLang::equalityExpression() {Token* 
         EqualityExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = relationalExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -2640,7 +2648,7 @@ exp = new EqualityExpression();
 exp = new EqualityExpression();
                                 exp->setPosition(left);
                                 exp->setLeft(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
 
                                 exp->setPosition(t);
                                 exp->setOp(EqualityExpression::NOT_EQ);
@@ -2670,8 +2678,7 @@ exp->setRight(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2680,8 +2687,13 @@ AbstractExpression                  * AlinousLang::relationalExpression() {Token
         RelationalExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = shiftExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -2699,7 +2711,7 @@ AbstractExpression                  * AlinousLang::relationalExpression() {Token
 exp = new RelationalExpression();
                                 exp->setPosition(left);
                                 exp->setLeft(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
 
 
                                 exp->setPosition(t);
@@ -2715,7 +2727,7 @@ exp = new RelationalExpression();
 exp = new RelationalExpression();
                                 exp->setPosition(left);
                                 exp->setLeft(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
 
                                 exp->setPosition(t);
                                 exp->setOp(RelationalExpression::GT_EQ);
@@ -2730,7 +2742,7 @@ exp = new RelationalExpression();
 exp = new RelationalExpression();
                                 exp->setPosition(left);
                                 exp->setLeft(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
 
 
                                 exp->setPosition(t);
@@ -2746,7 +2758,7 @@ exp = new RelationalExpression();
 exp = new RelationalExpression();
                                 exp->setPosition(left);
                                 exp->setLeft(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
 
                                 exp->setPosition(t);
                                 exp->setOp(RelationalExpression::LT_EQ);
@@ -2776,8 +2788,7 @@ exp->setRight(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2786,8 +2797,13 @@ AbstractExpression                  * AlinousLang::shiftExpression() {Token* t =
         ShiftExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = additiveExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2812,7 +2828,7 @@ if(exp == nullptr){
                                         exp = new ShiftExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
 
                                 exp->setPosition(t);
@@ -2829,7 +2845,7 @@ if(exp == nullptr){
                                         exp = new ShiftExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
 
                                 exp->setPosition(t);
@@ -2856,8 +2872,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2866,8 +2881,13 @@ AbstractExpression                  * AlinousLang::additiveExpression() {Token* 
         AddExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = multiplicativeExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2887,7 +2907,7 @@ if(exp == nullptr){
                                         exp = new AddExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
 
                                 exp->setPosition(t);
@@ -2904,7 +2924,7 @@ if(exp == nullptr){
                                         exp = new AddExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
 
                                 exp->setPosition(t);
@@ -2931,8 +2951,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -2941,8 +2960,13 @@ AbstractExpression                  * AlinousLang::multiplicativeExpression() {T
         MultiplicativeExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = negateExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -2968,7 +2992,7 @@ if(exp == nullptr){
                                         exp = new MultiplicativeExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(MultiplicativeExpression::MUL);
                                 exp->setPosition(t);
@@ -3000,7 +3024,7 @@ if(exp == nullptr){
                                         exp = new MultiplicativeExpression();
                                         exp->setPosition(left);
                                         exp->addExp(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(MultiplicativeExpression::MOD);
                                 exp->setPosition(t);
@@ -3026,8 +3050,7 @@ exp->addExp(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3036,6 +3059,8 @@ AbstractExpression                  * AlinousLang::negateExpression() {Token* t 
         NegateExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case MINUS:{
@@ -3045,7 +3070,7 @@ AbstractExpression                  * AlinousLang::negateExpression() {Token* t 
       if (!hasError) {
 exp = new NegateExpression();
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       break;
       }
@@ -3059,15 +3084,14 @@ exp = new NegateExpression();
     }
     if (!hasError) {
 if(left==nullptr){
-                        left = right;
+                        left = right; __left.reset(left);
                 }
                 else{
                         exp->setExpression(right);
                         exp->setPosition(right);
                 }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3075,8 +3099,13 @@ assert(false);
 AbstractExpression                  * AlinousLang::postIncrementExpression() {Token* t = nullptr;
         PostIncrementExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = preIncrementExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     if (jj_2_12(2)) {
@@ -3092,7 +3121,7 @@ exp = new PostIncrementExpression();
                                 exp->setOpe(PostIncrementExpression::MINUS);
                                 exp->setPosition(left);
                                 exp->setPosition(t);
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -3106,7 +3135,7 @@ exp = new PostIncrementExpression();
                                 exp->setOpe(PostIncrementExpression::PLUS);
                                 exp->setPosition(left);
                                 exp->setPosition(t);
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -3123,8 +3152,7 @@ exp = new PostIncrementExpression();
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3133,6 +3161,8 @@ AbstractExpression                  * AlinousLang::preIncrementExpression() {Tok
         PreIncrementExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case PLUSPLUS:
@@ -3147,7 +3177,7 @@ AbstractExpression                  * AlinousLang::preIncrementExpression() {Tok
 exp = new PreIncrementExpression();
                                 exp->setOpe(PreIncrementExpression::MINUS);
                                 exp->setPosition(t);
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -3159,7 +3189,7 @@ exp = new PreIncrementExpression();
 exp = new PreIncrementExpression();
                                 exp->setOpe(PreIncrementExpression::PLUS);
                                 exp->setPosition(t);
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -3181,15 +3211,14 @@ exp = new PreIncrementExpression();
     }
     if (!hasError) {
 if(left==nullptr){
-                        left = right;
+                        left = right; __left.reset(left);
                 }
                 else{
                         exp->setExpression(right);
                         exp->setPosition(right);
                 }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3198,6 +3227,8 @@ AbstractExpression                  * AlinousLang::bitReverseExpression() {Token
         BitReverseExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case 193:{
@@ -3207,7 +3238,7 @@ AbstractExpression                  * AlinousLang::bitReverseExpression() {Token
       if (!hasError) {
 exp = new BitReverseExpression();
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       break;
       }
@@ -3221,15 +3252,14 @@ exp = new BitReverseExpression();
     }
     if (!hasError) {
 if(left==nullptr){
-                        left = right;
+                        left = right; __left.reset(left);
                 }
                 else{
                         exp->setExpression(right);
                         exp->setPosition(right);
                 }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3238,6 +3268,8 @@ AbstractExpression                  * AlinousLang::notExpression() {Token* t = n
         NotExpression* exp = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NOT:{
@@ -3247,7 +3279,7 @@ AbstractExpression                  * AlinousLang::notExpression() {Token* t = n
       if (!hasError) {
 exp = new NotExpression();
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       break;
       }
@@ -3261,15 +3293,14 @@ exp = new NotExpression();
     }
     if (!hasError) {
 if(left==nullptr){
-                        left = right;
+                        left = right; __left.reset(left);
                 }
                 else{
                         exp->setExpression(right);
                         exp->setPosition(right);
                 }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3279,6 +3310,8 @@ AbstractExpression                  * AlinousLang::castExpression() {Token* t = 
         AbstractType* type = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     if (jj_2_13(3)) {
       if (!hasError) {
@@ -3288,7 +3321,7 @@ AbstractExpression                  * AlinousLang::castExpression() {Token* t = 
       if (!hasError) {
 exp = new CastExpression();
                                 exp->setPosition(t);
-                                left = exp;
+                                left = exp; __left.reset(left);
       }
       if (!hasError) {
       type = typeDeclare();
@@ -3371,7 +3404,7 @@ exp->setExpression(right);
         right = memberReferenceExpression();
         }
         if (!hasError) {
-left = right;
+left = right; __left.reset(left);
         }
         }
         break;
@@ -3383,8 +3416,7 @@ left = right;
       }
     }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3393,8 +3425,13 @@ AbstractExpression                  * AlinousLang::memberReferenceExpression() {
         Token* t = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = arrayReferenceExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -3418,7 +3455,7 @@ if(exp == nullptr){
                                 exp = new MemberReferenceExpression();
                                 exp->addExp(left);
                                 exp->setPosition(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->addExp(right);
@@ -3430,8 +3467,7 @@ if(exp == nullptr){
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3440,8 +3476,13 @@ AbstractExpression                  * AlinousLang::arrayReferenceExpression() {A
         Token* t = nullptr;
         AbstractExpression* left = nullptr;
         AbstractExpression* right = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = functionCallExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -3458,7 +3499,7 @@ if(exp == nullptr){
                                 exp = new ArrayReferenceExpression();
                                 exp->setExp(left);
                                 exp->setPosition(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
       }
       if (!hasError) {
@@ -3477,8 +3518,7 @@ exp->addIndex(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3486,8 +3526,13 @@ assert(false);
 AbstractExpression                  * AlinousLang::functionCallExpression() {FunctionCallExpression* exp = nullptr;
         Token* t = nullptr;
         AbstractExpression* left = nullptr;
+
+        StackRelease<AbstractExpression> __left;
     if (!hasError) {
     left = primitive();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     if (jj_2_15(2)) {
@@ -3500,7 +3545,7 @@ exp = new FunctionCallExpression();
                         exp->setPosition(left);
                         exp->setPosition(t);
 
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       if (!hasError) {
       functionCallExpressionArg(exp);
@@ -3518,8 +3563,7 @@ exp->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -3736,11 +3780,13 @@ AllocationExpression                    * AlinousLang::allocationExpression() {A
         Token* t = nullptr;
 
         AbstractType* type = nullptr;
+
+        StackRelease<AllocationExpression> __exp;
     if (!hasError) {
     t = jj_consume_token(NEW);
     }
     if (!hasError) {
-exp = new AllocationExpression();
+exp = new AllocationExpression(); __exp.reset(exp);
                 exp->setPosition(t);
     }
     if (!hasError) {
@@ -3776,13 +3822,12 @@ exp->setPosition(ar);
       }
     }
     }
-__ONERROR(exp);
-                return exp;
+return __exp.move();
 assert(false);
 }
 
 
-ConstructorArray                * AlinousLang::constructorArray(AbstractType* type) {ConstructorArray* exp = new ConstructorArray();
+ConstructorArray                * AlinousLang::constructorArray(AbstractType* type) {ConstructorArray* exp = new ConstructorArray(); __STP(exp);
         Token* t = nullptr;
         AbstractExpression* dim = nullptr;
 
@@ -3820,13 +3865,12 @@ exp->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-ConstructorCall               * AlinousLang::constructorCallExpression(AbstractType* type) {ConstructorCall* exp = new ConstructorCall();
+ConstructorCall               * AlinousLang::constructorCallExpression(AbstractType* type) {ConstructorCall* exp = new ConstructorCall(); __STP(exp);
         Token* t = nullptr;
 
         exp->setName(type);
@@ -3846,8 +3890,7 @@ exp->setPosition(t);
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
@@ -3958,7 +4001,7 @@ exp->addArgument(arg);
 }
 
 
-ParenthesisExpression                     * AlinousLang::parenthesisExpression() {ParenthesisExpression* exp = new ParenthesisExpression();
+ParenthesisExpression                     * AlinousLang::parenthesisExpression() {ParenthesisExpression* exp = new ParenthesisExpression(); __STP(exp);
         AbstractExpression* e = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -3980,13 +4023,12 @@ exp->setExp(e);
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-VariableIdentifier                  * AlinousLang::variableIdentifier() {VariableIdentifier* valId = new VariableIdentifier();
+VariableIdentifier                  * AlinousLang::variableIdentifier() {VariableIdentifier* valId = new VariableIdentifier(); __STP(valId);
         Token* t = nullptr;
     if (!hasError) {
     t = identifierName();
@@ -3994,8 +4036,7 @@ VariableIdentifier                  * AlinousLang::variableIdentifier() {Variabl
     if (!hasError) {
 valId->setName(_STR(t));
     }
-__ONERROR(valId);
-                return valId;
+return __STP_MV(valId);
 assert(false);
 }
 
@@ -4315,7 +4356,7 @@ assert(false);
 }
 
 
-NullLiteral           * AlinousLang::nullLiteral() {NullLiteral* lit = new NullLiteral();
+NullLiteral           * AlinousLang::nullLiteral() {NullLiteral* lit = new NullLiteral(); __STP(lit);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(_NULL);
@@ -4323,13 +4364,12 @@ NullLiteral           * AlinousLang::nullLiteral() {NullLiteral* lit = new NullL
     if (!hasError) {
 lit->setPositions(t, t);
     }
-__ONERROR(lit);
-                return lit;
+return __STP_MV(lit);
 assert(false);
 }
 
 
-NumberLiteral             * AlinousLang::numberLiteral() {NumberLiteral* lit = new NumberLiteral();
+NumberLiteral             * AlinousLang::numberLiteral() {NumberLiteral* lit = new NumberLiteral(); __STP(lit);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(INTEGER_LITERAL);
@@ -4338,13 +4378,12 @@ NumberLiteral             * AlinousLang::numberLiteral() {NumberLiteral* lit = n
 lit->setValue(_STR(t));
                 lit->setPositions(t, t);
     }
-__ONERROR(lit);
-                return lit;
+return __STP_MV(lit);
 assert(false);
 }
 
 
-BooleanLiteral              * AlinousLang::booleanLiteral() {BooleanLiteral* lit = new BooleanLiteral();
+BooleanLiteral              * AlinousLang::booleanLiteral() {BooleanLiteral* lit = new BooleanLiteral(); __STP(lit);
         Token* t = nullptr;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -4375,13 +4414,12 @@ lit->setValue(false);
     if (!hasError) {
 lit->setPositions(t, t);
     }
-__ONERROR(lit);
-                return lit;
+return __STP_MV(lit);
 assert(false);
 }
 
 
-LiteralExpression                 * AlinousLang::literalExpression() {LiteralExpression* lit = new LiteralExpression();
+LiteralExpression                 * AlinousLang::literalExpression() {LiteralExpression* lit = new LiteralExpression(); __STP(lit);
         Token* t = nullptr;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -4412,8 +4450,7 @@ lit->setString(_STR(t), false);
     if (!hasError) {
 lit->setPositions(t, t);
     }
-__ONERROR(lit);
-                return lit;
+return __STP_MV(lit);
 assert(false);
 }
 
@@ -4454,7 +4491,7 @@ assert(false);
 }
 
 
-AlterTableStatement                   * AlinousLang::alterTableStatement() {AlterTableStatement* stmt = new AlterTableStatement();
+AlterTableStatement                   * AlinousLang::alterTableStatement() {AlterTableStatement* stmt = new AlterTableStatement(); __STP(stmt);
         TableIdentifier* tableId = nullptr;
         AbstractAlterDdlCommand* cmd = nullptr;
         Token* t = null;
@@ -4490,8 +4527,7 @@ stmt->setPosition(cmd);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -4529,8 +4565,7 @@ AbstractAlterDdlCommand                       * AlinousLang::alterCommands() {Ab
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(cmd);
-                return cmd;
+return cmd;
 assert(false);
 }
 
@@ -4560,13 +4595,12 @@ AbstractAlterDdlCommand                       * AlinousLang::alterRenameCommands
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(cmd);
-                return cmd;
+return cmd;
 assert(false);
 }
 
 
-AlterRenameTableCommand                       * AlinousLang::alterRenameTableCommand(Token* t) {AlterRenameTableCommand* cmd = new AlterRenameTableCommand();
+AlterRenameTableCommand                       * AlinousLang::alterRenameTableCommand(Token* t) {AlterRenameTableCommand* cmd = new AlterRenameTableCommand(); __STP(cmd);
         cmd->setPosition(t);
 
         TableIdentifier* tableId = nullptr;
@@ -4583,13 +4617,12 @@ cmd->setPosition(t);
 cmd->setPosition(t);
                 cmd->setNewName(tableId);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterRenameColumnCommand                        * AlinousLang::alterRenameColumnCommand(Token* t) {AlterRenameColumnCommand* cmd = new AlterRenameColumnCommand();
+AlterRenameColumnCommand                        * AlinousLang::alterRenameColumnCommand(Token* t) {AlterRenameColumnCommand* cmd = new AlterRenameColumnCommand(); __STP(cmd);
         cmd->setPosition(t);
     if (!hasError) {
     t = jj_consume_token(IDENTIFIER);
@@ -4611,13 +4644,12 @@ cmd->setPosition(t);
 cmd->setPosition(t);
                 cmd->setNewName(_STR(t));
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterModifyCommand                  * AlinousLang::alterModifyCommand() {AlterModifyCommand* cmd = new AlterModifyCommand();
+AlterModifyCommand                  * AlinousLang::alterModifyCommand() {AlterModifyCommand* cmd = new AlterModifyCommand(); __STP(cmd);
         DdlColumnDescriptor* desc = nullptr;
         Token* t = nullptr;
     if (!hasError) {
@@ -4633,8 +4665,7 @@ cmd->setPosition(t);
 cmd->setPosition(desc);
                 cmd->setColumnDescriptor(desc);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
@@ -4671,13 +4702,12 @@ AbstractAlterDdlCommand                       * AlinousLang::dropAlterCommands()
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(cmd);
-                return cmd;
+return cmd;
 assert(false);
 }
 
 
-AlterDropPrimaryKeyCommand                          * AlinousLang::alterDropPrimaryKeyCommand(Token* t) {AlterDropPrimaryKeyCommand* cmd = new AlterDropPrimaryKeyCommand();
+AlterDropPrimaryKeyCommand                          * AlinousLang::alterDropPrimaryKeyCommand(Token* t) {AlterDropPrimaryKeyCommand* cmd = new AlterDropPrimaryKeyCommand(); __STP(cmd);
         cmd->setPosition(t);
     if (!hasError) {
     t = jj_consume_token(PRIMARY);
@@ -4691,13 +4721,12 @@ cmd->setPosition(t);
     if (!hasError) {
 cmd->setPosition(t);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterDropIndexCommand                     * AlinousLang::alterDropIndexCommand(Token* t) {AlterDropIndexCommand* cmd = new AlterDropIndexCommand();
+AlterDropIndexCommand                     * AlinousLang::alterDropIndexCommand(Token* t) {AlterDropIndexCommand* cmd = new AlterDropIndexCommand(); __STP(cmd);
         cmd->setPosition(t);
     if (!hasError) {
     t = jj_consume_token(INDEX);
@@ -4712,13 +4741,12 @@ cmd->setPosition(t);
 cmd->setPosition(t);
                 cmd->setName(_STR(t));
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterDropColumnCommand                      * AlinousLang::alterDropColumnCommand(Token* t) {AlterDropColumnCommand* cmd = new AlterDropColumnCommand();
+AlterDropColumnCommand                      * AlinousLang::alterDropColumnCommand(Token* t) {AlterDropColumnCommand* cmd = new AlterDropColumnCommand(); __STP(cmd);
         cmd->setPosition(t);
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -4743,8 +4771,7 @@ cmd->setPosition(t);
 cmd->setPosition(t);
                 cmd->setName(_STR(t));
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
@@ -4782,13 +4809,12 @@ AbstractAlterDdlCommand                       * AlinousLang::addAlterCommands() 
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(cmd);
-                return cmd;
+return cmd;
 assert(false);
 }
 
 
-AlterAddPrimaryKeyCommand                         * AlinousLang::alterAddPrimaryKeyCommand(Token* t) {AlterAddPrimaryKeyCommand* cmd = new AlterAddPrimaryKeyCommand();
+AlterAddPrimaryKeyCommand                         * AlinousLang::alterAddPrimaryKeyCommand(Token* t) {AlterAddPrimaryKeyCommand* cmd = new AlterAddPrimaryKeyCommand(); __STP(cmd);
 
         cmd->setPosition(t);
     if (!hasError) {
@@ -4849,13 +4875,12 @@ cmd->setPosition(t);
     if (!hasError) {
 cmd->setPosition(t);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterAddColumnCommand                     * AlinousLang::alterAddColumnCommand(Token* __t) {AlterAddColumnCommand* cmd = new AlterAddColumnCommand();
+AlterAddColumnCommand                     * AlinousLang::alterAddColumnCommand(Token* __t) {AlterAddColumnCommand* cmd = new AlterAddColumnCommand(); __STP(cmd);
         DdlColumnDescriptor* desc = nullptr;
         cmd->setPosition(__t);
 
@@ -4883,13 +4908,12 @@ cmd->setPosition(t);
 cmd->setPosition(desc);
                 cmd->setColumnDescriptor(desc);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-AlterAddIndexCommand                    * AlinousLang::alterAddIndexCommand(Token* t) {AlterAddIndexCommand* cmd = new AlterAddIndexCommand();
+AlterAddIndexCommand                    * AlinousLang::alterAddIndexCommand(Token* t) {AlterAddIndexCommand* cmd = new AlterAddIndexCommand(); __STP(cmd);
         cmd->setPosition(t);
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -4967,13 +4991,12 @@ cmd->setPosition(t);
     if (!hasError) {
 cmd->setPosition(t);
     }
-__ONERROR(cmd);
-                return cmd;
+return __STP_MV(cmd);
 assert(false);
 }
 
 
-CreateTableStatement                    * AlinousLang::createTableStatement() {CreateTableStatement* stmt = new CreateTableStatement();
+CreateTableStatement                    * AlinousLang::createTableStatement() {CreateTableStatement* stmt = new CreateTableStatement(); __STP(stmt);
         DdlColumnDescriptor* desc = nullptr;
         Token* t = null;
     if (!hasError) {
@@ -5136,13 +5159,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-DdlColumnDescriptor                   * AlinousLang::ddlColumnDescriptor() {DdlColumnDescriptor* desc = new DdlColumnDescriptor();
+DdlColumnDescriptor                   * AlinousLang::ddlColumnDescriptor() {DdlColumnDescriptor* desc = new DdlColumnDescriptor(); __STP(desc);
         ColumnTypeDescriptor* typeDesc = nullptr;
         AbstractSQLExpression* val = nullptr;
         Token* t = nullptr;
@@ -5249,13 +5271,12 @@ desc->setDefaultValue(val);
       ;
     }
     }
-__ONERROR(desc);
-                return desc;
+return __STP_MV(desc);
 assert(false);
 }
 
 
-ColumnTypeDescriptor                    * AlinousLang::columnTypeDescriptor() {ColumnTypeDescriptor* typeDesc = new ColumnTypeDescriptor();
+ColumnTypeDescriptor                    * AlinousLang::columnTypeDescriptor() {ColumnTypeDescriptor* typeDesc = new ColumnTypeDescriptor(); __STP(typeDesc);
         AbstractSQLExpression* val = nullptr;
         Token* t1 = nullptr;
         Token* t2 = nullptr;
@@ -5350,13 +5371,12 @@ typeDesc->setPosition(t2);
       ;
     }
     }
-__ONERROR(typeDesc);
-                return typeDesc;
+return __STP_MV(typeDesc);
 assert(false);
 }
 
 
-DropTableStatement                  * AlinousLang::dropTableStatement() {DropTableStatement* stmt = new DropTableStatement();
+DropTableStatement                  * AlinousLang::dropTableStatement() {DropTableStatement* stmt = new DropTableStatement(); __STP(stmt);
         Token* t = null;
         TableIdentifier* tableId = nullptr;
     if (!hasError) {
@@ -5384,8 +5404,7 @@ stmt->setTableId(tableId);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -5450,7 +5469,7 @@ assert(false);
 }
 
 
-SelectStatement               * AlinousLang::selectStatement() {SelectStatement* stmt = new SelectStatement();
+SelectStatement               * AlinousLang::selectStatement() {SelectStatement* stmt = new SelectStatement(); __STP(stmt);
         Token* t = nullptr;
         SQLSelectTargetList* expList = nullptr;
         SQLFrom* from = nullptr;
@@ -5565,13 +5584,12 @@ stmt->setLimitOffset(limitOffset);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLSelectTargetList                   * AlinousLang::sqlSelectTargetList() {SQLSelectTargetList* stmt = new SQLSelectTargetList();
+SQLSelectTargetList                   * AlinousLang::sqlSelectTargetList() {SQLSelectTargetList* stmt = new SQLSelectTargetList(); __STP(stmt);
         Token* t = nullptr;
         SQLSelectTarget* target = nullptr;
     if (!hasError) {
@@ -5611,13 +5629,12 @@ stmt->addTarget(target);
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLSelectTarget               * AlinousLang::sqlSelectTarget() {SQLSelectTarget* stmt = new SQLSelectTarget();
+SQLSelectTarget               * AlinousLang::sqlSelectTarget() {SQLSelectTarget* stmt = new SQLSelectTarget(); __STP(stmt);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
     if (!hasError) {
@@ -5657,13 +5674,12 @@ stmt->setAsName(_STR(t));
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLGroupBy          * AlinousLang::sqlGroupBy() {SQLGroupBy* stmt = new SQLGroupBy();
+SQLGroupBy          * AlinousLang::sqlGroupBy() {SQLGroupBy* stmt = new SQLGroupBy(); __STP(stmt);
         Token* t = nullptr;
         SQLColumnsList* columns = nullptr;
         SQLHaving* having = nullptr;
@@ -5706,8 +5722,7 @@ stmt->setHaving(having);
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -5734,7 +5749,7 @@ assert(false);
 }
 
 
-SQLOrderBy          * AlinousLang::sqlOrderBy() {SQLOrderBy* stmt = new SQLOrderBy();
+SQLOrderBy          * AlinousLang::sqlOrderBy() {SQLOrderBy* stmt = new SQLOrderBy(); __STP(stmt);
         Token* t = nullptr;
         SQLColumnsList* columns = nullptr;
     if (!hasError) {
@@ -5756,13 +5771,12 @@ stmt->setPosition(t);
 stmt->setList(columns);
                 stmt->setPosition(columns);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLLimitOffset              * AlinousLang::sqlLimitOffset() {SQLLimitOffset* stmt = new SQLLimitOffset();
+SQLLimitOffset              * AlinousLang::sqlLimitOffset() {SQLLimitOffset* stmt = new SQLLimitOffset(); __STP(stmt);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
     if (!hasError) {
@@ -5814,13 +5828,12 @@ stmt->setOffset(exp);
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-UpdateStatement               * AlinousLang::updateStatement() {UpdateStatement* stmt = new UpdateStatement();
+UpdateStatement               * AlinousLang::updateStatement() {UpdateStatement* stmt = new UpdateStatement(); __STP(stmt);
         Token* t = nullptr;
         TableIdentifier* tableId = nullptr;
         SQLSet* set = nullptr;
@@ -5868,13 +5881,12 @@ stmt->setWhere(where);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLSet      * AlinousLang::sqlSet() {SQLSet* stmt = new SQLSet();
+SQLSet      * AlinousLang::sqlSet() {SQLSet* stmt = new SQLSet(); __STP(stmt);
         Token* t = nullptr;
         SQLSetPair* pair = nullptr;
     if (!hasError) {
@@ -5920,13 +5932,12 @@ stmt->addPair(pair);
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLSetPair          * AlinousLang::sqlSetPair() {SQLSetPair* stmt = new SQLSetPair();
+SQLSetPair          * AlinousLang::sqlSetPair() {SQLSetPair* stmt = new SQLSetPair(); __STP(stmt);
         Token* t = nullptr;
         SQLColumnIdentifier* colId = nullptr;
         AbstractSQLExpression* ex = nullptr;
@@ -5950,13 +5961,12 @@ stmt->setPosition(t);
 stmt->setExpression(ex);
                 stmt->setPosition(ex);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-InsertStatement               * AlinousLang::insertStatement() {InsertStatement* stmt = new InsertStatement();
+InsertStatement               * AlinousLang::insertStatement() {InsertStatement* stmt = new InsertStatement(); __STP(stmt);
         Token* t = nullptr;
         TableIdentifier* tableId = nullptr;
         SQLColumnsList* columns = nullptr;
@@ -6040,13 +6050,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLColumnsList              * AlinousLang::sqlColumnsList() {SQLColumnsList* stmt = new SQLColumnsList();
+SQLColumnsList              * AlinousLang::sqlColumnsList() {SQLColumnsList* stmt = new SQLColumnsList(); __STP(stmt);
         Token* t = nullptr;
         SQLColumnIdentifier* colId = nullptr;
     if (!hasError) {
@@ -6086,13 +6095,12 @@ stmt->addColumn(colId);
     if (!hasError) {
 
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-DeleteStatement               * AlinousLang::deleteStatement() {DeleteStatement* stmt = new DeleteStatement();
+DeleteStatement               * AlinousLang::deleteStatement() {DeleteStatement* stmt = new DeleteStatement(); __STP(stmt);
         Token* t = nullptr;
         SQLFrom* from = nullptr;
         SQLWhere* where = nullptr;
@@ -6132,13 +6140,12 @@ stmt->setWhere(where);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLWhere        * AlinousLang::sqlWhere() {SQLWhere* stmt = new SQLWhere();
+SQLWhere        * AlinousLang::sqlWhere() {SQLWhere* stmt = new SQLWhere(); __STP(stmt);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
     if (!hasError) {
@@ -6154,13 +6161,12 @@ stmt->setPosition(t);
 stmt->setExpression(exp);
                 stmt->setPosition(exp);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-SQLFrom       * AlinousLang::sqlFrom() {SQLFrom* stmt = new SQLFrom();
+SQLFrom       * AlinousLang::sqlFrom() {SQLFrom* stmt = new SQLFrom(); __STP(stmt);
         Token* t = nullptr;
         AbstractJoinPart* tableId = nullptr;
     if (!hasError) {
@@ -6176,13 +6182,12 @@ stmt->setPosition(t);
 stmt->setTable(tableId);
                 stmt->setPosition(tableId);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-BeginStatement              * AlinousLang::beginStatement() {BeginStatement* stmt = new BeginStatement();
+BeginStatement              * AlinousLang::beginStatement() {BeginStatement* stmt = new BeginStatement(); __STP(stmt);
         Token* t = null;
     if (!hasError) {
     t = jj_consume_token(BEGIN);
@@ -6196,13 +6201,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-CommitStatement               * AlinousLang::commitStatement() {CommitStatement* stmt = new CommitStatement();
+CommitStatement               * AlinousLang::commitStatement() {CommitStatement* stmt = new CommitStatement(); __STP(stmt);
         Token* t = null;
     if (!hasError) {
     t = jj_consume_token(COMMIT);
@@ -6216,13 +6220,12 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
 
-RollbackStatement                 * AlinousLang::rollbackStatement() {RollbackStatement* stmt = new RollbackStatement();
+RollbackStatement                 * AlinousLang::rollbackStatement() {RollbackStatement* stmt = new RollbackStatement(); __STP(stmt);
         Token* t = null;
     if (!hasError) {
     t = jj_consume_token(ROLLBACK);
@@ -6236,8 +6239,7 @@ stmt->setPosition(t);
     if (!hasError) {
 stmt->setPosition(t);
     }
-__ONERROR(stmt);
-                return stmt;
+return __STP_MV(stmt);
 assert(false);
 }
 
@@ -6261,8 +6263,13 @@ AbstractSQLExpression                     * AlinousLang::sqlOrExpression() {SQLO
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlAndExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -6279,7 +6286,7 @@ if(exp == nullptr){
                                 exp = new SQLOrExpression();
                                 exp->addOperand(left);
                                 exp->setPosition(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -6297,8 +6304,7 @@ exp->addOperand(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6307,8 +6313,13 @@ AbstractSQLExpression                     * AlinousLang::sqlAndExpression() {SQL
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlNotExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -6325,7 +6336,7 @@ if(exp == nullptr){
                                 exp = new SQLAndExpression();
                                 exp->addOperand(left);
                                 exp->setPosition(left);
-                                left = exp;
+                                left = exp; __left.reset(left);
                         }
 
                         exp->setPosition(t);
@@ -6343,8 +6354,7 @@ exp->addOperand(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6353,6 +6363,8 @@ AbstractSQLExpression                     * AlinousLang::sqlNotExpression() {SQL
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case SQL_NOT:{
@@ -6362,7 +6374,7 @@ AbstractSQLExpression                     * AlinousLang::sqlNotExpression() {SQL
       if (!hasError) {
 exp = new SQLNotExpression();
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       break;
       }
@@ -6376,15 +6388,14 @@ exp = new SQLNotExpression();
     }
     if (!hasError) {
 if(left == nullptr){
-                        left = right;
+                        left = right;  __left.reset(left);
                 }
                 else{
                         exp->setExpression(right);
                         exp->setPosition(right);
                 }
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6393,8 +6404,13 @@ AbstractSQLExpression                     * AlinousLang::sqlLikeExpression() {SQ
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         SQLLiteral* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlIsNullExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     if (jj_2_20(2)) {
@@ -6407,7 +6423,7 @@ exp = new SQLLikeExpression();
 
                         exp->setPosition(left);
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       if (!hasError) {
       right = sqlLiteral();
@@ -6446,8 +6462,7 @@ exp->setEscape(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6456,8 +6471,13 @@ AbstractSQLExpression                     * AlinousLang::sqlIsNullExpression() {
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlBetweenExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     if (jj_2_21(2)) {
@@ -6470,7 +6490,7 @@ exp = new SQLIsNullExpression();
 
                         exp->setPosition(left);
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       if (!hasError) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -6502,8 +6522,7 @@ exp->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6512,8 +6531,13 @@ AbstractSQLExpression                     * AlinousLang::sqlBetweenExpression() 
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlInExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -6527,7 +6551,7 @@ exp = new SQLBetweenExpression();
 
                         exp->setPosition(left);
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       if (!hasError) {
       right = sqlAdditiveExpression();
@@ -6559,8 +6583,7 @@ exp->setEnd(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6569,8 +6592,13 @@ AbstractSQLExpression                     * AlinousLang::sqlInExpression() {SQLI
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         SQLExpressionList* list = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlRelationalExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -6584,7 +6612,7 @@ exp = new SQLInExpression();
 
                         exp->setPosition(left);
                         exp->setPosition(t);
-                        left = exp;
+                        left = exp; __left.reset(left);
       }
       if (!hasError) {
       t = jj_consume_token(L_PARENTHESIS);
@@ -6614,8 +6642,7 @@ exp->setPosition(t);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6624,8 +6651,13 @@ AbstractSQLExpression                     * AlinousLang::sqlRelationalExpression
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlEqualityExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -6646,7 +6678,7 @@ exp = new SQLRelationalExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6661,7 +6693,7 @@ exp = new SQLRelationalExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6676,7 +6708,7 @@ exp = new SQLRelationalExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6691,7 +6723,7 @@ exp = new SQLRelationalExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6718,8 +6750,7 @@ exp->setRight(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6728,8 +6759,13 @@ AbstractSQLExpression                     * AlinousLang::sqlEqualityExpression()
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlAdditiveExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -6749,7 +6785,7 @@ exp = new SQLEqualityExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6764,7 +6800,7 @@ exp = new SQLEqualityExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6779,7 +6815,7 @@ exp = new SQLEqualityExpression();
                                 exp->setPosition(left);
                                 exp->setPosition(t);
 
-                                left = exp;
+                                left = exp; __left.reset(left);
         }
         break;
         }
@@ -6806,8 +6842,7 @@ exp->setRight(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6816,8 +6851,13 @@ AbstractSQLExpression                     * AlinousLang::sqlAdditiveExpression()
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlMultiplicativeExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -6842,7 +6882,7 @@ if(exp == nullptr){
                                         exp = new SQLAdditiveExpression();
                                         exp->addOperand(left);
                                         exp->setPosition(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(SQLAdditiveExpression::ADD);
                                 exp->setPosition(t);
@@ -6858,7 +6898,7 @@ if(exp == nullptr){
                                         exp = new SQLAdditiveExpression();
                                         exp->addOperand(left);
                                         exp->setPosition(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(SQLAdditiveExpression::SUB);
                                 exp->setPosition(t);
@@ -6884,8 +6924,7 @@ exp->addOperand(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -6894,8 +6933,13 @@ AbstractSQLExpression                     * AlinousLang::sqlMultiplicativeExpres
         Token* t = nullptr;
         AbstractSQLExpression* left = nullptr;
         AbstractSQLExpression* right = nullptr;
+
+        StackRelease<AbstractSQLExpression> __left;
     if (!hasError) {
     left = sqlPrimitiveExpression();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -6921,7 +6965,7 @@ if(exp == nullptr){
                                         exp = new SqlMultiplicativeExpression();
                                         exp->addOperand(left);
                                         exp->setPosition(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(SqlMultiplicativeExpression::MUL);
                                 exp->setPosition(t);
@@ -6937,7 +6981,7 @@ if(exp == nullptr){
                                         exp = new SqlMultiplicativeExpression();
                                         exp->addOperand(left);
                                         exp->setPosition(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(SqlMultiplicativeExpression::DIV);
                                 exp->setPosition(t);
@@ -6953,7 +6997,7 @@ if(exp == nullptr){
                                         exp = new SqlMultiplicativeExpression();
                                         exp->addOperand(left);
                                         exp->setPosition(left);
-                                        left = exp;
+                                        left = exp; __left.reset(left);
                                 }
                                 exp->addOpe(SqlMultiplicativeExpression::MOD);
                                 exp->setPosition(t);
@@ -6979,8 +7023,7 @@ exp->addOperand(right);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -7102,7 +7145,7 @@ assert(false);
 }
 
 
-SQLNullLiteral              * AlinousLang::sqlNullLiteral() {SQLNullLiteral* exp = new SQLNullLiteral();
+SQLNullLiteral              * AlinousLang::sqlNullLiteral() {SQLNullLiteral* exp = new SQLNullLiteral(); __STP(exp);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(_NULL);
@@ -7110,13 +7153,12 @@ SQLNullLiteral              * AlinousLang::sqlNullLiteral() {SQLNullLiteral* exp
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLWildCard           * AlinousLang::sqlWildCard() {SQLWildCard* exp = new SQLWildCard();
+SQLWildCard           * AlinousLang::sqlWildCard() {SQLWildCard* exp = new SQLWildCard(); __STP(exp);
         Token* t = nullptr;
     if (!hasError) {
     t = jj_consume_token(ASTERISK);
@@ -7124,13 +7166,12 @@ SQLWildCard           * AlinousLang::sqlWildCard() {SQLWildCard* exp = new SQLWi
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLFunctionCall               * AlinousLang::sqlFunctionCall() {SQLFunctionCall* exp = new SQLFunctionCall();
+SQLFunctionCall               * AlinousLang::sqlFunctionCall() {SQLFunctionCall* exp = new SQLFunctionCall(); __STP(exp);
         Token* t = nullptr;
         VariableIdentifier* name = nullptr;
     if (!hasError) {
@@ -7155,8 +7196,7 @@ exp->setPosition(t);
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
@@ -7266,7 +7306,11 @@ exp->addArgument(ex);
 
 
 AbstractSQLExpression                     * AlinousLang::sqlDistinctArgument() {SQLDistinctArgument* dist = nullptr;
+        StackRelease<SQLDistinctArgument> __dist;
+
         AbstractSQLExpression* ex = nullptr;
+        StackRelease<AbstractSQLExpression> __ex;
+
         Token* t = nullptr;
     if (!hasError) {
     if (jj_2_23(2)) {
@@ -7274,7 +7318,7 @@ AbstractSQLExpression                     * AlinousLang::sqlDistinctArgument() {
       t = jj_consume_token(DISTINCT);
       }
       if (!hasError) {
-dist = new SQLDistinctArgument();
+dist = new SQLDistinctArgument(); __dist.reset(dist);
                         dist->setPosition(t);
       }
     } else {
@@ -7288,15 +7332,18 @@ dist = new SQLDistinctArgument();
 if(t != nullptr){
                         dist->setPosition(ex);
                         dist->setExpression(ex);
-                        ex = dist;
+                        ex = __dist.move();  __ex.reset(ex);
+                }
+                else{
+                        __ex.reset(ex);
                 }
     }
-return ex;
+return __ex.move();
 assert(false);
 }
 
 
-SQLPlaceHolder              * AlinousLang::sqlPlaceHolder() {SQLPlaceHolder* exp = new SQLPlaceHolder();
+SQLPlaceHolder              * AlinousLang::sqlPlaceHolder() {SQLPlaceHolder* exp = new SQLPlaceHolder(); __STP(exp);
         Token* t = nullptr;
         AbstractExpression* ex = nullptr;
     if (!hasError) {
@@ -7345,13 +7392,12 @@ exp->setAvailable(ex);
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLParenthesisExpression                        * AlinousLang::sqlParenthesisExpression() {SQLParenthesisExpression* exp = new SQLParenthesisExpression();
+SQLParenthesisExpression                        * AlinousLang::sqlParenthesisExpression() {SQLParenthesisExpression* exp = new SQLParenthesisExpression(); __STP(exp);
         Token* t = nullptr;
         AbstractSQLExpression* ex = nullptr;
     if (!hasError) {
@@ -7373,13 +7419,12 @@ exp->setExpression(ex);
     if (!hasError) {
 exp->setPosition(t);
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLLiteral          * AlinousLang::sqlLiteral() {SQLLiteral* exp = new SQLLiteral();
+SQLLiteral          * AlinousLang::sqlLiteral() {SQLLiteral* exp = new SQLLiteral(); __STP(exp);
         Token* t = nullptr;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -7422,13 +7467,12 @@ exp->setValue(_STR(t), SQLLiteral::TYPE_STRING);
     if (!hasError) {
 
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLBooleanLiteral                 * AlinousLang::sqlBooleanLiteral() {SQLBooleanLiteral* exp = new SQLBooleanLiteral();
+SQLBooleanLiteral                 * AlinousLang::sqlBooleanLiteral() {SQLBooleanLiteral* exp = new SQLBooleanLiteral(); __STP(exp);
         Token* t = nullptr;
     if (!hasError) {
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -7461,13 +7505,12 @@ exp->setValue(false);
     if (!hasError) {
 
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
 
-SQLColumnIdentifier                   * AlinousLang::sqlColumnIdentifier() {SQLColumnIdentifier* exp = new SQLColumnIdentifier();
+SQLColumnIdentifier                   * AlinousLang::sqlColumnIdentifier() {SQLColumnIdentifier* exp = new SQLColumnIdentifier(); __STP(exp);
         Token* t = nullptr;
         Token* t1 = nullptr;
         Token* t2 = nullptr;
@@ -7536,8 +7579,7 @@ if(t3 != nullptr){
                         exp->setColumnName(_STR(t1));
                 }
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
@@ -7833,7 +7875,7 @@ assert(false);
 
 
 SQLExpressionList
-                 * AlinousLang::sqlExpressionList() {SQLExpressionList* exp = new SQLExpressionList();
+                 * AlinousLang::sqlExpressionList() {SQLExpressionList* exp = new SQLExpressionList(); __STP(exp);
         Token* t = nullptr;
         AbstractSQLExpression* ex = nullptr;
     if (!hasError) {
@@ -7873,8 +7915,7 @@ exp->addExpression(ex);
     if (!hasError) {
 
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
@@ -7884,8 +7925,13 @@ AbstractJoinPart
         TableList* tablelist = nullptr;
         Token* t = nullptr;
         TableIdentifier* table = nullptr;
+
+        StackRelease<AbstractJoinPart> __left;
     if (!hasError) {
     left = join();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -7907,7 +7953,7 @@ if(tablelist == nullptr){
                                 tablelist->addTable(left);
                                 tablelist->setPosition(left);
 
-                                left = tablelist;
+                                left = tablelist; __left.reset(left);
                         }
 
                         tablelist->setPosition(t);
@@ -7925,8 +7971,7 @@ tablelist->addTable(table);
     if (!hasError) {
 
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
@@ -7934,8 +7979,13 @@ assert(false);
 AbstractJoinPart                * AlinousLang::join() {AbstractJoinPart* left = nullptr;
         SQLJoinPart* right = nullptr;
         SQLJoin* joinBody = nullptr;
+
+        StackRelease<AbstractJoinPart> __left;
     if (!hasError) {
     left = joinTarget();
+    }
+    if (!hasError) {
+__left.reset(left);
     }
     if (!hasError) {
     while (!hasError) {
@@ -7989,7 +8039,7 @@ if(joinBody == nullptr){
                                 joinBody->setPosition(left);
                                 joinBody->setFirst(left);
 
-                                left = joinBody;
+                                left = joinBody; __left.reset(left);
                         }
 
                         joinBody->addJoinPart(right);
@@ -7997,13 +8047,12 @@ if(joinBody == nullptr){
     }
     end_label_43: ;
     }
-__ONERROR(left);
-                return left;
+return __left.move();
 assert(false);
 }
 
 
-SQLJoinPart           * AlinousLang::innerJoin() {SQLJoinPart* join = new SQLJoinPart();
+SQLJoinPart           * AlinousLang::innerJoin() {SQLJoinPart* join = new SQLJoinPart(); __STP(join);
         join->setJoinType(SQLJoinPart::INNER_JOIN);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
@@ -8053,13 +8102,12 @@ join->setExpression(exp);
     if (!hasError) {
 
     }
-__ONERROR(join);
-                return join;
+return __STP_MV(join);
 assert(false);
 }
 
 
-SQLJoinPart           * AlinousLang::leftJoin() {SQLJoinPart* join = new SQLJoinPart();
+SQLJoinPart           * AlinousLang::leftJoin() {SQLJoinPart* join = new SQLJoinPart(); __STP(join);
         join->setJoinType(SQLJoinPart::LEFT_OUTER_JOIN);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
@@ -8125,13 +8173,12 @@ join->setExpression(exp);
     if (!hasError) {
 
     }
-__ONERROR(join);
-                return join;
+return __STP_MV(join);
 assert(false);
 }
 
 
-SQLJoinPart           * AlinousLang::rightJoin() {SQLJoinPart* join = new SQLJoinPart();
+SQLJoinPart           * AlinousLang::rightJoin() {SQLJoinPart* join = new SQLJoinPart(); __STP(join);
         join->setJoinType(SQLJoinPart::RIGHT_OUTER_JOIN);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
@@ -8197,13 +8244,12 @@ join->setExpression(exp);
     if (!hasError) {
 
     }
-__ONERROR(join);
-                return join;
+return __STP_MV(join);
 assert(false);
 }
 
 
-SQLJoinPart           * AlinousLang::crossJoin() {SQLJoinPart* join = new SQLJoinPart();
+SQLJoinPart           * AlinousLang::crossJoin() {SQLJoinPart* join = new SQLJoinPart(); __STP(join);
         join->setJoinType(SQLJoinPart::CROSS_JOIN);
         Token* t = nullptr;
         AbstractSQLExpression* exp = nullptr;
@@ -8253,8 +8299,7 @@ join->setExpression(exp);
     if (!hasError) {
 
     }
-__ONERROR(join);
-                return join;
+return __STP_MV(join);
 assert(false);
 }
 
@@ -8333,7 +8378,7 @@ assert(false);
 }
 
 
-ParenthesisJoinPart                   * AlinousLang::parenthesisJoinPart() {ParenthesisJoinPart* part = new ParenthesisJoinPart();
+ParenthesisJoinPart                   * AlinousLang::parenthesisJoinPart() {ParenthesisJoinPart* part = new ParenthesisJoinPart(); __STP(part);
         Token* t = nullptr;
         AbstractJoinPart* target = nullptr;
     if (!hasError) {
@@ -8355,13 +8400,12 @@ part->setPart(target);
     if (!hasError) {
 part->setPosition(t);
     }
-__ONERROR(part);
-                return part;
+return __STP_MV(part);
 assert(false);
 }
 
 
-TableIdentifier               * AlinousLang::tableIdentifier() {TableIdentifier* exp = new TableIdentifier();
+TableIdentifier               * AlinousLang::tableIdentifier() {TableIdentifier* exp = new TableIdentifier(); __STP(exp);
         Token* t = nullptr;
         Token* t1 = nullptr;
         Token* t2 = nullptr;
@@ -8425,8 +8469,7 @@ exp->setPosition(t);
       ;
     }
     }
-__ONERROR(exp);
-                return exp;
+return __STP_MV(exp);
 assert(false);
 }
 
@@ -8461,13 +8504,12 @@ AbstractJsonExpression
       errorHandler->handleParseError(token, getToken(1), __FUNCTION__, this), hasError = true;
     }
     }
-__ONERROR(jsonExp);
-                return jsonExp;
+return jsonExp;
 assert(false);
 }
 
 
-JsonInitializerExpression                         * AlinousLang::jsonInitializerExpression() {JsonInitializerExpression* jsonExp = new JsonInitializerExpression();
+JsonInitializerExpression                         * AlinousLang::jsonInitializerExpression() {JsonInitializerExpression* jsonExp = new JsonInitializerExpression(); __STP(jsonExp);
         Token* t = nullptr;
         JsonKeyValuePairExpression* element = nullptr;
     if (!hasError) {
@@ -8528,13 +8570,12 @@ jsonExp->setPosition(element);
     if (!hasError) {
 jsonExp->setPosition(t);
     }
-__ONERROR(jsonExp);
-                return jsonExp;
+return __STP_MV(jsonExp);
 assert(false);
 }
 
 
-JsonArrayExpression                   * AlinousLang::jsonArrayExpression() {JsonArrayExpression* jsonExp = new JsonArrayExpression();
+JsonArrayExpression                   * AlinousLang::jsonArrayExpression() {JsonArrayExpression* jsonExp = new JsonArrayExpression(); __STP(jsonExp);
         AbstractJsonExpression* element = nullptr;
         Token* t = nullptr;
 
@@ -8652,13 +8693,12 @@ jsonExp->setPosition(exp);
     if (!hasError) {
 jsonExp->setPosition(t);
     }
-__ONERROR(jsonExp);
-                return jsonExp;
+return __STP_MV(jsonExp);
 assert(false);
 }
 
 
-JsonKeyValuePairExpression                          * AlinousLang::jsonKeyValuePair() {JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression();
+JsonKeyValuePairExpression                          * AlinousLang::jsonKeyValuePair() {JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression(); __STP(pair);
         Token* t = nullptr;
         AbstractExpression* exp = nullptr;
         LiteralExpression* lit = nullptr;
@@ -8730,8 +8770,7 @@ pair->setPosition(jsonExp);
       }
     }
     }
-__ONERROR(pair);
-                return pair;
+return __STP_MV(pair);
 assert(false);
 }
 

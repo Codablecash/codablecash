@@ -16,14 +16,13 @@ AbstractJsonExpression* jsonElement() : {
 		
 	)
 	{
-		 __ONERROR(jsonExp);
 		return jsonExp;
 	}
 }
 
 JsonInitializerExpression* jsonInitializerExpression() :
 {
-	JsonInitializerExpression* jsonExp = new JsonInitializerExpression();
+	JsonInitializerExpression* jsonExp = new JsonInitializerExpression(); __STP(jsonExp);
 	Token* t = nullptr;
 	JsonKeyValuePairExpression* element = nullptr;
 }
@@ -51,14 +50,13 @@ JsonInitializerExpression* jsonInitializerExpression() :
 		jsonExp->setPosition(t);
 	}
 	{
-		 __ONERROR(jsonExp);
-		return jsonExp;
+		return __STP_MV(jsonExp);
 	}
 }
 
 JsonArrayExpression* jsonArrayExpression() :
 {
-	JsonArrayExpression* jsonExp = new JsonArrayExpression();
+	JsonArrayExpression* jsonExp = new JsonArrayExpression(); __STP(jsonExp);
 	AbstractJsonExpression* element = nullptr;
 	Token* t = nullptr;
 	
@@ -89,14 +87,13 @@ JsonArrayExpression* jsonArrayExpression() :
 		jsonExp->setPosition(t);
 	}
 	{
-		 __ONERROR(jsonExp);
-		return jsonExp;
+		return __STP_MV(jsonExp);
 	}
 }
 
 JsonKeyValuePairExpression* jsonKeyValuePair() :
 {
-	JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression();
+	JsonKeyValuePairExpression* pair = new JsonKeyValuePairExpression(); __STP(pair);
 	Token* t = nullptr;
 	AbstractExpression* exp = nullptr;
 	LiteralExpression* lit = nullptr;
@@ -129,7 +126,6 @@ JsonKeyValuePairExpression* jsonKeyValuePair() :
 		}
 	)
 	{
-		 __ONERROR(pair);
-		return pair;
+		return __STP_MV(pair);
 	}
 }

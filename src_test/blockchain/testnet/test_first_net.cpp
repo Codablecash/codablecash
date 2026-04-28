@@ -60,8 +60,8 @@ TEST(TestFirstNetGroup, case01){
 	File* dirNode03 = projectFolder.get(L"node03"); __STP(dirNode03);
 
 	DebugDefaultLogger logger;
-	logger.setSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
-	logger.setSection(ISystemLogger::DEBUG_POW_CALC_THREAD);
+	logger.addSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
+	logger.addSection(ISystemLogger::DEBUG_POW_CALC_THREAD);
 
 	CodablecashSystemParam param;
 	DebugCodablecashSystemParamSetup::setupConfig02(param);

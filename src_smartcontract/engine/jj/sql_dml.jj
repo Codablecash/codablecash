@@ -23,7 +23,7 @@ AbstractSQLStatement* sqlDmlStatement() : {
 }
 
 SelectStatement* selectStatement() : {
-	SelectStatement* stmt = new SelectStatement();
+	SelectStatement* stmt = new SelectStatement(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSelectTargetList* expList = nullptr;
 	SQLFrom* from = nullptr;
@@ -80,13 +80,12 @@ SelectStatement* selectStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSelectTargetList* sqlSelectTargetList() : {
-	SQLSelectTargetList* stmt = new SQLSelectTargetList();
+	SQLSelectTargetList* stmt = new SQLSelectTargetList(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSelectTarget* target = nullptr;
 }
@@ -106,13 +105,12 @@ SQLSelectTargetList* sqlSelectTargetList() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSelectTarget* sqlSelectTarget() : {
-	SQLSelectTarget* stmt = new SQLSelectTarget();
+	SQLSelectTarget* stmt = new SQLSelectTarget(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -136,13 +134,12 @@ SQLSelectTarget* sqlSelectTarget() : {
 	)
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLGroupBy* sqlGroupBy() : {
-	SQLGroupBy* stmt = new SQLGroupBy();
+	SQLGroupBy* stmt = new SQLGroupBy(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnsList* columns = nullptr;
 	SQLHaving* having = nullptr;
@@ -167,8 +164,7 @@ SQLGroupBy* sqlGroupBy() : {
 	]
 	{}	
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
@@ -192,7 +188,7 @@ SQLHaving* sqlHaving() : {
 }
 
 SQLOrderBy* sqlOrderBy() : {
-	SQLOrderBy* stmt = new SQLOrderBy();
+	SQLOrderBy* stmt = new SQLOrderBy(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnsList* columns = nullptr;
 }
@@ -208,13 +204,12 @@ SQLOrderBy* sqlOrderBy() : {
 		stmt->setPosition(columns);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLLimitOffset* sqlLimitOffset() : {
-	SQLLimitOffset* stmt = new SQLLimitOffset();
+	SQLLimitOffset* stmt = new SQLLimitOffset(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -239,13 +234,12 @@ SQLLimitOffset* sqlLimitOffset() : {
 	]
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 UpdateStatement* updateStatement() : {
-	UpdateStatement* stmt = new UpdateStatement();
+	UpdateStatement* stmt = new UpdateStatement(); __STP(stmt);
 	Token* t = nullptr;
 	TableIdentifier* tableId = nullptr;
 	SQLSet* set = nullptr;
@@ -274,13 +268,12 @@ UpdateStatement* updateStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSet* sqlSet() : {
-	SQLSet* stmt = new SQLSet();
+	SQLSet* stmt = new SQLSet(); __STP(stmt);
 	Token* t = nullptr;
 	SQLSetPair* pair = nullptr;
 }
@@ -303,13 +296,12 @@ SQLSet* sqlSet() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLSetPair* sqlSetPair() : {
-	SQLSetPair* stmt = new SQLSetPair();
+	SQLSetPair* stmt = new SQLSetPair(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnIdentifier* colId = nullptr;
 	AbstractSQLExpression* ex = nullptr;
@@ -329,13 +321,12 @@ SQLSetPair* sqlSetPair() : {
 		stmt->setPosition(ex);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 InsertStatement* insertStatement() : {
-	InsertStatement* stmt = new InsertStatement();
+	InsertStatement* stmt = new InsertStatement(); __STP(stmt);
 	Token* t = nullptr;
 	TableIdentifier* tableId = nullptr;
 	SQLColumnsList* columns = nullptr;
@@ -387,13 +378,12 @@ InsertStatement* insertStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLColumnsList* sqlColumnsList() : {
-	SQLColumnsList* stmt = new SQLColumnsList();
+	SQLColumnsList* stmt = new SQLColumnsList(); __STP(stmt);
 	Token* t = nullptr;
 	SQLColumnIdentifier* colId = nullptr;
 }
@@ -413,13 +403,12 @@ SQLColumnsList* sqlColumnsList() : {
 	)*
 	{}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 DeleteStatement* deleteStatement() : {
-	DeleteStatement* stmt = new DeleteStatement();
+	DeleteStatement* stmt = new DeleteStatement(); __STP(stmt);
 	Token* t = nullptr;
 	SQLFrom* from = nullptr;
 	SQLWhere* where = nullptr;
@@ -443,13 +432,12 @@ DeleteStatement* deleteStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLWhere* sqlWhere() : {
-	SQLWhere* stmt = new SQLWhere();
+	SQLWhere* stmt = new SQLWhere(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractSQLExpression* exp = nullptr;
 }
@@ -462,13 +450,12 @@ SQLWhere* sqlWhere() : {
 		stmt->setPosition(exp);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 SQLFrom* sqlFrom() : {
-	SQLFrom* stmt = new SQLFrom();
+	SQLFrom* stmt = new SQLFrom(); __STP(stmt);
 	Token* t = nullptr;
 	AbstractJoinPart* tableId = nullptr;
 }
@@ -481,13 +468,12 @@ SQLFrom* sqlFrom() : {
 		stmt->setPosition(tableId);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}	
 }
 
 BeginStatement* beginStatement() : {
-	BeginStatement* stmt = new BeginStatement();
+	BeginStatement* stmt = new BeginStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -499,13 +485,12 @@ BeginStatement* beginStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 CommitStatement* commitStatement() : {
-	CommitStatement* stmt = new CommitStatement();
+	CommitStatement* stmt = new CommitStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -516,13 +501,12 @@ CommitStatement* commitStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }
 
 RollbackStatement* rollbackStatement() : {
-	RollbackStatement* stmt = new RollbackStatement();
+	RollbackStatement* stmt = new RollbackStatement(); __STP(stmt);
 	Token* t = null;
 }
 {
@@ -533,7 +517,6 @@ RollbackStatement* rollbackStatement() : {
 		stmt->setPosition(t);
 	}
 	{
-		__ONERROR(stmt);
-		return stmt;
+		return __STP_MV(stmt);
 	}
 }

@@ -9,6 +9,9 @@
 #define SC_ALINOUSLANG_H_
 
 #include "base/UnicodeString.h"
+#include "base/StackRelease.h"
+
+#include "alinous_lang/ParseException.h"
 
 #include "engine/sc/CompilationUnit.h"
 
@@ -172,7 +175,7 @@ using namespace alinous;
 
 #define _STR(t) new UnicodeString(t->image.c_str())
 #define __ONERROR(obj) \
-	if(hasError){\
+	//if(hasError){\
 		delete obj, obj=nullptr;\
 	}
 

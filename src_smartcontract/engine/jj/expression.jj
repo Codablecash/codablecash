@@ -22,9 +22,15 @@ AbstractExpression* conditionalOrExpression() : {
 	ConditionalOrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=conditionalAndExpression()
+	{
+		__left.reset(left);
+	}
+	
 	(
 
 		t="||" {
@@ -32,7 +38,7 @@ AbstractExpression* conditionalOrExpression() : {
 				exp = new ConditionalOrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(exp);
 			}
 			
 			exp->setPosition(t);
@@ -45,8 +51,7 @@ AbstractExpression* conditionalOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -55,9 +60,14 @@ AbstractExpression* conditionalAndExpression() : {
 	ConditionalAndExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=orExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="&&" {
@@ -65,7 +75,7 @@ AbstractExpression* conditionalAndExpression() : {
 				exp = new ConditionalAndExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -78,8 +88,7 @@ AbstractExpression* conditionalAndExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -88,9 +97,14 @@ AbstractExpression* orExpression() : {
 	OrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=exclusiveOrExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="|" {
@@ -98,7 +112,7 @@ AbstractExpression* orExpression() : {
 				exp = new OrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -111,8 +125,7 @@ AbstractExpression* orExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -121,9 +134,14 @@ AbstractExpression* exclusiveOrExpression() : {
 	ExclusiveOrExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=andExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="^" {
@@ -131,7 +149,7 @@ AbstractExpression* exclusiveOrExpression() : {
 				exp = new ExclusiveOrExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -144,8 +162,7 @@ AbstractExpression* exclusiveOrExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -154,9 +171,14 @@ AbstractExpression* andExpression() : {
 	AndExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=equalityExpression()
+	{
+		__left.reset(left);
+	}
 	(
 
 		t="&" {
@@ -164,7 +186,7 @@ AbstractExpression* andExpression() : {
 				exp = new AndExpression();
 				exp->setPosition(left);
 				exp->addExp(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->setPosition(t);
@@ -177,8 +199,7 @@ AbstractExpression* andExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -187,9 +208,14 @@ AbstractExpression* equalityExpression() : {
 	EqualityExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=relationalExpression()
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t="==" {
@@ -206,7 +232,7 @@ AbstractExpression* equalityExpression() : {
 				exp = new EqualityExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				exp->setPosition(t);
 				exp->setOp(EqualityExpression::NOT_EQ);
@@ -220,8 +246,7 @@ AbstractExpression* equalityExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -231,17 +256,21 @@ AbstractExpression* relationalExpression() : {
 	RelationalExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=shiftExpression()
-	
+	{
+		__left.reset(left);
+	}
 	[
 		(
 			t=">" {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				
 				exp->setPosition(t);
@@ -252,7 +281,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 				
 				exp->setPosition(t);
 				exp->setOp(RelationalExpression::GT_EQ);
@@ -262,7 +291,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 
 				
 				exp->setPosition(t);
@@ -273,7 +302,7 @@ AbstractExpression* relationalExpression() : {
 				exp = new RelationalExpression();
 				exp->setPosition(left);
 				exp->setLeft(left);
-				left = exp;
+				left = exp; __left.reset(left);
 				
 				exp->setPosition(t);
 				exp->setOp(RelationalExpression::LT_EQ);
@@ -287,8 +316,7 @@ AbstractExpression* relationalExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -297,9 +325,14 @@ AbstractExpression* shiftExpression() : {
 	ShiftExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=additiveExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="<<" {
@@ -307,7 +340,7 @@ AbstractExpression* shiftExpression() : {
 					exp = new ShiftExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -319,7 +352,7 @@ AbstractExpression* shiftExpression() : {
 					exp = new ShiftExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -334,8 +367,7 @@ AbstractExpression* shiftExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -344,9 +376,14 @@ AbstractExpression* additiveExpression() : {
 	AddExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=multiplicativeExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		(
 			t="+" {
@@ -354,7 +391,7 @@ AbstractExpression* additiveExpression() : {
 					exp = new AddExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -366,7 +403,7 @@ AbstractExpression* additiveExpression() : {
 					exp = new AddExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				
 				exp->setPosition(t);
@@ -381,8 +418,7 @@ AbstractExpression* additiveExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -391,9 +427,14 @@ AbstractExpression* multiplicativeExpression() : {
 	MultiplicativeExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=negateExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		(
 			t="*" {
@@ -401,7 +442,7 @@ AbstractExpression* multiplicativeExpression() : {
 					exp = new MultiplicativeExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(MultiplicativeExpression::MUL);
 				exp->setPosition(t);
@@ -423,7 +464,7 @@ AbstractExpression* multiplicativeExpression() : {
 					exp = new MultiplicativeExpression();
 					exp->setPosition(left);
 					exp->addExp(left);
-					left = exp;
+					left = exp; __left.reset(left);
 				}
 				exp->addOpe(MultiplicativeExpression::MOD);
 				exp->setPosition(t);
@@ -437,8 +478,7 @@ AbstractExpression* multiplicativeExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -447,18 +487,20 @@ AbstractExpression* negateExpression() :{
 	NegateExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="-" {
 			exp = new NegateExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=postIncrementExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -466,8 +508,7 @@ AbstractExpression* negateExpression() :{
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -475,10 +516,14 @@ AbstractExpression* postIncrementExpression() : {
 	Token* t = nullptr;
 	PostIncrementExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=preIncrementExpression()
-	
+	{
+		__left.reset(left);
+	}
 	[LOOKAHEAD(2)
 		(
 			t="--" {
@@ -487,7 +532,7 @@ AbstractExpression* postIncrementExpression() : {
 				exp->setOpe(PostIncrementExpression::MINUS);
 				exp->setPosition(left);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="++" {
@@ -496,14 +541,13 @@ AbstractExpression* postIncrementExpression() : {
 				exp->setOpe(PostIncrementExpression::PLUS);
 				exp->setPosition(left);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}			
 		)
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 	
 }
@@ -513,6 +557,8 @@ AbstractExpression* preIncrementExpression() : {
 	PreIncrementExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
@@ -521,20 +567,20 @@ AbstractExpression* preIncrementExpression() : {
 				exp = new PreIncrementExpression();
 				exp->setOpe(PreIncrementExpression::MINUS);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			|
 			t="++" {
 				exp = new PreIncrementExpression();
 				exp->setOpe(PreIncrementExpression::PLUS);
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}			
 		)
 	]
 	right=bitReverseExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -542,8 +588,7 @@ AbstractExpression* preIncrementExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -552,18 +597,20 @@ AbstractExpression* bitReverseExpression() : {
 	BitReverseExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="~" {
 			exp = new BitReverseExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=notExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -571,8 +618,7 @@ AbstractExpression* bitReverseExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -581,18 +627,20 @@ AbstractExpression* notExpression() : {
 	NotExpression* exp = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	[
 		t="!" {
 			exp = new NotExpression();
 			exp->setPosition(t);
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 	]
 	right=castExpression() {
 		if(left==nullptr){
-			left = right;
+			left = right; __left.reset(left);
 		}
 		else{
 			exp->setExpression(right);
@@ -600,8 +648,7 @@ AbstractExpression* notExpression() : {
 		}
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -611,6 +658,8 @@ AbstractExpression* castExpression() : {
 	AbstractType* type = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	(LOOKAHEAD(3)
@@ -618,7 +667,7 @@ AbstractExpression* castExpression() : {
 			t="(" {
 				exp = new CastExpression();
 				exp->setPosition(t);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			type=typeDeclare() {
@@ -637,14 +686,13 @@ AbstractExpression* castExpression() : {
 		|
 		(
 			right=memberReferenceExpression() {
-				left = right;
+				left = right; __left.reset(left);
 			}
 		)
 	)
 	
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -653,16 +701,21 @@ AbstractExpression* memberReferenceExpression() :{
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
-	left=arrayReferenceExpression() 
+	left=arrayReferenceExpression()
+	{
+		__left.reset(left);
+	}
 	(
 		"." right=arrayReferenceExpression() {
 			if(exp == nullptr){
 				exp = new MemberReferenceExpression();
 				exp->addExp(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 			
 			exp->addExp(right);
@@ -672,8 +725,7 @@ AbstractExpression* memberReferenceExpression() :{
 	{
 	}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 	
 }
@@ -683,16 +735,21 @@ AbstractExpression* arrayReferenceExpression() : {
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
 	AbstractExpression* right = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
-	left=functionCallExpression() 
+	left=functionCallExpression()
+	{
+		__left.reset(left);
+	}
 	(LOOKAHEAD(2)
 		t="[" {
 			if(exp == nullptr){
 				exp = new ArrayReferenceExpression();
 				exp->setExp(left);
 				exp->setPosition(left);
-				left = exp;
+				left = exp; __left.reset(left);
 			}
 		}
 		right=expression()
@@ -703,8 +760,7 @@ AbstractExpression* arrayReferenceExpression() : {
 	)*
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -713,9 +769,14 @@ AbstractExpression* functionCallExpression() : {
 	FunctionCallExpression* exp = nullptr;
 	Token* t = nullptr;
 	AbstractExpression* left = nullptr;
+	
+	StackRelease<AbstractExpression> __left;
 }
 {
 	left=primitive()
+	{
+		__left.reset(left);
+	}
 	
 	[LOOKAHEAD(2)
 		t="(" {
@@ -724,7 +785,7 @@ AbstractExpression* functionCallExpression() : {
 			exp->setPosition(left);
 			exp->setPosition(t);
 			
-			left = exp;
+			left = exp; __left.reset(left);
 		}
 		
 		functionCallExpressionArg(exp)		
@@ -735,8 +796,7 @@ AbstractExpression* functionCallExpression() : {
 	]
 	{}
 	{
-		__ONERROR(left);
-		return left;
+		return __left.move();
 	}
 }
 
@@ -790,10 +850,12 @@ AllocationExpression* allocationExpression() : {
 	Token* t = nullptr;
 	
 	AbstractType* type = nullptr;
+	
+	StackRelease<AllocationExpression> __exp;
 }
 {
 	t="new" {
-		exp = new AllocationExpression();
+		exp = new AllocationExpression(); __exp.reset(exp);
 		exp->setPosition(t);
 	}
 	
@@ -816,15 +878,14 @@ AllocationExpression* allocationExpression() : {
 		)
 	)
 
-	{	
-		 __ONERROR(exp);
-		return exp;
+	{
+		return __exp.move();
 	}
 }
 
 
 ConstructorArray* constructorArray(AbstractType* type) : {
-	ConstructorArray* exp = new ConstructorArray();
+	ConstructorArray* exp = new ConstructorArray(); __STP(exp);
 	Token* t = nullptr;
 	AbstractExpression* dim = nullptr;
 	
@@ -850,13 +911,12 @@ ConstructorArray* constructorArray(AbstractType* type) : {
 	
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 ConstructorCall* constructorCallExpression(AbstractType* type) : {
-	ConstructorCall* exp = new ConstructorCall();
+	ConstructorCall* exp = new ConstructorCall(); __STP(exp);
 	Token* t = nullptr;
 
 	exp->setName(type);
@@ -873,8 +933,7 @@ ConstructorCall* constructorCallExpression(AbstractType* type) : {
 		exp->setPosition(t);
 	}
 	{
-		__ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
@@ -903,7 +962,7 @@ void constructorCallExpressionArg(ConstructorCall* exp) : {
 }
 
 ParenthesisExpression* parenthesisExpression() : {
-	ParenthesisExpression* exp = new ParenthesisExpression();
+	ParenthesisExpression* exp = new ParenthesisExpression(); __STP(exp);
 	AbstractExpression* e = nullptr;
 	Token* t = nullptr;
 }
@@ -921,14 +980,13 @@ ParenthesisExpression* parenthesisExpression() : {
 		exp->setPosition(t);
 	}
 	{
-		 __ONERROR(exp);
-		return exp;
+		return __STP_MV(exp);
 	}
 }
 
 
 VariableIdentifier* variableIdentifier() : {
-	VariableIdentifier* valId = new VariableIdentifier();
+	VariableIdentifier* valId = new VariableIdentifier(); __STP(valId);
 	Token* t = nullptr;
 }
 {
@@ -936,8 +994,7 @@ VariableIdentifier* variableIdentifier() : {
 		valId->setName(_STR(t));
 	}
 	{
-		 __ONERROR(valId);
-		return valId;
+		return __STP_MV(valId);
 	}
 }
 
@@ -979,7 +1036,7 @@ AbstractExpression* literal() : {
 
 NullLiteral* nullLiteral() :
 {
-	NullLiteral* lit = new NullLiteral();
+	NullLiteral* lit = new NullLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -987,13 +1044,12 @@ NullLiteral* nullLiteral() :
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 NumberLiteral* numberLiteral() : {
-	NumberLiteral* lit = new NumberLiteral();
+	NumberLiteral* lit = new NumberLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -1003,14 +1059,13 @@ NumberLiteral* numberLiteral() : {
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 
 BooleanLiteral* booleanLiteral() : {
-	BooleanLiteral* lit = new BooleanLiteral();
+	BooleanLiteral* lit = new BooleanLiteral(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -1027,14 +1082,13 @@ BooleanLiteral* booleanLiteral() : {
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 
 LiteralExpression* literalExpression() :
 {
-	LiteralExpression* lit = new LiteralExpression();
+	LiteralExpression* lit = new LiteralExpression(); __STP(lit);
 	Token* t = nullptr;
 }
 {
@@ -1050,8 +1104,7 @@ LiteralExpression* literalExpression() :
 		lit->setPositions(t, t);
 	}
 	{
-		 __ONERROR(lit);
-		return lit;
+		return __STP_MV(lit);
 	}
 }
 

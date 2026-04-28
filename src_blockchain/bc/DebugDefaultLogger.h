@@ -24,7 +24,7 @@ public:
 	DebugDefaultLogger();
 	virtual ~DebugDefaultLogger();
 
-	void setSection(int section) noexcept;
+	void addSection(int section) noexcept;
 
 	virtual void logException(const Exception* e) noexcept;
 	virtual void log(const UnicodeString* message) noexcept;

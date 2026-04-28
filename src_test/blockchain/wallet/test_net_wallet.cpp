@@ -98,10 +98,10 @@ TEST_GROUP(TestNetWalletGroup) {
 
 		this->portSel = new StackTestPortGetter();
 		this->params = new TesGrouptParams();
-		this->params->logger->setSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
+		this->params->logger->addSection(ISystemLogger::DEBUG_NODE_TRANSFER_RESPONSE);
 
 		DebugDefaultLogger* logger = this->params->logger;
-		logger->setSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
+		logger->addSection(ISystemLogger::DEBUG_CHAIN_HEAD_DETECT);
 
 
 		this->env->getTestGroup()->setParam(this->params);

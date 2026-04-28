@@ -5,7 +5,7 @@
 
 CompilationUnit* compilationUnit() :
 {
-	CompilationUnit* unit = new CompilationUnit();
+	CompilationUnit* unit = new CompilationUnit(); __STP(unit);
 	PackageDeclare* pkg = nullptr;
 	ImportsDeclare* imports = nullptr;
 	ClassDeclare* clazz = nullptr;
@@ -29,12 +29,12 @@ CompilationUnit* compilationUnit() :
 	)+
 	<EOF>
 	{
-		return unit;
+		return __STP_MV(unit);
 	}
 }
 
 ImportsDeclare* importsDeclare() : {
-	ImportsDeclare* importsDeclare = new ImportsDeclare();
+	ImportsDeclare* importsDeclare = new ImportsDeclare(); __STP(importsDeclare);
 	ImportDeclare* dec = nullptr;
 }
 {
@@ -48,12 +48,12 @@ ImportsDeclare* importsDeclare() : {
 	}
 	{
 	    __ONERROR(importsDeclare);
-		return importsDeclare;
+		return __STP_MV(importsDeclare);
 	}
 }
 
 ImportDeclare* importDeclare() : {
-	ImportDeclare* dec = new ImportDeclare();
+	ImportDeclare* dec = new ImportDeclare(); __STP(dec);
 	Token* t = nullptr;
 }
 {
@@ -80,19 +80,19 @@ ImportDeclare* importDeclare() : {
 		dec->setPosition(t);
 	}
 	{
-	    __ONERROR(dec);
-		return dec;
+		return __STP_MV(dec);
 	}
 }
 
 PackageDeclare* packageDeclare() : {
 	PackageDeclare* pkg = nullptr;
+	StackRelease<PackageDeclare> __pkg;
 	PackageNameDeclare* name = nullptr;
 	Token* t = nullptr;
 }
 {
 	t="package" {
-		pkg=new PackageDeclare();
+		pkg=new PackageDeclare(); __pkg.reset(pkg);
 		pkg->setPosition(t);
 	}
 
@@ -105,19 +105,19 @@ PackageDeclare* packageDeclare() : {
 		pkg->setPosition(t);
 	}
 	{
-	    __ONERROR(pkg);
-		return pkg;
+		return __pkg.move();
 	}
 }
 
 PackageNameDeclare* packageNameDeclare() :
 {
 	PackageNameDeclare* names = nullptr;
+	StackRelease<PackageNameDeclare> __names;
 	Token* t = nullptr;
 }
 {
 	t=< IDENTIFIER > {
-	    names = new PackageNameDeclare();
+	    names = new PackageNameDeclare(); __names.reset(names);
 		names->addSegment(_STR(t));
 		names->setPosition(t);
 	}
@@ -131,8 +131,7 @@ PackageNameDeclare* packageNameDeclare() :
 	{
 	}
 	{
-	    __ONERROR(names);
-		return names;
+		return __names.move();
 	}
 
 }
@@ -140,6 +139,8 @@ PackageNameDeclare* packageNameDeclare() :
 ClassDeclare* classDeclare() :
 {
 	ClassDeclare* clazz = nullptr;
+	StackRelease<ClassDeclare> __clazz;
+	
 	GenericsClassDeclare* gclazz = nullptr;
 	GenericsParameter* param = nullptr;
 	Token* cls = nullptr;
@@ -153,7 +154,7 @@ ClassDeclare* classDeclare() :
 {
 	(
 		cls="class" {
-			clazz = new ClassDeclare();
+			clazz = new ClassDeclare(); __clazz.reset(clazz);
 		}
 		|
 		cls="interface" {
@@ -239,14 +240,13 @@ ClassDeclare* classDeclare() :
 	    clazz->setBlock(block);
 	}
 	{
-	    __ONERROR(clazz);
-		return clazz;
+		return __clazz.move();
 	}
 }
 
 ClassExtends* classExtends() :
 {
-	ClassExtends* extends = new ClassExtends();
+	ClassExtends* extends = new ClassExtends(); __STP(extends);
 	ClassName* name = nullptr;
 	Token* t = nullptr;
 }
@@ -259,13 +259,12 @@ ClassExtends* classExtends() :
 		extends->setClassName(name);
 	}
 	{
-		__ONERROR(extends);
-		return extends;
+		return __STP_MV(extends);
 	}
 }
 
 ClassImplements* classImplements() :{
-	ClassImplements*  implements = new ClassImplements();
+	ClassImplements* implements = new ClassImplements(); __STP(implements);
 	ClassName* name = nullptr;
 	Token* t = nullptr;
 }
@@ -289,14 +288,13 @@ ClassImplements* classImplements() :{
 	{}
 	
 	{
-		__ONERROR(implements);
-		return implements;
+		return __STP_MV(implements);
 	}
 }
 
 ClassName* className() :
 {
-	ClassName* name = new ClassName();
+	ClassName* name = new ClassName(); __STP(name);
 	Token* t = nullptr;
 }
 {
@@ -316,14 +314,14 @@ ClassName* className() :
 	)*
 	{}
 	{
-		__ONERROR(name);
-		return name;
+		return __STP_MV(name);
 	}
 }
 
 ClassDeclareBlock* classDeclareBlock() :
 {
 	ClassDeclareBlock* block = nullptr;
+	StackRelease<ClassDeclareBlock> __block;
 	Token* begin, *end;
 	
 	MethodDeclare* method = nullptr;
@@ -336,7 +334,7 @@ ClassDeclareBlock* classDeclareBlock() :
 }
 {
 	begin="{" {
-		block = new ClassDeclareBlock();
+		block = new ClassDeclareBlock(); __block.reset(block);
 		block->setPosition(begin);
 	}
 
@@ -386,13 +384,12 @@ ClassDeclareBlock* classDeclareBlock() :
    		block->setPosition(end);
 	}
 	{
-		__ONERROR(block);
-		return block;
+		return __block.move();
 	}
 }
 
 MethodDeclare* methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) : {
-    MethodDeclare* method = new MethodDeclare();
+    MethodDeclare* method = new MethodDeclare(); __STP(method);
 
     method->setPosition(ctrl);
     
@@ -424,13 +421,12 @@ MethodDeclare* methodDeclare(AccessControlDeclare* ctrl, bool _static, AbstractT
 	{
 	}
 	{
-	    __ONERROR(method);
-		return method;
+		return __STP_MV(method);
 	}
 }
 
 MemberVariableDeclare* memberVariableDeclare(AccessControlDeclare* ctrl, bool _static, AbstractType* type, Token* identifier) : {
-    MemberVariableDeclare* variable = new MemberVariableDeclare();
+    MemberVariableDeclare* variable = new MemberVariableDeclare(); __STP(variable);
 	Token* t = nullptr;
 	
 	variable->setPosition(ctrl);
@@ -458,14 +454,13 @@ MemberVariableDeclare* memberVariableDeclare(AccessControlDeclare* ctrl, bool _s
 	}
 	
 	{
-	    __ONERROR(variable);
-		return variable;
+		return __STP_MV(variable);
 	}
 }
 
 AccessControlDeclare* accessControlDeclare() : {
 	Token* t = nullptr;
-	AccessControlDeclare* ctrl = new AccessControlDeclare();
+	AccessControlDeclare* ctrl = new AccessControlDeclare(); __STP(ctrl);
 }
 {
     ( 
@@ -485,13 +480,12 @@ AccessControlDeclare* accessControlDeclare() : {
 		}
 	)
 	{
-	    __ONERROR(ctrl);
-		return ctrl;
+		return __STP_MV(ctrl);
 	}
 }
 
 ArgumentsListDeclare* argumentsListDeclare() : {
-    ArgumentsListDeclare* arguments = new ArgumentsListDeclare();
+    ArgumentsListDeclare* arguments = new ArgumentsListDeclare(); __STP(arguments);
 	Token* t = nullptr;
 	ArgumentDeclare* arg = nullptr;
 }
@@ -516,14 +510,13 @@ ArgumentsListDeclare* argumentsListDeclare() : {
 		arguments->setPosition(t);
 	}
 	{
-	    __ONERROR(arguments);
-		return arguments;
+		return __STP_MV(arguments);
 	}
 }
 
 
 ArgumentDeclare* argumentDeclare() : {
-	ArgumentDeclare* arg = new ArgumentDeclare();
+	ArgumentDeclare* arg = new ArgumentDeclare(); __STP(arg);
 	AbstractType* type = nullptr;
 	Token* t = nullptr;
 }
@@ -539,8 +532,7 @@ ArgumentDeclare* argumentDeclare() : {
     }
 
 	{
-	    __ONERROR(arg);
-		return arg;
+		return __STP_MV(arg);
 	}
 }
 
