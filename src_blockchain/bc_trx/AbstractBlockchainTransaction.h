@@ -63,6 +63,7 @@ public:
 	static const constexpr uint8_t TRX_TYPE_SMARTCONTRACT_NOP{10};
 
 	static const constexpr uint8_t TRX_TYPE_ICC_NOP{20};
+	static const constexpr uint8_t TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED{21};
 
 
 	AbstractBlockchainTransaction(const AbstractBlockchainTransaction& inst);

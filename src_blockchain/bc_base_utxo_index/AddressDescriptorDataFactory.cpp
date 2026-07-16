@@ -27,10 +27,8 @@ IBlockObject* AddressDescriptorDataFactory::makeDataFromBinary(ByteBuffer *in) {
 }
 
 void AddressDescriptorDataFactory::registerData(const AbstractBtreeKey *key,
-		const IBlockObject *data, DataNode *dataNode,
-		BtreeStorage *store) const {
-	uint64_t dataFpos = store->storeData(data);
-	dataNode->setDataFpos(dataFpos);
+		const IBlockObject *data, DataNode *dataNode, BtreeStorage *store) const {
+	AbstractBtreeDataFactory::registerData(key, data, dataNode, store);
 }
 
 bool AddressDescriptorDataFactory::beforeRemove(DataNode *dataNode,

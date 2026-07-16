@@ -113,7 +113,7 @@ TEST(TestFirstNetGroup, case01){
 	{
 		// First
 		node01.setNodeName(L"node01");
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 
 		// after init
 		node01.startNetwork(&seeder, false);
@@ -142,7 +142,7 @@ TEST(TestFirstNetGroup, case01){
 	CodablecashNetworkNode node02(dirNode02, config02, &logger);
 	{
 		// second
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		//UnicodeString idstr = nodeId01.getPublicKey()->toString(16);
 
@@ -199,7 +199,7 @@ TEST(TestFirstNetGroup, case01){
 	CodablecashNetworkNode node03(dirNode03, config03, &logger);
 	{
 		// third
-		node03.initBlank(0); // zone 0
+		node03.initBlank(0, 1); // zone 0
 
 		// after init
 		node03.setNodeName(L"node03");

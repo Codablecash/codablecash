@@ -123,7 +123,7 @@ TEST(TestSyncHeaderOnlyGroup, case01){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// second
-		node01.initBlank(1); // zone 0
+		node01.initBlank(1, 1); // zone 0
 
 		// after init
 		node01.setNodeName(L"node02");

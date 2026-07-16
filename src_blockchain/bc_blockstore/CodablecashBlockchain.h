@@ -50,6 +50,9 @@ public:
 	static const UnicodeString KEY_BLOCK_VERSION_MINOR;
 	static const UnicodeString KEY_BLOCK_VERSION_PATCH;
 
+public:
+	void addZone(uint16_t zone);
+
 private:
 	CodablecashBlockchain(const File* baseDir, uint16_t zoneSelf, uint16_t numZones);
 	void initBlankchain();
@@ -78,13 +81,6 @@ public:
 	virtual BlockHeaderStoreManager* getHeaderManager(uint16_t zone) const noexcept;
 	virtual BlockBodyStoreManager* getBlockBodyStoreManager(uint16_t zone) const noexcept;
 
-	uint16_t getZoneSelf() const noexcept {
-		return this->zoneSelf;
-	}
-	int getNumZones() const noexcept {
-		return this->zonesStore->size();
-	}
-
 	void setProcessor(CentralProcessor* processor) noexcept {
 		this->processor = processor;
 	}
@@ -93,6 +89,10 @@ public:
 	}
 
 	void firePostBlockAdded(const Block* block);
+
+	const BlockchainSoftwareVersion* getVersion() const noexcept {
+		return this->version;
+	}
 
 private:
 	void fireBlockAdded(MemPoolTransaction* memTrx, const Block* block);

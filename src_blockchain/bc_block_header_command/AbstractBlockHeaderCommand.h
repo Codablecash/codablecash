@@ -18,9 +18,16 @@ using namespace alinous;
 
 namespace codablecash {
 
+class BlockHeader;
+class BlockchainStatusCache;
+class CodablecashBlockchain;
+class CodablecashSystemParam;
+class ILockinManager;
+
 class AbstractBlockHeaderCommand : public alinous::IBlockObject {
 public:
 	static constexpr const uint16_t NEW_SHARD_COMMAND = 1;
+	static constexpr const uint16_t RECOGNIZED_SHARD_COMMAND = 2;
 
 	AbstractBlockHeaderCommand(const AbstractBlockHeaderCommand& inst);
 	explicit AbstractBlockHeaderCommand(uint16_t type);
@@ -29,6 +36,9 @@ public:
 	static AbstractBlockHeaderCommand* createFromBinary(ByteBuffer* in);
 
 	virtual void fromBinary(ByteBuffer* in) = 0;
+
+	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config) = 0;
+
 
 protected:
 	uint16_t type;

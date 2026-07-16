@@ -112,6 +112,10 @@ public:
 	void addHeaderCommand(const AbstractBlockHeaderCommand* cmd);
 	bool hasHeaderCommnads() const noexcept;
 
+	ArrayList<AbstractBlockHeaderCommand>* getHeaderCommands() const noexcept {
+		return this->commnads;
+	}
+
 private:
 	BlockVersion* version;
 

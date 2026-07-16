@@ -18,8 +18,6 @@
 
 namespace alinous {
 
-
-
 #ifdef _WIN64
 #define PATH_SEPARATOR L"\\"
 #elseif _WIN32
@@ -64,8 +62,11 @@ public:
 	static void usleep(uint32_t microsec) noexcept;
 
 	static uint64_t getMicroSec() noexcept;
+	static uint64_t getNanoSec() noexcept;
 	static uint64_t getTimestampLong() noexcept;
 	static SystemTimestamp now() noexcept;
+
+	static uint32_t getOsCspring() noexcept;
 
 	/**************************************************************************
 	 * File functions

@@ -72,7 +72,7 @@ PoWRequest2Client* PoWRequestStatus::getClientPoWRequest() {
 	req->setRequestData(this->data);
 
 	const BigInteger* max = PoWNonce::getMaxBigInt();
-	BigInteger nonceSolt = BigInteger::ramdom(BigInteger(0L), BigInteger(*max));
+	BigInteger nonceSolt = BigInteger::random(BigInteger(0L), BigInteger(*max));
 
 	BigInteger s(this->solt++);
 	nonceSolt.addSelf(s);

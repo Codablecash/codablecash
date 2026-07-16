@@ -54,8 +54,8 @@ TEST(TestRandomAddressGroup, case01){
 
 
 TEST(TestRandomAddressGroup, case02){
-	BigInteger seed = BigInteger::ramdom();
-	BigInteger seed2 = BigInteger::ramdom();
+	BigInteger seed = BigInteger::random();
+	BigInteger seed2 = BigInteger::random();
 
 	bool bl = seed.equals(&seed2);
 	CHECK(!bl);

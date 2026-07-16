@@ -38,6 +38,7 @@ class Block;
 class LockinManager;
 class BlockHeaderStoreManager;
 class VoteManager;
+class RemoteUtxoRepository;
 
 class ZoneStatusCache {
 public:
@@ -51,7 +52,7 @@ public:
 	static const constexpr wchar_t* KEY_REQUESTED_SHARDS{L"requestedShards"};
 
 	ZoneStatusCache(const File* baseDir, uint16_t zone, bool headerOnly, ISystemLogger* logger, const CodablecashSystemParam* config);
-	ZoneStatusCache(const File* baseDir, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config);
+	ZoneStatusCache(const File* baseDir, uint16_t zone, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config);
 	virtual ~ZoneStatusCache();
 
 	void initBlank();
@@ -60,7 +61,7 @@ public:
 	void close();
 
 	void updateBlockStatus(MemPoolTransaction* memTrx, CodablecashBlockchain *chain, const CodablecashSystemParam* config);
-	void finalizeUpdateCacheData(uint64_t finalizingHeight, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain, IStatusCacheContext* context);
+	void finalizeUpdateCacheData(uint64_t finalizingHeight, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain, IStatusCacheContext* context, const CodablecashSystemParam* config);
 	void finalizeHeaderUpdateCacheData(uint64_t finalizingHeight, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain);
 
 	const BlockHead* getHead() const noexcept;
@@ -93,6 +94,12 @@ public:
 
 	bool registerBlockHeader4Limit(const BlockHeader* header, const CodablecashSystemParam* param);
 	SystemTimestamp* getPosVoteLimit(uint64_t lastHeight);
+
+	int getRequestedNewShards() const noexcept {
+		return this->requestedNewShards;
+	}
+
+	RemoteUtxoRepository* getRemoteUtxoRepository() const noexcept;
 
 private:
 	void addIdex2String(UnicodeString *str) const noexcept;

@@ -99,7 +99,7 @@ ByteBuffer* Abstract32BytesId::makeRandom16Bytes() {
 	int size = 0;
 	BigInteger p(L"0", 16);
 	do{
-		BigInteger seed = BigInteger::ramdom();
+		BigInteger seed = BigInteger::random();
 
 		BigInteger s = seed.mod(Abstract32BytesId::Q);
 		p = G.modPow(s, Abstract32BytesId::Q);

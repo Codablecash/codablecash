@@ -9,6 +9,8 @@
 #include "bc_status_cache_context/TransactionContextCache.h"
 #include "bc_status_cache_context/UtxoCacheContext.h"
 #include "bc_status_cache_context/StatusCacheContext.h"
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
+#include "bc_status_cache_context/RemoteUtxoHeight.h"
 
 #include "bc_status_cache_context_finalizer/VoterStatusMappedCacheContext.h"
 
@@ -28,8 +30,9 @@
 #include "bc_base_trx_index/TransactionIdData.h"
 
 #include "bc_base_utxo_index/UtxoIdKey.h"
-
 #include "bc_base_utxo_index/UtxoData.h"
+
+#include "bc_trx/UtxoId.h"
 
 
 namespace codablecash {
@@ -53,6 +56,12 @@ CachedStatusCache::CachedStatusCache(uint64_t serial, const File* cacheRepoBaseD
 	this->voterCache = nullptr;
 
 	this->ticketPrice = 0;
+
+	// new shards history
+	this->requestedNewShards = 0;
+	this->numZones = 0;
+
+	this->utxolist = new ArrayList<RemoteUtxoHeight>();
 }
 
 CachedStatusCache::~CachedStatusCache() {
@@ -62,6 +71,9 @@ CachedStatusCache::~CachedStatusCache() {
 
 	this->baseDir->deleteDir();
 	delete this->baseDir;
+
+	this->utxolist->deleteElements();
+	delete this->utxolist;
 }
 
 void CachedStatusCache::init() {
@@ -90,6 +102,22 @@ void CachedStatusCache::importStatusContext(StatusCacheContext *context) {
 	importVoterStatusCache(context->getVoterStatusCacheContext());
 
 	this->ticketPrice = context->getTicketPrice();
+
+	this->requestedNewShards = context->getRequestedNewShards();
+	this->numZones = context->getNumZones();
+
+	// remote utxos
+	{
+		RemoteUtxoDetector* remoteUtxos = context->getRemoteUtxoDetector();
+		ArrayList<RemoteUtxoHeight>* list = remoteUtxos->getList();
+
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			const RemoteUtxoHeight* utxoIdHeight = list->get(i);
+
+			this->utxolist->addElement(new RemoteUtxoHeight(*utxoIdHeight));
+		}
+	}
 }
 
 void CachedStatusCache::importOtherCache(const CachedStatusCache *previousCache) {

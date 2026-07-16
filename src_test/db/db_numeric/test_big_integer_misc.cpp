@@ -20,7 +20,7 @@ TEST_GROUP(TestBigIntegerMiscGroup) {
 };
 
 TEST(TestBigIntegerMiscGroup, rnd02){
-	BigInteger inst = BigInteger::ramdom(BigInteger(1000L), BigInteger(100000000000L));
+	BigInteger inst = BigInteger::random(BigInteger(1000L), BigInteger(100000000000L));
 	UnicodeString str = inst.toString("%Zd");
 
 	BigInteger mask(0xFF);
@@ -30,7 +30,7 @@ TEST(TestBigIntegerMiscGroup, rnd02){
 }
 
 TEST(TestBigIntegerMiscGroup, rnd01){
-	BigInteger inst = BigInteger::ramdom();
+	BigInteger inst = BigInteger::random();
 }
 
 TEST(TestBigIntegerMiscGroup, pad01){

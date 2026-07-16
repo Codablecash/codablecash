@@ -183,7 +183,7 @@ void CodablecashNodeInstance::startNetwork(const UnicodeString *host, int port) 
 	this->p2pServer = new P2pServer(this->logger, this);
 	this->p2pManager = new BlochchainP2pManager();
 
-	this->p2pManager->init(this->blockchain->getNumZones());
+	this->p2pManager->init(this->statusCache->getNumZones());
 
 	this->p2pServer->addConnectionListener(this->p2pManager);
 
@@ -233,7 +233,7 @@ void CodablecashNodeInstance::shutdownNetwork() {
 }
 
 void CodablecashNodeInstance::startBlockGenerator(const MiningConfig *config) {
-	uint16_t zone = this->blockchain->getZoneSelf();
+	uint16_t zone = this->statusCache->getZoneSelf();
 
 	this->powManager = new PoWManager(this->logger, config);
 	this->blockGenerator = this->allocator->newBlockGenerator(zone, this->param, this->memoryPool, this->ctrl, config, this->logger);
@@ -378,7 +378,7 @@ void CodablecashNodeInstance::loginNode(uint16_t zone, P2pHandshake *handshake, 
 	// login
 	NodeIdentifierSource* source = this->p2pRequestProcessor->getNetworkKey();
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	LoginPubSubCommand cmd(zoneSelf, canonicalName);
 
 	{
@@ -414,11 +414,11 @@ NodeIdentifierSource* CodablecashNodeInstance::getNetworkKey() const noexcept  {
 }
 
 uint16_t CodablecashNodeInstance::getZoneSelf() const noexcept {
-	return this->blockchain->getZoneSelf();
+	return this->statusCache->getZoneSelf();
 }
 
 int CodablecashNodeInstance::getNumZones() const noexcept {
-	return this->blockchain->getNumZones();
+	return this->statusCache->getNumZones();
 }
 
 void CodablecashNodeInstance::maintainNetwork() {
@@ -495,7 +495,7 @@ void CodablecashNodeInstance::setNodeName(const UnicodeString *name) noexcept {
 }
 
 void CodablecashNodeInstance::validateZone(uint16_t zone) const {
-	uint16_t numZone = this->blockchain->getNumZones();
+	uint16_t numZone = this->statusCache->getNumZones();
 
 	ExceptionThrower<InvalidZoneException>::throwExceptionIfCondition(numZone <= zone, L"", __FILE__, __LINE__);
 }
@@ -513,6 +513,10 @@ void CodablecashNodeInstance::broadCastShutdownCommand(const NodeIdentifierSourc
 
 int CodablecashNodeInstance::getListningPort() const noexcept {
 	return this->p2pServer->getListningPort();
+}
+
+void CodablecashNodeInstance::setShardExtendValidator(const AbstractShardExtentionValidator *validator) {
+	this->statusCache->setShardExtentionValidator(validator);
 }
 
 } /* namespace codablecash */

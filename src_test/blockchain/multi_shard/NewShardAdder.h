@@ -19,6 +19,8 @@ public:
 	NewShardAdder();
 	virtual ~NewShardAdder();
 
+	void init(uint16_t newShardZone, uint16_t requestingZone);
+
 	virtual void onBlockGenerated(Block* block, MemPoolTransaction *memTrx, BlockchainController* ctrl);
 	virtual IBlockGenerationListner* copy() const noexcept;
 
@@ -29,6 +31,10 @@ private:
 
 private:
 	uint64_t height;
+
+	uint16_t newShardZone;
+	uint16_t requestingZone;
+
 };
 
 } /* namespace codablecash */

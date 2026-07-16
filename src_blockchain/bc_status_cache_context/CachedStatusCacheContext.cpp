@@ -6,6 +6,7 @@
  */
 
 #include "bc_status_cache_context/CachedStatusCacheContext.h"
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
 
 #include "base/UnicodeString.h"
 
@@ -43,6 +44,21 @@ CachedStatusCacheContext::CachedStatusCacheContext(const CachedStatusCache* cach
 	this->cache = cache;
 
 	this->ticketPrice = cache->getTicketPrice();
+
+	this->requestedNewShards = cache->getRequestedNewShards();
+	this->numZones = cache->getNumZones();
+
+	// [multishard]remoteUtxos
+	{
+		ArrayList<RemoteUtxoHeight>* list = cache->getRemoteUtxoList();
+
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			const RemoteUtxoHeight* utxo = list->get(i);
+
+			this->remoteUtxos->add(utxo);
+		}
+	}
 }
 
 CachedStatusCacheContext::~CachedStatusCacheContext() {

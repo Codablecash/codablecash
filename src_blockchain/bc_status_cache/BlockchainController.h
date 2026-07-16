@@ -65,6 +65,10 @@ public:
 	void finalize(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId, MemoryPool* memPool);
 	void finalizeHeader(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId, MemoryPool* memPool);
 
+private:
+	void handleHeaderCommandsOnFinalize(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId);
+
+public:
 	//BlockHeader* getNblocksBefore(uint16_t zone, const BlockHeaderId *headerId, uint64_t height, int voteBeforeNBlocks) const;
 	BlockHeader* __getNblocksBefore(uint16_t zone, const BlockHeaderId *headerId, uint64_t height, int voteBeforeNBlocks) const;
 

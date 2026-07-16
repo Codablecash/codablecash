@@ -12,6 +12,9 @@
 
 namespace codablecash {
 
+class BlockchainSoftwareVersion;
+
+
 class CodablecashSystemParam {
 public:
 	CodablecashSystemParam(const CodablecashSystemParam& inst);
@@ -112,6 +115,13 @@ public:
 		return this->consensusPosVoteLimitMillis;
 	}
 
+	uint64_t getRemoteUtxoSaveHeightPeriod(const BlockchainSoftwareVersion* version) const noexcept {
+		return this->remoteUtxoSaveHeightPeriod;
+	}
+	uint64_t getRemoteUtxoExpireHeight(const BlockchainSoftwareVersion* version) const noexcept {
+		return this->remoteUtxoExpireHeight;
+	}
+
 private:
 	// pow
 	uint16_t powHashrateBlocks;
@@ -159,6 +169,10 @@ private:
 
 	// Pos Vote Limit
 	uint32_t consensusPosVoteLimitMillis;
+
+	// Remote UtxoId to Store period by height
+	uint64_t remoteUtxoSaveHeightPeriod;
+	uint64_t remoteUtxoExpireHeight;
 
 };
 

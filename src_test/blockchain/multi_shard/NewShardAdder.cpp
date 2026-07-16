@@ -16,14 +16,24 @@ namespace codablecash {
 
 NewShardAdder::NewShardAdder(const NewShardAdder &inst) {
 	this->height = inst.height;
+
+	this->newShardZone = inst.newShardZone;
+	this->requestingZone = inst.requestingZone;
 }
 
 NewShardAdder::NewShardAdder() {
 	this->height = 0;
+	this->newShardZone = 0;
+	this->requestingZone = 0;
 }
 
 NewShardAdder::~NewShardAdder() {
 
+}
+
+void NewShardAdder::init(uint16_t newShardZone, uint16_t requestingZone) {
+	this->newShardZone = newShardZone;
+	this->requestingZone = requestingZone;
 }
 
 void NewShardAdder::onBlockGenerated(Block *block, MemPoolTransaction *memTrx, BlockchainController *ctrl) {
@@ -37,7 +47,12 @@ void NewShardAdder::__addCommand(Block *block, MemPoolTransaction *memTrx, Block
 	BlockHeader* header = block->getHeader();
 
 	NewShardZoneCommand cmd;
-	cmd.setNewShardNo(1);
+	cmd.setNewShardZone(this->newShardZone);
+	cmd.setRequestingZone(this->requestingZone);
+
+	Block gblock(this->newShardZone, 1);
+	gblock.build();
+	cmd.setGenesisblock(&gblock);
 
 	header->addHeaderCommand(&cmd);
 }

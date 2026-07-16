@@ -71,16 +71,16 @@ void CodablecashNetworkNode::setNetworkConfig(const CodablecashNetworkNodeConfig
 	this->nwconfig = new CodablecashNetworkNodeConfig(*nwconfig);
 }
 
-bool CodablecashNetworkNode::initBlank(uint16_t zoneSelf) {
+bool CodablecashNetworkNode::initBlank(uint16_t zoneSelf, int numZones) {
 	CodablecashNodeInstance inst(this->baseDir, this->logger, this->nwconfig->getSysConfig());
-	bool bl = inst.initBlankInstance(zoneSelf, 1);
+	bool bl = inst.initBlankInstance(zoneSelf, numZones);
 
 	return bl;
 }
 
-bool CodablecashNetworkNode::generateNetwork(uint16_t zoneSelf) {
+bool CodablecashNetworkNode::generateNetwork(uint16_t zoneSelf, int numZones) {
 	CodablecashNodeInstance inst(this->baseDir, this->logger, this->nwconfig->getSysConfig());
-	bool bl = inst.initBlankInstance(zoneSelf, 1);
+	bool bl = inst.initBlankInstance(zoneSelf, numZones);
 
 	const GenesisBalanceConfig* gconfig = this->nwconfig->getGenesisConfig();
 	bl = bl && (gconfig != nullptr);

@@ -29,7 +29,7 @@ ScSignature::~ScSignature() {
 void ScSignature::sign(ByteBuffer* data, const BigInteger s) {
 	Secp256k1Point G;
 
-	BigInteger r = BigInteger::ramdom().mod(Secp256k1Point::p);
+	BigInteger r = BigInteger::random().mod(Secp256k1Point::p);
 
 	Secp256k1Point rG = G.multiple(r);
 

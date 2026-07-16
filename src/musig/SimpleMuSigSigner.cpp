@@ -27,7 +27,7 @@ Secp256k1Point SimpleMuSigSigner::getxG() {
 }
 
 Secp256k1Point SimpleMuSigSigner::getrG() {
-	this->r = BigInteger::ramdom(BigInteger(0L), Secp256k1Point::n);
+	this->r = BigInteger::random(BigInteger(0L), Secp256k1Point::n);
 	Secp256k1Point G;
 
 	return G.multiple(this->r);

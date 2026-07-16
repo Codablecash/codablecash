@@ -42,7 +42,8 @@ class MemoryPool;
 class ISystemLogger;
 class BlockHeaderStoreManager;
 class LockinManager;
-
+class AbstractShardExtentionValidator;
+class RemoteUtxoRepository;
 
 class BlockchainStatusCache : public IBlockchainEventListner {
 public:
@@ -50,6 +51,7 @@ public:
 
 	static const constexpr wchar_t* KEY_NUM_ZONES{L"numZones"};
 	static const constexpr wchar_t* KEY_ZONE_SELF{L"zoneSelf"};
+	static const constexpr wchar_t* KEY_ZONE_LIST_SIZE{L"zoneListSize"};
 
 	explicit BlockchainStatusCache(const File* baseDir, const CodablecashSystemParam* config, MemoryPool* memPool, const File* tmpCacheBaseDir, ISystemLogger* logger);
 	virtual ~BlockchainStatusCache();
@@ -59,6 +61,8 @@ public:
 	void open();
 	void close();
 	void initCacheStatus(CodablecashBlockchain* blockchain);
+
+	void newZone(bool headerOnly);
 
 	virtual void onBlockAdded(MemPoolTransaction* memTrx, const Block* block, CodablecashBlockchain* chain);
 	virtual void postBlockAdded(const Block* block, CodablecashBlockchain* chain);
@@ -74,7 +78,7 @@ public:
 	void setFinalizer(FinalizerPool* finalizer);
 
 	void updateFinalizedCacheData(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId
-			, CodablecashBlockchain* blockchain, MemPoolTransaction* memtrx, IStatusCacheContext* context);
+			, CodablecashBlockchain* blockchain, MemPoolTransaction* memtrx, IStatusCacheContext* context, const CodablecashSystemParam* config);
 	void updateFinalizedHeaderCacheData(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId
 			, CodablecashBlockchain* blockchain, MemPoolTransaction* memTrx);
 
@@ -90,6 +94,12 @@ public:
 	void importCosumedMemTransactions(uint16_t zone, MemPoolTransaction* memTrx, uint64_t heigh, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain);
 
 	uint16_t getNumZones() const;
+	uint16_t getZoneSelf() const noexcept {
+		return this->zoneSelf;
+	}
+
+	int getRequestedNewShards(uint16_t zone) const noexcept;
+	void setNumZones(uint16_t numZones) noexcept;
 
 	ZoneStatusCache* getZoneStatusCache(uint16_t zone) const noexcept {
 		return this->zoneList.get(zone);
@@ -115,6 +125,13 @@ public:
 
 	LockinManager* getLockInManager(uint16_t zone) const noexcept;
 
+	void setShardExtentionValidator(const AbstractShardExtentionValidator* validator) noexcept;
+	AbstractShardExtentionValidator* getShardExtentionValidator() const noexcept {
+		return this->shardExtentionValidator;
+	}
+
+	RemoteUtxoRepository* getRemoteUtxoRepository(uint16_t zone) const noexcept;
+
 private:
 	void saveConfig();
 	void loadConfig();
@@ -125,6 +142,7 @@ private:
 	const CodablecashSystemParam* config;
 	File* baseDir;
 
+	int zoneListSize;
 	ArrayList<ZoneStatusCache> zoneList;
 
 	uint16_t numZones;
@@ -140,6 +158,8 @@ private:
 	MemoryPool* memPool;
 
 	ISystemLogger* logger;
+
+	AbstractShardExtentionValidator* shardExtentionValidator;
 };
 
 } /* namespace codablecash */

@@ -23,8 +23,8 @@ TEST_GROUP(Sha256TestGroup) {
 };
 
 TEST(Sha256TestGroup, case01){
-	BigInteger blockHash = BigInteger::ramdom(BigInteger(0L), BigInteger(Secp256k1Point::p));
-	BigInteger nonce = BigInteger::ramdom(BigInteger(0L), BigInteger(Secp256k1Point::p));
+	BigInteger blockHash = BigInteger::random(BigInteger(0L), BigInteger(Secp256k1Point::p));
+	BigInteger nonce = BigInteger::random(BigInteger(0L), BigInteger(Secp256k1Point::p));
 
 	ByteBuffer* bin = blockHash.toBinary(); __STP(bin);
 	ByteBuffer* bin2 = nonce.toBinary(); __STP(bin2);

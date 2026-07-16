@@ -27,8 +27,7 @@ IBlockObject* TransactionIdDataFactory::makeDataFromBinary(ByteBuffer *in) {
 
 void TransactionIdDataFactory::registerData(const AbstractBtreeKey *key,
 		const IBlockObject *data, DataNode *dataNode, BtreeStorage *store) const {
-	uint64_t dataFpos = store->storeData(data);
-	dataNode->setDataFpos(dataFpos);
+	AbstractBtreeDataFactory::registerData(key, data, dataNode, store);
 }
 
 bool TransactionIdDataFactory::beforeRemove(DataNode *dataNode,

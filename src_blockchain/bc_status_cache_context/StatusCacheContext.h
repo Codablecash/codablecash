@@ -45,6 +45,7 @@ class AbstractUtxoReference;
 class CachedStatusCache;
 class ReservedVotesStore;
 class TransactionId;
+class RemoteUtxoDetector;
 
 class StatusCacheContext : public IStatusCacheContext {
 public:
@@ -61,8 +62,8 @@ public:
 
 	void importBlock(const BlockHeader* header, const BlockBody* blockBody, ISystemLogger* logger);
 
-	virtual void beginBlock(const BlockHeader* header, ILockinManager* lockinManager);
-	virtual void endBlock(const BlockHeader* header, ILockinManager* lockinManager);
+	virtual void beginBlock(const BlockHeader* header, ILockinManager* lockinManager, bool finalize);
+	virtual void endBlock(const BlockHeader* header, ILockinManager* lockinManager, bool finalize);
 
 	virtual void importBalanceTransaction(const BlockHeader* header, const AbstractBalanceTransaction* trx, ISystemLogger* logger);
 	virtual void importControlTransaction(const BlockHeader* header, const BlockBody* body, const AbstractControlTransaction* trx, ISystemLogger* logger);
@@ -84,7 +85,6 @@ public:
 	}
 
 	virtual const VoterEntry* getVoterEntry(const NodeIdentifier* nodeId) const noexcept;
-	virtual uint16_t getNumZones() const;
 
 	virtual const CodablecashSystemParam* getConfig() const noexcept {
 		return this->config;
@@ -127,7 +127,22 @@ public:
 
 	virtual AbstractBlockchainTransaction* getTransaction(const TransactionId *trxId);
 
+	virtual void setNumZones(uint16_t numZones) noexcept;
+	virtual void setRequestedNewShards(int requestedNewShards) noexcept;
+	virtual uint16_t getNumZones() const noexcept {
+		return this->numZones;
+	}
+	virtual int getRequestedNewShards() const noexcept {
+		return this->requestedNewShards;
+	}
+
+	virtual RemoteUtxoDetector* getRemoteUtxoDetector() const noexcept {
+		return this->remoteUtxos;
+	}
+
 protected:
+	void handleHeaderCommands(const BlockHeader *header, ILockinManager* lockinManager);
+
 	void importBalanceTransactions(const BlockHeader* header, const BlockBody* blockBody, ISystemLogger* logger);
 	void importControlTransactions(const BlockHeader* header, const BlockBody* blockBody, ISystemLogger* logger);
 	void importInterChainCommunicationTransactions(const BlockHeader* header, const BlockBody* blockBody, ISystemLogger* logger);
@@ -168,6 +183,9 @@ protected:
 	// new shards history
 	int requestedNewShards;
 	uint16_t numZones;
+
+	// remote utxo
+	RemoteUtxoDetector* remoteUtxos;
 
 };
 

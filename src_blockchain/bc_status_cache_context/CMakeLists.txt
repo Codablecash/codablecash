@@ -6,6 +6,8 @@ set(__src
 	CachedStatusCacheRepository.cpp
 	IStatusCacheContext.cpp
 	NullLockinManager.cpp
+	RemoteUtxoDetector.cpp
+	RemoteUtxoHeight.cpp
 	RemovedDummyUtxo.cpp
 	StatusCacheContext.cpp
 	TransactionContextCache.cpp

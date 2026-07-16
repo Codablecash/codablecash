@@ -133,7 +133,7 @@ TEST(TestSecp256Group, binary){
 }
 
 TEST(TestSecp256Group, mul01){
-	BigInteger r = BigInteger::ramdom().mod(Secp256k1Point::p);
+	BigInteger r = BigInteger::random().mod(Secp256k1Point::p);
 	Secp256k1Point pt;
 
 	Secp256k1Point rG = pt.multiple(r);

@@ -62,6 +62,7 @@ void Block::addControlTransaction(const AbstractControlTransaction *trx) noexcep
 	case AbstractBlockchainTransaction::TRX_TYPE_VOTE_BLOCK:
 		addVote(dynamic_cast<const VoteBlockTransaction*>(trx));
 		break;
+	// FIXME[multishard]add header command to register new zone
 	default:
 		this->body->addControlTransaction(trx);
 		break;

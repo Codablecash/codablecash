@@ -16,6 +16,8 @@
 
 #include "bc_status_cache_context_finalizer/AlreadyFinalizedException.h"
 
+#include "bc_status_cache_lockin/LockinManager.h"
+
 #include "bc_blockstore/CodablecashBlockchain.h"
 
 #include "bc_blockstore_header/BlockHeaderStoreManager.h"
@@ -56,6 +58,8 @@
 #include "bc_trx/AbstractInterChainCommunicationTansaction.h"
 
 #include "transaction/AbstractSmartcontractTransaction.h"
+
+#include "bc_block_header_command/AbstractBlockHeaderCommand.h"
 
 
 namespace codablecash {
@@ -182,13 +186,13 @@ uint64_t BlockchainController::getHeadHeight(uint16_t zone) {
 uint16_t BlockchainController::getZoneSelf() const noexcept {
 	StackReadLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	return this->blockchain->getZoneSelf();
+	return this->statusCache->getZoneSelf();
 }
 
 uint16_t BlockchainController::getNUmZones() const noexcept {
 	StackReadLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	return this->blockchain->getNumZones();
+	return this->statusCache->getNumZones();
 }
 
 uint64_t BlockchainController::getFinalizedHeight(uint16_t zone) const {
@@ -429,7 +433,7 @@ void BlockchainController::finalize(uint16_t zone, uint64_t finalizingHeight, co
 		this->blockchain->cleanOnFinalize(zone, finalizingHeight, headerId, lastFinalizedHeight);
 
 		// update finalized data
-		this->statusCache->updateFinalizedCacheData(zone, finalizingHeight, headerId, this->blockchain, memTrx, context);
+		this->statusCache->updateFinalizedCacheData(zone, finalizingHeight, headerId, this->blockchain, memTrx, context, this->config);
 
 		// clean memory Pool
 		{
@@ -471,12 +475,69 @@ void BlockchainController::finalizeHeader(uint16_t zone, uint64_t finalizingHeig
 		uint64_t lastFinalizedHeight = this->statusCache->getFinalizedHeight(zone);
 		this->blockchain->cleanOnFinalize(zone, finalizingHeight, headerId, lastFinalizedHeight);
 
+		// handle header commands
+		handleHeaderCommandsOnFinalize(zone, finalizingHeight, headerId);
+
 		// set finalized height
 		// update finalized data
 		this->statusCache->updateFinalizedHeaderCacheData(zone, finalizingHeight, headerId, this->blockchain, memTrx);
 	}
 
 	// header does not use status cache
+}
+
+void BlockchainController::handleHeaderCommandsOnFinalize(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId) {
+	ZoneStatusCache* zoneCashe = this->statusCache->getZoneStatusCache(zone);
+	assert(zoneCashe != nullptr);
+
+	uint64_t lastFinalizedHeight = zoneCashe->getFinalizedHeight();
+
+	ArrayList<BlockHeaderId> list;
+	list.setDeleteOnExit();
+
+	BlockHeaderStoreManager* headerManager = this->blockchain->getHeaderManager(zone);
+	BlockBodyStoreManager* bodyManager = this->blockchain->getBlockBodyStoreManager(zone);
+
+	// make list
+	{
+		uint64_t height = finalizingHeight;
+		BlockHeaderId* currentHeaderId = dynamic_cast<BlockHeaderId*>(headerId->copyData());
+
+		while(height > lastFinalizedHeight){
+			__STP(currentHeaderId);
+			list.addElement(dynamic_cast<BlockHeaderId*>(currentHeaderId->copyData()));
+
+			BlockHeader* header = headerManager->getHeader(currentHeaderId, height); __STP(header);
+
+			currentHeaderId = dynamic_cast<BlockHeaderId*>(header->getLastHeaderId()->copyData());
+			height--;
+		}
+		__STP(currentHeaderId);
+	}
+
+	// [multishard] handle header commands
+	{
+		uint64_t height = lastFinalizedHeight + 1;
+		LockinManager* lockinManager = this->statusCache->getLockInManager(this->statusCache->getZoneSelf());
+
+		int startLoop = list.size() - 1;
+		for(int i = startLoop; i >= 0; --i){
+			BlockHeaderId* id = list.get(i);
+
+			BlockHeader* header = headerManager->getHeader(id, height); __STP(header);
+			assert(header != nullptr);
+			height++;
+
+			ArrayList<AbstractBlockHeaderCommand>* commands = header->getHeaderCommands();
+			int maxLoop = commands->size();
+			for(int j = 0; j != maxLoop; ++j){
+				AbstractBlockHeaderCommand* cmd = commands->get(j);
+
+				cmd->onFinalize(header, this->statusCache, this->blockchain, lockinManager, this->config);
+			}
+
+		}
+	}
 }
 
 void BlockchainController::checkFinalizedHeight(uint64_t finalizedHeight, uint64_t finalizingHeight) {
@@ -647,7 +708,7 @@ BigInteger BlockchainController::calcTargetDifficulty(uint16_t zone, uint64_t la
 void BlockchainController::requestMiningBlock(MemPoolTransaction* memTrx) {
 	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	ZoneStatusCache* cache = this->statusCache->getZoneStatusCache(zoneSelf);
 
 	cache->updateBlockStatus(memTrx, this->blockchain, this->config);
@@ -656,7 +717,7 @@ void BlockchainController::requestMiningBlock(MemPoolTransaction* memTrx) {
 }
 
 const VoterEntry* BlockchainController::getVoterEntry(const NodeIdentifier *nodeId) {
-	uint16_t zone = this->blockchain->getZoneSelf();
+	uint16_t zone = this->statusCache->getZoneSelf();
 
 	IStatusCacheContext* context = getStatusCacheContext(zone); __STP(context);
 
@@ -667,7 +728,7 @@ const VoterEntry* BlockchainController::getVoterEntry(const NodeIdentifier *node
 BlockHeader* BlockchainController::getTopHeader() const {
 	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	const BlockHead* head = this->statusCache->getHead(zoneSelf);
 
 	const BlockHeader* header = head->getHeadHeader();
@@ -679,7 +740,7 @@ bool BlockchainController::checkAcceptSecondRealBlockOnMining() const {
 
 	bool result = false;
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 
 	const BlockHead* head = this->statusCache->getHead(zoneSelf); // scheduled block
 	const BlockHead* secondHead = this->statusCache->getSecondHead(zoneSelf); // real block
@@ -714,7 +775,7 @@ bool BlockchainController::checkAcceptSecondRealBlockOnMining() const {
 BlockHeader* BlockchainController::changeMiningTarget() {
 	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 
 	return this->statusCache->changeMiningTarget(zoneSelf);
 }
@@ -722,7 +783,7 @@ BlockHeader* BlockchainController::changeMiningTarget() {
 void BlockchainController::setScheduledBlock(const Block *block) {
 	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
 
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	this->statusCache->setScheduledBlock(zoneSelf, block);
 }
 
@@ -733,12 +794,12 @@ Block* BlockchainController::fetechScheduledBlock() {
 }
 
 Block* BlockchainController::__fetechScheduledBlock() {
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	return this->statusCache->fetchScheduledBlock(zoneSelf);
 }
 
 Block* BlockchainController::__getScheduledBlock() {
-	uint16_t zoneSelf = this->blockchain->getZoneSelf();
+	uint16_t zoneSelf = this->statusCache->getZoneSelf();
 	return this->statusCache->getScheduledBlock(zoneSelf);
 }
 

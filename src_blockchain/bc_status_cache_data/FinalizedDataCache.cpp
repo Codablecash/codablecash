@@ -8,6 +8,7 @@
 #include "bc_status_cache_data/FinalizedDataCache.h"
 #include "bc_status_cache_data/FinalizedUtxoRepository.h"
 #include "bc_status_cache_data/FinalizedVoterRepository.h"
+#include "bc_status_cache_data/RemoteUtxoRepository.h"
 
 #include "base_io/File.h"
 
@@ -36,7 +37,9 @@
 
 #include "bc_status_cache/BlockchainStatusCache.h"
 
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
 #include "bc_status_cache_context/IStatusCacheContext.h"
+#include "bc_status_cache_context/RemoteUtxoHeight.h"
 
 #include "bc_status_cache_context_finalizer/VoterStatusCacheContext.h"
 #include "bc_status_cache_context_finalizer/VoterStatusMappedCacheContext.h"
@@ -45,15 +48,18 @@
 
 #include "transaction/AbstractSmartcontractTransaction.h"
 
+#include "bc/CodablecashSystemParam.h"
 
 namespace codablecash {
 
 FinalizedDataCache::FinalizedDataCache(const File* baseDir) {
 	this->baseDir = baseDir->get(NAME_FINALIZED_DATA);
 
-	this->utxoRepo = new FinalizedUtxoRepository(baseDir);
-	this->voterRepo = new FinalizedVoterRepository(baseDir);
-	this->votingStatusCache = new VoterStatusCacheContext(baseDir);
+	this->utxoRepo = new FinalizedUtxoRepository(this->baseDir);
+	this->voterRepo = new FinalizedVoterRepository(this->baseDir);
+	this->votingStatusCache = new VoterStatusCacheContext(this->baseDir);
+
+	this->remoteUrxo = new RemoteUtxoRepository(this->baseDir);
 }
 
 FinalizedDataCache::~FinalizedDataCache() {
@@ -69,12 +75,14 @@ void FinalizedDataCache::initBlank() {
 	this->utxoRepo->initBlank();
 	this->voterRepo->initBlank();
 	this->votingStatusCache->initBlank();
+	this->remoteUrxo->initBlank();
 }
 
 void FinalizedDataCache::open() {
 	this->utxoRepo->open();
 	this->voterRepo->open();
 	this->votingStatusCache->open();
+	this->remoteUrxo->open();
 }
 
 void FinalizedDataCache::close() {
@@ -90,6 +98,10 @@ void FinalizedDataCache::close() {
 		this->votingStatusCache->close();
 		delete this->votingStatusCache, this->votingStatusCache = nullptr;
 	}
+	if(this->remoteUrxo != nullptr){
+		this->remoteUrxo->close();
+		delete this->remoteUrxo, this->remoteUrxo = nullptr;
+	}
 }
 
 void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context) {
@@ -100,7 +112,7 @@ void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockH
 	lockinManager->setFinalizingHeight(finalizingHeight);
 
 
-	context->beginBlock(header, lockinManager);
+	context->beginBlock(header, lockinManager, true);
 
 	importControlTransactions(header, body, context);
 	importInterChainCommunicationTransactions(header, body);
@@ -109,7 +121,7 @@ void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockH
 	importRewardBaseTransactions(header, body);
 
 	// register lockin actions on Finalize @endBlock();
-	context->endBlock(header, lockinManager);
+	context->endBlock(header, lockinManager, true);
 }
 
 void FinalizedDataCache::importRewardBaseTransactions(const BlockHeader *header, const BlockBody *body) {
@@ -223,7 +235,8 @@ void FinalizedDataCache::importTransactionUtxos(const AbstractBlockchainTransact
 
 			uint8_t type = ref->getType();
 			if(type == AbstractUtxoReference::UTXO_REF_TYPE_COINBASE
-					|| type == AbstractUtxoReference::UTXO_REF_TYPE_STAKEBASE){
+					|| type == AbstractUtxoReference::UTXO_REF_TYPE_STAKEBASE
+					|| ref->isRemote()){
 				continue;
 			}
 
@@ -271,6 +284,25 @@ void FinalizedDataCache::writeBackVoterStatus(IStatusCacheContext *context) {
 	VoterStatusMappedCacheContext* voterStatusCache = context->getVoterStatusCacheContext();
 
 	this->votingStatusCache->importRepo(voterStatusCache);
+}
+
+void FinalizedDataCache::writeBackRemoteUtxo(uint64_t finalizingHeight, IStatusCacheContext *context, const CodablecashSystemParam* config, const BlockchainSoftwareVersion* version) {
+	RemoteUtxoDetector* utxoDetector = context->getRemoteUtxoDetector();
+	ArrayList<RemoteUtxoHeight>* list = utxoDetector->getList();
+
+	int maxLoop = list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		RemoteUtxoHeight* utxoHeight = list->get(i);
+
+		uint64_t height = utxoHeight->getHeight();
+		const UtxoId* utxoId = utxoHeight->getUtxoId();
+		this->remoteUrxo->addUtxo(height, utxoId);
+	}
+
+	// clean
+	uint64_t period = config->getRemoteUtxoSaveHeightPeriod(version);
+	uint64_t cleanHeight = period < finalizingHeight ? finalizingHeight - period : 0;
+	this->remoteUrxo->clean(cleanHeight);
 }
 
 UtxoData* FinalizedDataCache::findUtxo(const UtxoId *utxoId) const {

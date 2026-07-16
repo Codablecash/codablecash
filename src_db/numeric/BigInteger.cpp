@@ -23,6 +23,9 @@
 #include "cassert"
 
 #include "../../src_ext/mod_sqrt/bn_sqrt.h"
+#include "crypto/Sha256.h"
+
+using codablecash::Sha256;
 namespace alinous {
 
 const BigInteger BigInteger::ZERO((int64_t)0);
@@ -395,7 +398,7 @@ BigInteger* BigInteger::fromBinary(const char* buff, int length) {
 	return big;
 }
 
-BigInteger BigInteger::ramdom() noexcept {
+BigInteger BigInteger::random() noexcept {
 	static uint64_t solt = 1;
 
 	mpz_t s;
@@ -404,10 +407,36 @@ BigInteger BigInteger::ramdom() noexcept {
 	gmp_randstate_t state;
 	gmp_randinit_default(state);
 
-	int shift = solt % 3;
 
-	uint64_t tm = (Os::getMicroSec() << shift) + solt++;
-	gmp_randseed_ui(state, tm);
+	{
+		mpz_t seed;
+		mpz_init(seed);
+
+		for(int i = 0; i != 10; ++i){
+			uint64_t cspr = Os::getOsCspring();
+
+			mpz_mul_2exp(seed, seed, 32);
+			mpz_add_ui(seed, seed, cspr);
+		}
+
+		// hash
+		{
+			size_t count;
+			uint8_t* data =  (uint8_t*)mpz_export(NULL, &count, 1, 1, 1, 0, seed);
+
+			ByteBuffer* buff = ByteBuffer::wrapWithEndian(data, count, true); __STP(buff);
+			::free(data);
+
+			ByteBuffer* shabuff = Sha256::sha256(buff, true); __STP(shabuff);
+
+			mpz_import(seed, shabuff->capacity(), 1, 1, 1, 0, shabuff->array()); // big endian
+		}
+
+
+		gmp_randseed(state, seed);
+
+		mpz_clear(seed);
+	}
 
 	mpz_urandomb(s, state, 256);
 
@@ -419,11 +448,11 @@ BigInteger BigInteger::ramdom() noexcept {
 	return *big;
 }
 
-BigInteger BigInteger::ramdom(const BigInteger &min, const BigInteger &max) noexcept {
+BigInteger BigInteger::random(const BigInteger &min, const BigInteger &max) noexcept {
 	BigInteger val(0L);
 
 	do{
-		val = ramdom();
+		val = random();
 		val = val.mod(max);
 	}
 	while(!between(val, min, max));

@@ -11,6 +11,7 @@
 #include "bc_status_cache_context/TransactionContextCache.h"
 #include "bc_status_cache_context/UtxoCacheContext.h"
 #include "bc_status_cache_context/NullLockinManager.h"
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
 
 #include "bc_status_cache_context_finalizer/VoterStatusCacheContext.h"
 
@@ -72,11 +73,14 @@
 #include "bc_status_cache_data/FinalizedDataCache.h"
 
 #include "bc_network/NodeIdentifier.h"
+
 #include "bc_status_cache_lockin/LockInOperationsData.h"
 
 #include "numeric/BigInteger.h"
 
 #include "merkletree/MerkleCertificate.h"
+
+#include "bc_block_header_command/AbstractBlockHeaderCommand.h"
 
 
 namespace codablecash {
@@ -119,6 +123,14 @@ StatusCacheContext::StatusCacheContext(const CodablecashSystemParam* config, con
 	this->voterCache = nullptr;
 
 	this->topHeight = 0;
+
+	this->numZones = statusCache->getNumZones();
+	this->requestedNewShards = statusCache->getRequestedNewShards(zone);
+
+	RemoteUtxoRepository* remoteUtxoRepo = statusCache->getRemoteUtxoRepository(zone);
+	uint64_t finalizedHeight = statusCache->getFinalizedHeight(zone);
+	const BlockchainSoftwareVersion* version = blockchain->getVersion();
+	this->remoteUtxos = new RemoteUtxoDetector(remoteUtxoRepo, finalizedHeight, config, version);
 }
 
 StatusCacheContext::~StatusCacheContext() {
@@ -128,6 +140,8 @@ StatusCacheContext::~StatusCacheContext() {
 		this->rwLock->open();
 	}
 	this->rwLock = nullptr;
+
+	delete this->remoteUtxos;
 }
 
 void StatusCacheContext::close() {
@@ -160,7 +174,7 @@ void StatusCacheContext::importBlock(const BlockHeader *header, const BlockBody 
 	LockinManager* liManager = this->statusCache->getLockInManager(this->zone);
 	NullLockinManager lockinManager(liManager);
 
-	beginBlock(header, &lockinManager);
+	beginBlock(header, &lockinManager, false);
 
 	importControlTransactions(header, blockBody, logger);
 	importInterChainCommunicationTransactions(header, blockBody, logger);
@@ -168,10 +182,15 @@ void StatusCacheContext::importBlock(const BlockHeader *header, const BlockBody 
 	importSmartcontractTransactions(header, blockBody, logger);
 	importRewordTransactions(header, blockBody, logger);
 
-	endBlock(header, &lockinManager);
+	endBlock(header, &lockinManager, false);
 }
 
-void StatusCacheContext::beginBlock(const BlockHeader *header, ILockinManager* lockinManager) {
+void StatusCacheContext::beginBlock(const BlockHeader *header, ILockinManager* lockinManager, bool finalize) {
+	// [multishard] header commands
+	if(finalize){
+		handleHeaderCommands(header, lockinManager);
+	}
+
 	// select voters
 	ArrayList<VoterEntry, VoterEntry::VoteCompare>* list = getVoterEntries(); __STP(list);
 	list->setDeleteOnExit();
@@ -211,7 +230,19 @@ void StatusCacheContext::beginBlock(const BlockHeader *header, ILockinManager* l
 	}
 }
 
-void StatusCacheContext::endBlock(const BlockHeader *header, ILockinManager* lockinManager) {
+void StatusCacheContext::handleHeaderCommands(const BlockHeader *header, ILockinManager *lockinManager) {
+	// [multishard] header commands
+	ArrayList<AbstractBlockHeaderCommand>* list = header->getHeaderCommands();
+
+	int maxLoop = list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractBlockHeaderCommand* cmd = list->get(i);
+
+		cmd->onFinalize(header, this->statusCache, this->blockchain, lockinManager, this->config);
+	}
+}
+
+void StatusCacheContext::endBlock(const BlockHeader *header, ILockinManager* lockinManager, bool finalize) {
 	// update voted status check voted
 	// This is what lockin operation have to do.
 
@@ -219,7 +250,7 @@ void StatusCacheContext::endBlock(const BlockHeader *header, ILockinManager* loc
 	 * status of block height, which tickets of the block height to include in this block
 	 */
 	VotingBlockStatus* status = getVotingBlockStatus(header); __STP(status);
-	if(status != nullptr){
+	if(finalize == true && status != nullptr){ // on Finalizing
 		uint64_t height = header->getHeight();
 
 		int missingLimit = this->config->getVoteMissingLimit(height);
@@ -363,6 +394,7 @@ void StatusCacheContext::importControlTransaction(const BlockHeader *header,  co
 
 	this->trxCache->putTransaction(trx);
 
+	// handle utxo
 	importUtxo(trx, header);
 
 	uint8_t type = trx->getType();
@@ -379,10 +411,10 @@ void StatusCacheContext::importControlTransaction(const BlockHeader *header,  co
 		registerVote(header, voteTrx);
 	}
 	else if(type == AbstractBlockchainTransaction::TRX_TYPE_REVOKE_MISSED_TICKET){
-		// do nothing
+		// do nothing about controlling
 	}
 	else if(type == AbstractBlockchainTransaction::TRX_TYPE_REVOKE_MISS_VOTED_TICKET){
-		// do nothing
+		// do nothing about controlling
 	}
 }
 
@@ -404,7 +436,8 @@ void StatusCacheContext::importUtxo(const AbstractBlockchainTransaction *trx, co
 			// coinbase && stakebase
 			uint8_t type = ref->getType();
 			if(type == AbstractUtxoReference::UTXO_REF_TYPE_COINBASE ||
-					type == AbstractUtxoReference::UTXO_REF_TYPE_STAKEBASE){
+					type == AbstractUtxoReference::UTXO_REF_TYPE_STAKEBASE ||
+					ref->isRemote()){
 				continue;
 			}
 
@@ -562,10 +595,6 @@ const VoterEntry* StatusCacheContext::getVoterEntry(const NodeIdentifier *nodeId
 	return entry;
 }
 
-uint16_t StatusCacheContext::getNumZones() const {
-	return this->numZones;
-}
-
 void StatusCacheContext::loadInitialVotersData() {
 	this->voterCache->loadFinalyzedVoters(this->zone, this->statusCache);
 
@@ -621,6 +650,14 @@ uint64_t StatusCacheContext::getPreAnalyzedHeight() const noexcept {
 
 AbstractBlockchainTransaction* StatusCacheContext::getTransaction(const TransactionId *trxId) {
 	return this->trxCache->getTransaction(trxId);
+}
+
+void StatusCacheContext::setNumZones(uint16_t numZones) noexcept {
+	this->numZones = numZones;
+}
+
+void StatusCacheContext::setRequestedNewShards(int requestedNewShards) noexcept {
+	this->requestedNewShards = requestedNewShards;
 }
 
 } /* namespace codablecash */

@@ -35,8 +35,8 @@ public:
 
 	void setNetworkConfig(const CodablecashNetworkNodeConfig* nwconfig);
 
-	bool initBlank(uint16_t zoneSelf);
-	bool generateNetwork(uint16_t zoneSelf);
+	bool initBlank(uint16_t zoneSelf, int numZones);
+	bool generateNetwork(uint16_t zoneSelf, int numZones);
 	void startNetwork(INetworkSeeder* seeder, bool pending);
 	void syncNetwork();
 

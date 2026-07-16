@@ -57,7 +57,7 @@ int NopInterChainCommunicationTransaction::binarySize() const {
 	BinaryUtils::checkNotNull(this->timestamp);
 
 	int total = sizeof(uint8_t);
-
+	total += this->version->binarySize();
 	total += this->timestamp->binarySize();
 	total += sizeof(this->nonce);
 
@@ -78,6 +78,7 @@ void NopInterChainCommunicationTransaction::toBinary(ByteBuffer *out) const {
 
 	out->put(getType());
 
+	this->version->toBinary(out);
 	this->timestamp->toBinary(out);
 	out->putLong(this->nonce);
 
@@ -92,6 +93,9 @@ void NopInterChainCommunicationTransaction::toBinary(ByteBuffer *out) const {
 }
 
 void NopInterChainCommunicationTransaction::fromBinary(ByteBuffer *in) {
+	delete this->version;
+	this->version = TransactionVersion::createFromBinary(in);
+
 	delete this->timestamp;
 	this->timestamp = SystemTimestamp::fromBinary(in);
 	this->nonce = in->getLong();
@@ -110,11 +114,12 @@ void NopInterChainCommunicationTransaction::build() {
 
 	setUtxoNonce();
 
-	int capacity = sizeof(uint8_t) + this->timestamp->binarySize() + sizeof(this->nonce);
+	int capacity = sizeof(uint8_t) + this->version->binarySize() + this->timestamp->binarySize() + sizeof(this->nonce);
 
 	ByteBuffer* buff = ByteBuffer::allocateWithEndian(capacity, true); __STP(buff);
 	buff->put(getType());
 
+	this->version->toBinary(buff);
 	this->timestamp->toBinary(buff);
 	buff->putLong(this->nonce);
 

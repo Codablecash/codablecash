@@ -124,7 +124,7 @@ TEST(TestSyncBlockGroup, case01){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 
 		// after init
 		node01.startNetwork(&seeder, false);
@@ -264,7 +264,7 @@ TEST(TestSyncBlockGroup, case01){
 	CodablecashNetworkNode node02(dirNode02, config02, &logger);
 	{
 		// second
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, true);

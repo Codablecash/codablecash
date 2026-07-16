@@ -23,7 +23,7 @@ ScPrivateKey::ScPrivateKey(const BigInteger* seed, uint64_t solt) : keyvalue((in
 }
 
 ScPrivateKey::ScPrivateKey() : keyvalue((int64_t)0) {
-	this->keyvalue = BigInteger::ramdom().mod(ScPrivateKey::p);
+	this->keyvalue = BigInteger::random().mod(ScPrivateKey::p);
 }
 
 ScPrivateKey::~ScPrivateKey() {

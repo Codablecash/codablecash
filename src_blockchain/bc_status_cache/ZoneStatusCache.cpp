@@ -46,6 +46,7 @@
 
 #include "bc_status_cache_vote/VoteManager.h"
 
+#include "bc_status_cache/BlockchainStatusCache.h"
 
 namespace codablecash {
 
@@ -56,7 +57,7 @@ ZoneStatusCache::ZoneStatusCache(const File* baseDir, uint16_t zone, bool header
 	this->finalizedHeight = 0;
 
 	UnicodeString name(DIR_NAME_BASE);
-	addIdex2String(&name);
+	addIdex2String(&name); // add zone
 	this->baseDir = baseDir->get(&name);
 
 	this->headBlockDetector = new HeadBlockDetector(logger);
@@ -71,13 +72,13 @@ ZoneStatusCache::ZoneStatusCache(const File* baseDir, uint16_t zone, bool header
 	this->requestedNewShards = 0;
 }
 
-ZoneStatusCache::ZoneStatusCache(const File *baseDir, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config) {
-	this->zone = 0;
+ZoneStatusCache::ZoneStatusCache(const File *baseDir, uint16_t zone, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config) {
+	this->zone = zone;
 	this->headerOnly = headerOnly;
 	this->finalizedHeight = 0;
 
 	UnicodeString name(DIR_NAME_BASE);
-	addIdex2String(&name);
+	addIdex2String(&name); // add zone
 	this->baseDir = baseDir->get(&name);
 
 	this->headBlockDetector = new HeadBlockDetector(logger);
@@ -184,7 +185,7 @@ void ZoneStatusCache::updateBlockStatus(MemPoolTransaction* memTrx, CodablecashB
 }
 
 void ZoneStatusCache::finalizeUpdateCacheData(uint64_t finalizingHeight, const BlockHeaderId *headerId
-		, CodablecashBlockchain *blockchain, IStatusCacheContext* context) {
+		, CodablecashBlockchain *blockchain, IStatusCacheContext* context, const CodablecashSystemParam* config) {
 	uint64_t lastFinalizedHeight = this->finalizedHeight;
 
 	ArrayList<BlockHeaderId> list;
@@ -192,6 +193,7 @@ void ZoneStatusCache::finalizeUpdateCacheData(uint64_t finalizingHeight, const B
 
 	BlockHeaderStoreManager* headerManager = blockchain->getHeaderManager(this->zone);
 	BlockBodyStoreManager* bodyManager = blockchain->getBlockBodyStoreManager(this->zone);
+	const BlockchainSoftwareVersion* version = blockchain->getVersion();
 
 	// make list
 	{
@@ -231,6 +233,16 @@ void ZoneStatusCache::finalizeUpdateCacheData(uint64_t finalizingHeight, const B
 			height++;
 		}
 	}
+
+	// [multishard] writeback zone data
+	this->requestedNewShards = context->getRequestedNewShards();
+
+	BlockchainStatusCache* statusCache = context->getBlockchainStatusCache();
+	statusCache->setNumZones(context->getNumZones());
+
+	// writeback remote utxo
+	this->finalizedCache->writeBackRemoteUtxo(finalizingHeight, context, config, version);
+
 
 	// writeback Voter
 	this->finalizedCache->writeBackVoterEntries(context);
@@ -365,6 +377,10 @@ bool ZoneStatusCache::registerBlockHeader4Limit(const BlockHeader *header, const
 
 SystemTimestamp* ZoneStatusCache::getPosVoteLimit(uint64_t lastHeight) {
 	return this->voteManager->getPosVoteLimit(lastHeight);
+}
+
+RemoteUtxoRepository* ZoneStatusCache::getRemoteUtxoRepository() const noexcept {
+	return this->finalizedCache->getRemoteUtxoRepository();
 }
 
 } /* namespace codablecash */

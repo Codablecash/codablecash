@@ -30,10 +30,13 @@
 #include "bc_block_validator/BlockValidationException.h"
 
 #include "bc_status_cache/BlockchainController.h"
+#include "bc_status_cache/AbstractShardExtentionValidator.h"
+#include "bc_status_cache/BlockchainStatusCache.h"
 
 #include "bc_status_cache_context/IStatusCacheContext.h"
 
 #include "bc_status_cache_context_finalizer/VotingBlockStatus.h"
+#include "bc_status_cache_context_finalizer/VoteCandidate.h"
 
 #include "bc_memorypool/MemoryPool.h"
 #include "bc_memorypool/MemPoolTransaction.h"
@@ -54,8 +57,6 @@
 #include "bc_block_vote/VotePart.h"
 #include "bc_block_vote/VotedHeaderIdGroup.h"
 
-#include "bc_status_cache_context_finalizer/VoteCandidate.h"
-
 #include "bc_finalizer_trx/VoteBlockTransaction.h"
 #include "bc_finalizer_trx/RevokeMissVotedTicket.h"
 #include "bc_finalizer_trx/RevokeMissedTicket.h"
@@ -71,6 +72,8 @@
 #include "transaction/AbstractSmartcontractTransaction.h"
 
 #include "base_timestamp/SystemTimestamp.h"
+
+#include "bc_block_header_command/NewShardZoneCommand.h"
 
 namespace codablecash {
 
@@ -94,8 +97,8 @@ void BlockValidator::validate() {
 
 	// validate last header
 	validateLastHeader();
-
 	validateHashrate();
+	validateHeaderCommand();
 
 	{
 		uint16_t zoneSelf = this->ctrl->getZoneSelf();
@@ -107,6 +110,35 @@ void BlockValidator::validate() {
 		this->ctrl->importCosumedMemTransactions(zoneSelf, memTrx, lastBlockHeight, bid);
 
 		validateTransactionsInBlock(memTrx);
+	}
+}
+
+void BlockValidator::validateHeaderCommand() {
+	const BlockHeader* header = this->block->getHeader();
+
+	ArrayList<AbstractBlockHeaderCommand>* list = header->getHeaderCommands();
+	if(!list->isEmpty()){
+		const BlockHeaderId* lastheaderId = header->getLastHeaderId();
+		uint64_t lastheight = header->getHeight() - 1;
+		uint16_t zone = header->getZone();
+
+		IStatusCacheContext* context = this->ctrl->getStatusCacheContext(zone, lastheaderId, lastheight); __STP(context);
+
+		BlockchainStatusCache* cache = context->getBlockchainStatusCache();
+		AbstractShardExtentionValidator* extValidator = cache->getShardExtentionValidator();
+
+		// [multishard] header command validate
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			AbstractBlockHeaderCommand* cmd = list->get(i);
+
+			NewShardZoneCommand* newShardCommand = dynamic_cast<NewShardZoneCommand*>(cmd);
+			if(newShardCommand != nullptr){
+				bool res = extValidator->validate(newShardCommand, context, this->ctrl);
+				ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(res == false
+						, L"The header command to extend new shard is wrong.", __FILE__, __LINE__);
+			}
+		}
 	}
 }
 
@@ -139,8 +171,6 @@ void BlockValidator::validateTransactionsInBlock(MemPoolTransaction *memTrx) {
 	uint16_t zone = header->getZone();
 
 	IStatusCacheContext* context = this->ctrl->getStatusCacheContext(zone, lastheaderId, lastheight); __STP(context);
-
-	// FIXME [multishard] header command validate
 
 	validateControlTransactions(memTrx, header, context);
 	validateInterChainCommunicationTransactions(memTrx, header, context);

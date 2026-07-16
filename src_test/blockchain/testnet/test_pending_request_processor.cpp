@@ -121,7 +121,7 @@ TEST(TestPendingRequestProcessorGroup, case01){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 
 		// after init
 		node01.startNetwork(&seeder, false);
@@ -174,7 +174,7 @@ TEST(TestPendingRequestProcessorGroup, case01){
 		CodablecashNetworkNode node02(dirNode02, config02, &logger);
 
 		// second
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, true);
@@ -260,7 +260,7 @@ TEST(TestPendingRequestProcessorGroup, case01_02){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 
 		// after init
 		node01.startNetwork(&seeder, false);
@@ -313,7 +313,7 @@ TEST(TestPendingRequestProcessorGroup, case01_02){
 		CodablecashNetworkNode node02(dirNode02, config02, &logger);
 
 		// second
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, true);
@@ -382,7 +382,7 @@ TEST(TestPendingRequestProcessorGroup, case02_err){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 
 		// after init
 		node01.startNetwork(&seeder, true);
@@ -434,7 +434,7 @@ TEST(TestPendingRequestProcessorGroup, queue01){
 	CodablecashNetworkNodeConfig* config01 = new CodablecashNetworkNodeConfig(nwconfig); __STP(config01);
 
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
-	node01.initBlank(0);
+	node01.initBlank(0, 1);
 	node01.startNetwork(nullptr, false);
 
 	CodablecashNodeInstance* inst = node01.getInstance();

@@ -85,8 +85,8 @@ public:
     ByteBuffer* toBinary() const;
 	static BigInteger* fromBinary(const char* buff, int length);
 
-	static BigInteger ramdom() noexcept;
-	static BigInteger ramdom(const BigInteger& min, const BigInteger& max) noexcept;
+	static BigInteger random() noexcept;
+	static BigInteger random(const BigInteger& min, const BigInteger& max) noexcept;
 
 	static ByteBuffer* padBuffer(ByteBuffer* bin, int size);
 

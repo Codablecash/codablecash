@@ -93,7 +93,7 @@ TEST(TestP2pNetworkGroup, case01){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 		// after init
 		node01.startNetwork(&seeder, false);
 	}
@@ -102,7 +102,7 @@ TEST(TestP2pNetworkGroup, case01){
 	CodablecashNetworkNode node02(dirNode02, &nwconfig, &logger);
 	{
 		// First
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, false);
@@ -174,7 +174,7 @@ TEST(TestP2pNetworkGroup, case02_err){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 		// after init
 		node01.startNetwork(&seeder, false);
 	}
@@ -183,7 +183,7 @@ TEST(TestP2pNetworkGroup, case02_err){
 	CodablecashNetworkNode node02(dirNode02, &nwconfig, &logger);
 	{
 		// First
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, false);
@@ -273,7 +273,7 @@ TEST(TestP2pNetworkGroup, case03_err){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// First
-		node01.generateNetwork(0); // zone 0
+		node01.generateNetwork(0, 1); // zone 0
 		// after init
 		node01.startNetwork(&seeder, false);
 
@@ -283,7 +283,7 @@ TEST(TestP2pNetworkGroup, case03_err){
 	CodablecashNetworkNode node02(dirNode02, &nwconfig, &logger);
 	{
 		// First
-		node02.initBlank(0); // zone 0
+		node02.initBlank(0, 1); // zone 0
 
 		// after init
 		node02.startNetwork(&seeder, false);

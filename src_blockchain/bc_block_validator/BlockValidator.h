@@ -29,6 +29,7 @@ public:
 	virtual ~BlockValidator();
 
 	void validate();
+	void validateHeaderCommand(); // if mined self
 
 private:
 	void validateLastHeader();

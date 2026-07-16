@@ -46,6 +46,9 @@ CodablecashSystemParam::CodablecashSystemParam(const CodablecashSystemParam &ins
 	this->consensusTrxAllowedDelayMillis = inst.consensusTrxAllowedDelayMillis;
 
 	this->consensusPosVoteLimitMillis = inst.consensusPosVoteLimitMillis;
+
+	this->remoteUtxoSaveHeightPeriod = inst.remoteUtxoSaveHeightPeriod;
+	this->remoteUtxoExpireHeight = inst.remoteUtxoExpireHeight;
 }
 
 CodablecashSystemParam::CodablecashSystemParam() {
@@ -85,6 +88,9 @@ CodablecashSystemParam::CodablecashSystemParam() {
 	this->consensusTrxAllowedDelayMillis = 3000;
 
 	this->consensusPosVoteLimitMillis = 20000;
+
+	this->remoteUtxoSaveHeightPeriod = 10000;
+	this->remoteUtxoExpireHeight = 5000;
 }
 
 CodablecashSystemParam::~CodablecashSystemParam() {

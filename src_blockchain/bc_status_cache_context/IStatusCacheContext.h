@@ -41,7 +41,7 @@ class ILockinManager;
 class VoterStatusMappedCacheContext;
 class ISystemLogger;
 class BlockBody;
-
+class RemoteUtxoDetector;
 
 class IStatusCacheContext {
 public:
@@ -60,7 +60,6 @@ public:
 	virtual VotingBlockStatus* getVotingBlockStatus(const BlockHeaderId *blockHeaderId) = 0;
 	virtual VotingBlockStatus* getVotingBlockStatus(const BlockHeader *header) = 0;
 	virtual const VoterEntry* getVoterEntry(const NodeIdentifier* nodeId) const noexcept = 0;
-	virtual uint16_t getNumZones() const = 0;
 
 	virtual const CodablecashSystemParam* getConfig() const noexcept = 0;
 	virtual CodablecashBlockchain* getBlockChain() const noexcept = 0;
@@ -73,8 +72,8 @@ public:
 	virtual void registerTicket(const BlockHeader *header, const RegisterTicketTransaction* trx) = 0;
 	virtual void registerVote(const BlockHeader *header, const VoteBlockTransaction* trx) = 0;
 
-	virtual void beginBlock(const BlockHeader* header, ILockinManager* lockinManager) = 0;
-	virtual void endBlock(const BlockHeader* header, ILockinManager* lockinManager) = 0;
+	virtual void beginBlock(const BlockHeader* header, ILockinManager* lockinManager, bool finalize) = 0;
+	virtual void endBlock(const BlockHeader* header, ILockinManager* lockinManager, bool finalize) = 0;
 
 	virtual uint16_t getZone() const noexcept = 0;
 	virtual uint64_t getTicketPrice() const noexcept = 0;
@@ -85,6 +84,13 @@ public:
 	virtual uint64_t getTopHeight() const noexcept = 0;
 
 	virtual AbstractBlockchainTransaction* getTransaction(const TransactionId *trxId) = 0;
+
+	virtual void setNumZones(uint16_t nuMzones) noexcept = 0;
+	virtual void setRequestedNewShards(int requestedNewShards) noexcept = 0;
+	virtual uint16_t getNumZones() const noexcept = 0;
+	virtual int getRequestedNewShards() const noexcept = 0;
+
+	virtual RemoteUtxoDetector* getRemoteUtxoDetector() const noexcept = 0;
 };
 
 } /* namespace codablecash */

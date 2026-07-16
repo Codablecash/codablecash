@@ -53,6 +53,7 @@
 #include "blockchain/utils/DebugCodablecashSystemParamSetup.h"
 #include "blockchain/wallet_util/WalletDriver.h"
 #include "NewShardAdder.h"
+#include "NewShardValidator.h"
 
 
 using namespace codablecash;
@@ -134,8 +135,13 @@ TEST(TestMultiShardGroup, case01){
 	{
 		TestnetInstanceWrapper* inst = testnet.getInstance(0, L"first");
 		NewShardAdder adder;
+		adder.init(1, 0);
 		adder.setHeight(6);
 		inst->addIBlockGenerationListner(&adder);
+
+		NewShardValidator shardValidator;
+		inst->setShardExtendValidator(&shardValidator);
+
 
 		int port01 = inst->getListeningPort();
 		const NodeIdentifierSource* source = inst->getVoterIdentifierSource();
@@ -186,7 +192,7 @@ TEST(TestMultiShardGroup, case01){
 
 		// staking ticket
 		testnet.suspendMining(0);
-		int maxLoop = 40;
+		int maxLoop = 10;
 		for(int i = 0; i != maxLoop; ++i){
 			BalanceUnit fee(1L);
 			BalanceUnit stakeAmount(100L);
@@ -246,7 +252,7 @@ TEST(TestMultiShardGroup, case01){
 	CodablecashNetworkNode node01(dirNode01, config01, &logger);
 	{
 		// second
-		node01.initBlank(1); // zone 0
+		node01.initBlank(1, 1); // zone 1
 
 		// after init
 		node01.setNodeName(L"node02");

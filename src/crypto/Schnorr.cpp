@@ -47,7 +47,7 @@ SchnorrKeyPair* Schnorr::generateKey(BigInteger seed) {
 }
 
 SchnorrKeyPair* Schnorr::generateKey(){
-	BigInteger s = BigInteger::ramdom();
+	BigInteger s = BigInteger::random();
 
 	return generateKey(s);
 }
@@ -59,7 +59,7 @@ SchnorrSignature* codablecash::Schnorr::sign(const BigInteger& s, const BigInteg
 }
 
 SchnorrSignature* Schnorr::sign(const BigInteger& s, const BigInteger& p, const uint8_t* data, size_t size){
-	BigInteger r = BigInteger::ramdom().modSelf(cnsts.Q_1);
+	BigInteger r = BigInteger::random().modSelf(cnsts.Q_1);
 	BigInteger powG = cnsts.G.modPow(r, cnsts.Q);
 
 	BigInteger* e = nullptr;

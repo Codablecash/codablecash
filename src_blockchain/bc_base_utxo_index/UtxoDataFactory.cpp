@@ -28,8 +28,7 @@ IBlockObject* UtxoDataFactory::makeDataFromBinary(ByteBuffer *in) {
 
 void UtxoDataFactory::registerData(const AbstractBtreeKey *key,
 		const IBlockObject *data, DataNode *dataNode, BtreeStorage *store) const {
-	uint64_t dataFpos = store->storeData(data);
-	dataNode->setDataFpos(dataFpos);
+	AbstractBtreeDataFactory::registerData(key, data, dataNode, store);
 }
 
 bool UtxoDataFactory::beforeRemove(DataNode *dataNode, BtreeStorage *store, const AbstractBtreeKey *key) const {

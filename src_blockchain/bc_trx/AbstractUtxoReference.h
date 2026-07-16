@@ -39,6 +39,10 @@ public:
 	virtual uint8_t getType() const noexcept = 0;
 	virtual void fromBinary(ByteBuffer* in) = 0;
 
+	virtual bool isRemote() const noexcept {
+		return false;
+	}
+
 	virtual bool checkFilter(const ArrayList<BloomFilter1024> *filtersList) const;
 
 	const UtxoId* getUtxoId() const noexcept {

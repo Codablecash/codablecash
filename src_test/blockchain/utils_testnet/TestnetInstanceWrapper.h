@@ -27,6 +27,7 @@ class IDebugSeeder;
 class NodeIdentifierSource;
 class TransactionId;
 class IBlockGenerationListner;
+class AbstractShardExtentionValidator;
 
 
 class TestnetInstanceWrapper {
@@ -67,6 +68,7 @@ public:
 	int getMempoolTransctionCount() const;
 
 	void addIBlockGenerationListner(const IBlockGenerationListner* listner);
+	void setShardExtendValidator(const AbstractShardExtentionValidator* validator);
 
 private:
 	uint16_t zone;

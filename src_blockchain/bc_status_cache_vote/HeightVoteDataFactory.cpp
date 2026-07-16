@@ -27,7 +27,12 @@ IBlockObject* HeightVoteDataFactory::makeDataFromBinary(ByteBuffer *in) {
 }
 
 void HeightVoteDataFactory::registerData(const AbstractBtreeKey *key, const IBlockObject *data, DataNode *dataNode,	BtreeStorage *store) const {
-	uint64_t dataFpos = store->storeData(data);
+	uint64_t dataFpos = dataNode->getDataFpos();
+	if(dataFpos != 0){
+		store->removeData(dataFpos);
+	}
+
+	dataFpos = store->storeData(data);
 	dataNode->setDataFpos(dataFpos);
 }
 

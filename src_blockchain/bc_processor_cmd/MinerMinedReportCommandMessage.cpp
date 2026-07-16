@@ -29,6 +29,7 @@
 
 #include "bc_p2p_cmd_client_notify/ClientNotifyBlockMinedCommand.h"
 
+#include "bc_block_validator/BlockValidator.h"
 
 namespace codablecash {
 
@@ -45,6 +46,12 @@ MinerMinedReportCommandMessage::~MinerMinedReportCommandMessage() {
  */
 void MinerMinedReportCommandMessage::process(CentralProcessor *processor) {
 	BlockchainController* ctrl = processor->getCtrl();
+	CodablecashSystemParam* config = processor->getCodablecashSystemParam();
+	MemoryPool* memoryPool = processor->getMemoryPool();
+
+	BlockValidator validator(this->block, config, memoryPool, ctrl);
+	validator.validateHeaderCommand();
+
 	ctrl->addBlock(this->block);
 
 	// Pos Voting Request
@@ -67,7 +74,6 @@ void MinerMinedReportCommandMessage::process(CentralProcessor *processor) {
 	{
 		const BlockHeader* header = data->getHeader();
 		uint16_t zone = header->getZone();
-		CodablecashSystemParam* config = processor->getCodablecashSystemParam();
 
 		ctrl->registerBlockHeader4Limit(zone, header, config);
 	}

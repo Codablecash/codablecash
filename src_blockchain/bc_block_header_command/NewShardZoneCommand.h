@@ -12,6 +12,9 @@
 
 namespace codablecash {
 
+class BlockHeaderId;
+class Block;
+
 class NewShardZoneCommand : public AbstractBlockHeaderCommand {
 public:
 	NewShardZoneCommand(const NewShardZoneCommand& inst);
@@ -24,10 +27,18 @@ public:
 
 	virtual IBlockObject* copyData() const noexcept;
 
-	void setNewShardNo(uint16_t newShardNo) noexcept;
+	void setNewShardZone(uint16_t newShardZone) noexcept;
+	void setRequestingZone(uint16_t requestingZone) noexcept;
+	void setGenesisblock(const Block* block);
+
+	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config);
 
 private:
-	uint16_t newShardNo;
+	uint16_t newShardZone;
+	uint16_t requestingZone;
+
+	Block* genesisBlock;
+
 };
 
 } /* namespace codablecash */

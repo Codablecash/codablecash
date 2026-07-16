@@ -60,11 +60,13 @@
 
 #include "bc/CodablecashSystemParam.h"
 
+#include "bc_status_cache/AbstractShardExtentionValidator.h"
 namespace codablecash {
 
 BlockchainStatusCache::BlockchainStatusCache(const File* baseDir, const CodablecashSystemParam* config, MemoryPool* memPool, const File* tmpCacheBaseDir, ISystemLogger* logger) {
 	this->config = config;
 	this->baseDir = new File(*baseDir);
+	this->zoneListSize = 0;
 	this->numZones = 0;
 	this->zoneSelf = 0;
 	this->statusStore = nullptr;
@@ -74,6 +76,7 @@ BlockchainStatusCache::BlockchainStatusCache(const File* baseDir, const Codablec
 	this->memPool = memPool;
 	this->lastVoted = 0;
 	this->logger = logger;
+	this->shardExtentionValidator = nullptr;
 }
 
 BlockchainStatusCache::~BlockchainStatusCache() {
@@ -84,6 +87,7 @@ BlockchainStatusCache::~BlockchainStatusCache() {
 	delete this->memberLock;
 
 	this->memPool = nullptr;
+	delete this->shardExtentionValidator;
 }
 
 void BlockchainStatusCache::initBlankCache(uint16_t zoneSelf, uint16_t numZones) {
@@ -91,7 +95,6 @@ void BlockchainStatusCache::initBlankCache(uint16_t zoneSelf, uint16_t numZones)
 	this->zoneSelf = zoneSelf;
 
 	this->statusStore = new StatusStore(this->baseDir, CONFIG_FILE_NAME);
-	saveConfig();
 
 	for(int i = 0; i != numZones; ++i){
 		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, i, i != zoneSelf, this->logger, this->config);
@@ -99,14 +102,17 @@ void BlockchainStatusCache::initBlankCache(uint16_t zoneSelf, uint16_t numZones)
 
 		cache->initBlank();
 	}
+
+	this->zoneListSize = this->zoneList.size();
+	saveConfig();
 }
 
 void BlockchainStatusCache::open() {
 	this->statusStore = new StatusStore(this->baseDir, CONFIG_FILE_NAME);
 	loadConfig();
 
-	for(int i = 0; i != this->numZones; ++i){
-		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, this->logger, i != this->zoneSelf, this->config);
+	for(int i = 0; i != this->zoneListSize; ++i){
+		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, i, this->logger, i != this->zoneSelf, this->config);
 		this->zoneList.addElement(cache);
 
 		cache->open();
@@ -122,6 +128,26 @@ void BlockchainStatusCache::close() {
 
 	this->zoneList.deleteElements();
 	this->zoneList.reset();
+}
+
+void BlockchainStatusCache::newZone(bool headerOnly) {
+	uint16_t nZone = this->numZones;
+
+	// init blank
+	{
+		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, headerOnly, this->logger, this->config); __STP(cache);
+		cache->initBlank();
+	}
+	// open and add list
+	{
+		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, this->logger, headerOnly, this->config); __STP(cache);
+		cache->open();
+
+		this->zoneList.addElement(__STP_MV(cache));
+	}
+
+	this->zoneListSize = this->zoneList.size();
+	saveConfig();
 }
 
 void BlockchainStatusCache::initCacheStatus(CodablecashBlockchain *blockchain) {
@@ -141,12 +167,14 @@ void BlockchainStatusCache::initCacheStatus(CodablecashBlockchain *blockchain) {
 void BlockchainStatusCache::saveConfig() {
 	this->statusStore->addShortValue(KEY_NUM_ZONES, this->numZones);
 	this->statusStore->addShortValue(KEY_ZONE_SELF, this->zoneSelf);
+	this->statusStore->addShortValue(KEY_ZONE_LIST_SIZE, this->zoneListSize);
 }
 
 void BlockchainStatusCache::loadConfig() {
 	this->statusStore->load();
 	this->numZones = this->statusStore->getShortValue(KEY_NUM_ZONES);
 	this->zoneSelf = this->statusStore->getShortValue(KEY_ZONE_SELF);
+	this->zoneListSize =  this->statusStore->getShortValue(KEY_ZONE_LIST_SIZE);
 }
 
 void BlockchainStatusCache::setPowManager(PoWManager *pow) noexcept {
@@ -382,6 +410,13 @@ uint16_t BlockchainStatusCache::getNumZones() const {
 	return this->numZones;
 }
 
+int BlockchainStatusCache::getRequestedNewShards(uint16_t zone) const noexcept {
+	ZoneStatusCache* cache = this->zoneList.get(zone);
+	assert(cache != nullptr);
+
+	return cache->getRequestedNewShards();
+}
+
 void BlockchainStatusCache::markConsumedTransactions(MemPoolTransaction *memTrx, BlockBody *body) {
 	{
 		const ArrayList<AbstractControlTransaction>* list = body->getControlTransactions();
@@ -426,10 +461,15 @@ void BlockchainStatusCache::markConsumedTransactions(MemPoolTransaction *memTrx,
 }
 
 void BlockchainStatusCache::updateFinalizedCacheData(uint16_t zone, uint64_t finalizingHeight
-		, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain, MemPoolTransaction* memtrx, IStatusCacheContext* context) {
+		, const BlockHeaderId *headerId, CodablecashBlockchain* blockchain, MemPoolTransaction* memtrx, IStatusCacheContext* context, const CodablecashSystemParam* config) {
 	ZoneStatusCache* cache = this->zoneList.get(zone);
 
-	cache->finalizeUpdateCacheData(finalizingHeight, headerId, blockchain, context);
+	// update zone data of blank context
+	context->setNumZones(this->numZones);
+	context->setRequestedNewShards(cache->getRequestedNewShards());
+
+	// import blocks and the transactons
+	cache->finalizeUpdateCacheData(finalizingHeight, headerId, blockchain, context, config);
 
 	cache->updateBlockStatus(memtrx, blockchain, this->config);
 }
@@ -481,7 +521,20 @@ void BlockchainStatusCache::requestPosVote(uint16_t zone, uint64_t calculatedNon
 	}
 }
 
+void BlockchainStatusCache::setNumZones(uint16_t numZones) noexcept {
+	this->numZones = numZones;
+}
 
+void BlockchainStatusCache::setShardExtentionValidator(const AbstractShardExtentionValidator *validator) noexcept {
+	delete this->shardExtentionValidator;
+	this->shardExtentionValidator = validator->copy();
 
+	this->shardExtentionValidator->setStatusCache(this);
+}
+
+RemoteUtxoRepository* BlockchainStatusCache::getRemoteUtxoRepository(uint16_t zone) const noexcept {
+	ZoneStatusCache* cache = this->zoneList.get(zone);
+	return cache->getRemoteUtxoRepository();
+}
 
 } /* namespace codablecash */

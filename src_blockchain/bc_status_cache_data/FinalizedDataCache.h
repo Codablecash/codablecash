@@ -29,7 +29,9 @@ class IStatusCacheContext;
 class UtxoData;
 class UtxoId;
 class VoterStatusCacheContext;
-
+class RemoteUtxoRepository;
+class CodablecashSystemParam;
+class BlockchainSoftwareVersion;
 
 class FinalizedDataCache {
 public:
@@ -46,6 +48,7 @@ public:
 	void importBlockData(uint64_t finalizingHeight, const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
 	void writeBackVoterEntries(IStatusCacheContext* context);
 	void writeBackVoterStatus(IStatusCacheContext* context);
+	void writeBackRemoteUtxo(uint64_t finalizingHeight, IStatusCacheContext* context, const CodablecashSystemParam* config, const BlockchainSoftwareVersion* version);
 
 	FinalizedVoterRepository* getFinalizedVoterRepository() const noexcept {
 		return this->voterRepo;
@@ -56,6 +59,10 @@ public:
 	}
 
 	UtxoData* findUtxo(const UtxoId* utxoId) const;
+
+	RemoteUtxoRepository* getRemoteUtxoRepository() const noexcept {
+		return this->remoteUrxo;
+	}
 
 private:
 	void importControlTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
@@ -77,6 +84,8 @@ private:
 	FinalizedUtxoRepository* utxoRepo;
 	FinalizedVoterRepository* voterRepo;
 	VoterStatusCacheContext* votingStatusCache;
+
+	RemoteUtxoRepository* remoteUrxo;
 };
 
 } /* namespace codablecash */

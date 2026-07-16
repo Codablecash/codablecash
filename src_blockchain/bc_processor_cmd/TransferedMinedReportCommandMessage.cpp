@@ -59,6 +59,11 @@
 #include "bc_block_body/OmittedBlockBodyFixer.h"
 
 #include "bc_block_validator/BlockHeaderValidator.h"
+
+#include "base_timestamp/SystemTimestamp.h"
+
+#include "bc_block_validator/BlockValidationException.h"
+
 namespace codablecash {
 
 TransferedMinedReportCommandMessage::TransferedMinedReportCommandMessage() {
@@ -101,7 +106,10 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 	// [consensus]check if the block time is after PoSLimit
 	{
 		uint64_t height = header->getHeight();
-		ctrl->getPosVoteLimit(zone, height);
+		SystemTimestamp* limit = ctrl->getPosVoteLimit(zone, height); __STP(limit);
+		const SystemTimestamp* blockGenerated = header->getTimestamp();
+
+		ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(blockGenerated->compareTo(limit) > 0, L"The block time must be after PoSLimit", __FILE__, __LINE__);
 	}
 
 

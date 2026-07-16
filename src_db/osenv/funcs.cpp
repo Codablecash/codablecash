@@ -23,6 +23,8 @@
 #include <time.h>
 #endif
 
+#include <random>
+
 
 #include "base/UnicodeString.h"
 #include "base/StackRelease.h"
@@ -76,6 +78,21 @@ uint64_t Os::getMicroSec() noexcept {
 
 	uint64_t microsec = startTime.tv_sec * 1000000 + (startTime.tv_nsec / 1000);
 	return microsec;
+}
+
+uint64_t Os::getNanoSec() noexcept {
+	struct timespec startTime;
+	clock_gettime(CLOCK_REALTIME, &startTime);
+
+	uint64_t nano = startTime.tv_nsec;
+	return nano;
+}
+
+uint32_t Os::getOsCspring() noexcept {
+	std::random_device rd;
+	unsigned int secure_rand = rd();
+
+	return secure_rand;
 }
 
 SystemTimestamp Os::now() noexcept {

@@ -28,8 +28,7 @@ IBlockObject* VoterEntryFactory::makeDataFromBinary(ByteBuffer *in) {
 
 void VoterEntryFactory::registerData(const AbstractBtreeKey *key,
 		const IBlockObject *data, DataNode *dataNode, BtreeStorage *store) const {
-	uint64_t dataFpos = store->storeData(data);
-	dataNode->setDataFpos(dataFpos);
+	AbstractBtreeDataFactory::registerData(key, data, dataNode, store);
 }
 
 AbstractBtreeDataFactory* VoterEntryFactory::copy() const noexcept {

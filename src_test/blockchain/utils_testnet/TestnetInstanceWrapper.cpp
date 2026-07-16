@@ -92,12 +92,12 @@ void TestnetInstanceWrapper::setFinalizerConfig(const FinalizerConfig *fconfig) 
 
 void TestnetInstanceWrapper::initGenesis() {
 	this->node->setNetworkConfig(this->nwconfig);
-	this->node->generateNetwork(this->zone);
+	this->node->generateNetwork(this->zone, 1);
 }
 
 void TestnetInstanceWrapper::initBlank() {
 	this->node->setNetworkConfig(this->nwconfig);
-	this->node->initBlank(this->zone);
+	this->node->initBlank(this->zone, 1);
 }
 
 void TestnetInstanceWrapper::start(IDebugSeeder* seeder, bool pending) {
@@ -219,6 +219,11 @@ void TestnetInstanceWrapper::addIBlockGenerationListner(const IBlockGenerationLi
 	BlockGenerator* generator = instance->getBlockGenerator();
 
 	generator->addBlockGenerationListner(listner);
+}
+
+void TestnetInstanceWrapper::setShardExtendValidator(const AbstractShardExtentionValidator *validator) {
+	CodablecashNodeInstance* instance = this->node->getInstance();
+	instance->setShardExtendValidator(validator);
 }
 
 } /* namespace codablecash */

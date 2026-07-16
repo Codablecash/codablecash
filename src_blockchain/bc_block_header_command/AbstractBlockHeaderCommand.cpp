@@ -7,10 +7,12 @@
 
 #include "bc_block_header_command/AbstractBlockHeaderCommand.h"
 #include "bc_block_header_command/NewShardZoneCommand.h"
+#include "bc_block_header_command/RecognizedNewShardCommand.h"
 
 #include "base_io/ByteBuffer.h"
 
 #include "base/StackRelease.h"
+
 
 namespace codablecash {
 
@@ -34,6 +36,9 @@ AbstractBlockHeaderCommand* AbstractBlockHeaderCommand::createFromBinary(ByteBuf
 	switch(t){
 	case NEW_SHARD_COMMAND:
 		ret = new NewShardZoneCommand();
+		break;
+	case RECOGNIZED_SHARD_COMMAND:
+		ret = new RecognizedNewShardCommand();
 		break;
 	default:
 		return nullptr;

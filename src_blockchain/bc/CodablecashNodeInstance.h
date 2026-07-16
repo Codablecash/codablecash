@@ -39,6 +39,8 @@ class P2pDnsManager;
 class P2pHandshake;
 class P2pNodeRecord;
 class NodeIdentifier;
+class AbstractShardExtentionValidator;
+
 
 class CodablecashNodeInstance : public IPubsubCommandExecutor {
 public:
@@ -131,6 +133,8 @@ public:
 	BlockGenerator* getBlockGenerator() const noexcept {
 		return this->blockGenerator;
 	}
+
+	void setShardExtendValidator(const AbstractShardExtentionValidator *validator);
 
 private:
 	void __init(const File* baseDir, ISystemLogger* logger, const CodablecashSystemParam* config);

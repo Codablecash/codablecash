@@ -249,6 +249,11 @@ void BlockGenerator::importInterChainCommunicationTransactions2Block(MemPoolTran
 		if(result == TrxValidationResult::OK){
 			block->addInterChainCommunicationTransaction(trx);
 			context->importInterChainCommunicationTransaction(header, trx, this->logger);
+
+			uint8_t tyxType = trx->getType();
+			if(tyxType == AbstractInterChainCommunicationTansaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
+				// FIXME[multishard] add RecognizedNewShardCommand to the header
+			}
 		}
 	}
 }

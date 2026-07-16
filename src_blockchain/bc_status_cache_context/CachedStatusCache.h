@@ -34,6 +34,7 @@ class BlockHeaderId;
 class UtxoData;
 class TransactionId;
 class AbstractBlockchainTransaction;
+class RemoteUtxoHeight;
 
 class CachedStatusCache {
 public:
@@ -61,6 +62,17 @@ public:
 
 	AbstractBlockchainTransaction* getTransaction(const TransactionId *trxId) const;
 
+	int getRequestedNewShards() const noexcept {
+		return this->requestedNewShards;
+	}
+	uint16_t getNumZones() const noexcept {
+		return this->numZones;
+	}
+
+	ArrayList<RemoteUtxoHeight>* getRemoteUtxoList() const noexcept {
+		return this->utxolist;
+	}
+
 private:
 	void importOtherCache(const CachedStatusCache* previousCache);
 
@@ -78,6 +90,13 @@ private:
 	TransactionContextCache* trxCache;
 	UtxoCacheContext* utxoCache;
 	VoterStatusMappedCacheContext* voterCache;
+
+	// new shards history
+	int requestedNewShards;
+	uint16_t numZones;
+
+	// remote utxo
+	ArrayList<RemoteUtxoHeight>* utxolist;
 };
 
 } /* namespace codablecash */

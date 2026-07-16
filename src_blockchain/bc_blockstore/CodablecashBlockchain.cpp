@@ -143,6 +143,15 @@ void CodablecashBlockchain::initBlankchain() {
 	initZonesStore();
 }
 
+void CodablecashBlockchain::addZone(uint16_t zone) {
+	if(zone == this->numZones){
+		this->numZones++;
+		saveCondig();
+
+		initZone(zone);
+	}
+}
+
 void CodablecashBlockchain::initZonesStore() {
 	int maxLoop = this->numZones;
 	for(int i = 0; i != maxLoop; ++i){
@@ -325,5 +334,6 @@ ArrayList<BlockHeader>* CodablecashBlockchain::getBlockHeadersHeightAt(uint16_t 
 
 	return __STP_MV(headers);
 }
+
 
 } /* namespace codablecash */

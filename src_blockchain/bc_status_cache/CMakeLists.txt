@@ -1,6 +1,7 @@
 
 
 set(__src
+	AbstractShardExtentionValidator.cpp
 	BlockchainController.cpp
 	BlockchainStatusCache.cpp
 	BlockHead.cpp
