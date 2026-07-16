@@ -99,6 +99,7 @@ void NewShardZoneCommand::onFinalize(const BlockHeader *header, BlockchainStatus
 
 		GenerateNewGenesisBlockCommandMessage* message = new GenerateNewGenesisBlockCommandMessage();
 		message->setNewShardZone(this->newShardZone);
+		message->setGenesisBlock(this->genesisBlock);
 
 		processor->addCommandMessage(message);
 	}

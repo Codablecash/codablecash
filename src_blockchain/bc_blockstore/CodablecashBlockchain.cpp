@@ -149,6 +149,9 @@ void CodablecashBlockchain::addZone(uint16_t zone) {
 		saveCondig();
 
 		initZone(zone);
+
+		ZoneStore* store = this->zonesStore->get(zone);
+		store->open();
 	}
 }
 
