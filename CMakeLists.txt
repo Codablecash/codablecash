@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 project(codablecash)
 
 
@@ -7,11 +7,11 @@ add_subdirectory(src_ext)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	message(STATUS "Debug Build")
 		
-	set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -D__DEBUG__ -D__USE_LARGEFILE64 -fmessage-length=0 -g -O0 -ftest-coverage -fprofile-arcs")
-	#set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -D__DEBUG__ -fmessage-length=0 -O3 -march=native -MMD -MP -MF")
+	set(CMAKE_CXX_FLAGS "-g -O0 -std=c++11 -D__cplusplus=201103L -D__DEBUG__ -D__USE_LARGEFILE64 -fmessage-length=0 -coverage")
+	#set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -D__DEBUG__ -fmessage-length=0 -O3 -march=native -MMD -MP -MF -ftest-coverage")
 	
-	#set(CMAKE_C_FLAGS "-g -O0 -coverage -fprofile-arcs -ftest-coverage")
-	#set(CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage")
+	#set(CMAKE_C_FLAGS "-g -O0 -coverage -coverage")
+	#set(CMAKE_EXE_LINKER_FLAGS="-ftest-coverage")
 	
 	set(CMAKE_C_FLAGS "-g -O0 -coverage")
 	set(CMAKE_EXE_LINKER_FLAGS=" -coverage")
@@ -23,7 +23,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 elseif(CMAKE_BUILD_TYPE STREQUAL "ReleaseTest")
 	set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -D__DEBUG__ -D__USE_LARGEFILE64 -fmessage-length=0 -g -march=native -MMD -MP -MF")
 else()
-	set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -DNDEBUG -D__USE_LARGEFILE64 -Wall -fmessage-length=0 -O3 -march=native -MMD -MP -MF")
+	set(CMAKE_CXX_FLAGS "-std=c++0x -D__cplusplus=201103L -DNDEBUG -D__USE_LARGEFILE64 -Wall -fmessage-length=0 -O2 -march=native -MMD -MP -MF")
 endif()
 
 
@@ -136,6 +136,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src_gen/)
 include_directories(${PROJECT_SOURCE_DIR}/src_ext/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_db/)
+include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_modular/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_vm/)
 include_directories(${PROJECT_SOURCE_DIR}/src_test/)
 
@@ -146,10 +147,11 @@ add_subdirectory(src_db)
 add_subdirectory(src_gen)
 add_subdirectory(src_smartcontract)
 add_subdirectory(src_smartcontract_db)
+add_subdirectory(src_smartcontract_modular)
 add_subdirectory(src_smartcontract_vm)
 
 
-add_library(codablecashlib STATIC ${top_src} ${top_src_blockchain} ${top_src_blockchain_p2p} ${top_src_db} ${top_src_gen} ${top_src_smartcontract} ${top_src_smartcontract_db} ${top_src_smartcontract_vm})
+add_library(codablecashlib STATIC ${top_src} ${top_src_blockchain} ${top_src_blockchain_p2p} ${top_src_db} ${top_src_gen} ${top_src_smartcontract} ${top_src_smartcontract_db} ${top_src_smartcontract_modular} ${top_src_smartcontract_vm})
 target_link_libraries(codablecashlib extlib pthread gmp)
 
 add_executable(codablecash ${srcmain})
@@ -191,7 +193,7 @@ add_custom_target(cppcheck
 
 add_custom_target(valgrind
 	COMMAND valgrind --leak-check=full
-		--xml=yes --xml-file=testall.%p.valgrind.xml --main-stacksize=83886080
+		--xml=yes --xml-file=testall.%p.valgrind.xml --main-stacksize=83886080 --max-threads=1000 --fair-sched=yes
 		./testall
 	
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -199,14 +201,14 @@ add_custom_target(valgrind
 
 add_custom_target(valgrindp
 	COMMAND valgrind --leak-check=full
-		--xml=yes --xml-file=testall.%p.valgrind.xml --main-stacksize=83886080
-		./testall -g TestVoteAndFinalizeTicketGroup
+		--xml=yes --xml-file=testall.%p.valgrind.xml --main-stacksize=83886080 --max-threads=1000 --fair-sched=yes
+		./testall -g TestMultiShardGroup
 	
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	)
 	
 add_custom_target(helgrindp
-	COMMAND valgrind --tool=helgrind --xml=yes --xml-file=testall.%p.helgrind.xml ./testall -g TestPoWManagerGroup
+	COMMAND valgrind --tool=helgrind --xml=yes --xml-file=testall.%p.helgrind.xml ./testall -g TestSyncHeaderOnlyGroup
 	
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	)
