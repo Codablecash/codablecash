@@ -13,6 +13,8 @@
 #include "bc/CodablecashNodeInstance.h"
 #include "bc_p2p_cmd_network/NodeNetworkInfo.h"
 
+#include "bc_network/NodeIdentifier.h"
+
 namespace codablecash {
 
 
@@ -139,6 +141,17 @@ bool AbstractConsensusNodeCommand::validateCurrentTime(const SystemTimestamp *la
 	int hops = this->history->size() + 1;
 
 	return hops <= maxHops && lim.compareTo(&tmnow) >= 0;
+}
+
+void AbstractConsensusNodeCommand::makeHistoryExcludeList(ArrayList<NodeIdentifier> *list) const {
+	int maxLoop = this->history->size();
+	for(int i = 0; i != maxLoop; ++i){
+		NodeNetworkInfo* his = this->history->get(i);
+		const NodeIdentifier* nodeId = his->getNodeIdentifier();
+
+		NodeIdentifier* newId = dynamic_cast<NodeIdentifier*>(nodeId->copyData());
+		list->addElement(newId);
+	}
 }
 
 } /* namespace codablecash */

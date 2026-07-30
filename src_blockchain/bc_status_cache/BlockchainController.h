@@ -65,6 +65,8 @@ public:
 	void finalize(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId, MemoryPool* memPool);
 	void finalizeHeader(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId, MemoryPool* memPool);
 
+	void setNumRecognizedZones(uint16_t zone, uint16_t numRecognizedZones);
+
 private:
 	void handleHeaderCommandsOnFinalize(uint16_t zone, uint64_t finalizingHeight, const BlockHeaderId *headerId);
 

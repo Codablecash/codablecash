@@ -13,7 +13,7 @@ namespace codablecash {
 class BlockchainStatusCache;
 class IStatusCacheContext;
 class BlockchainController;
-class NewShardZoneCommand;
+class AbstractBlockHeaderCommand;
 
 
 class AbstractShardExtentionValidator {
@@ -26,7 +26,7 @@ public:
 
 	void setStatusCache(BlockchainStatusCache* stcache) noexcept;
 
-	virtual bool validate(NewShardZoneCommand* newShardCommand, IStatusCacheContext* context, BlockchainController* ctrl) = 0;
+	virtual bool validate(AbstractBlockHeaderCommand* newShardCommand, IStatusCacheContext* context, BlockchainController* ctrl) = 0;
 
 private:
 	BlockchainStatusCache* statusCache;

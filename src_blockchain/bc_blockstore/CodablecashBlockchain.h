@@ -36,6 +36,7 @@ class BlockBodyStoreManager;
 class CentralProcessor;
 class BlockHeaderId;
 class MemPoolTransaction;
+class BlochchainP2pManager;
 
 class CodablecashBlockchain : public IBlockchainStoreProvider {
 public:
@@ -93,6 +94,8 @@ public:
 	const BlockchainSoftwareVersion* getVersion() const noexcept {
 		return this->version;
 	}
+
+	BlochchainP2pManager* getBlochchainP2pManager() const noexcept;
 
 private:
 	void fireBlockAdded(MemPoolTransaction* memTrx, const Block* block);

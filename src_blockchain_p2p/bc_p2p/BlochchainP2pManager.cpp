@@ -39,6 +39,8 @@ BlochchainP2pManager::BlochchainP2pManager() {
 	this->zones = new ArrayList<P2pZone>();
 	this->end = false;
 
+	this->numZones = 0;
+
 	this->protocol = 0;
 	this->host = nullptr;
 	this->port = 0;
@@ -148,10 +150,21 @@ void BlochchainP2pManager::__removeHandshake(const PubSubId *pubsubId) {
 void BlochchainP2pManager::init(int numZones) {
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
+	this->numZones = numZones;
+
 	for(int i = 0; i != numZones; ++i){
 		P2pZone* z = new P2pZone(i);
 		this->zones->addElement(z);
 	}
+}
+
+void BlochchainP2pManager::incNumZones() {
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+	int newZone = this->numZones;
+
+	this->numZones++;
+	P2pZone* z = new P2pZone(newZone);
+	this->zones->addElement(z);
 }
 
 void BlochchainP2pManager::onLoginHandshake(P2pHandshake *handshake, const LoginPubSubCommand *loginCommand, const UnicodeString* canonicalName) {
@@ -161,7 +174,7 @@ void BlochchainP2pManager::onLoginHandshake(P2pHandshake *handshake, const Login
 	const NodeIdentifier* nodeId = loginCommand->getNodeId();
 
 	// zone size
-	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zone > this->zones->size(), L"Zone does not exists", __FILE__, __LINE__);
+	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zone > this->numZones, L"Zone does not exists", __FILE__, __LINE__);
 
 	// use extra zone
 	if(zone == this->zones->size()){
@@ -182,7 +195,7 @@ void BlochchainP2pManager::registerHandshake(uint16_t zone, P2pHandshake *handsh
 
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
-	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zone > this->zones->size(), L"Zone does not exists", __FILE__, __LINE__);
+	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zone > this->numZones, L"Zone does not exists", __FILE__, __LINE__);
 
 	// use extra zone
 	if(zone == this->zones->size()){
@@ -369,7 +382,7 @@ void BlochchainP2pManager::bloadCastHighPriorityAllZones(const ArrayList<NodeIde
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
 	if(!this->end){
-		int maxLoop = this->zones->size();
+		int maxLoop = this->numZones; // this->zones->size();
 		for(int i = 0; i != maxLoop; ++i){
 			P2pZone* p2pzone = this->zones->get(i);
 

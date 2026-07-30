@@ -12,6 +12,8 @@
 
 namespace codablecash {
 
+class NotifyZoneExtendRequestedTransaction;
+
 class RecognizedNewShardCommand : public AbstractBlockHeaderCommand {
 public:
 	RecognizedNewShardCommand(const RecognizedNewShardCommand& inst);
@@ -25,6 +27,11 @@ public:
 	virtual IBlockObject* copyData() const noexcept;
 
 	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config);
+
+	void setTransaction(const NotifyZoneExtendRequestedTransaction* trx);
+
+private:
+	NotifyZoneExtendRequestedTransaction* trx;
 
 };
 

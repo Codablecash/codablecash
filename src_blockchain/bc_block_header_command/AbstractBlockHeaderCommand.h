@@ -23,6 +23,7 @@ class BlockchainStatusCache;
 class CodablecashBlockchain;
 class CodablecashSystemParam;
 class ILockinManager;
+class BlockHeaderCommandId;
 
 class AbstractBlockHeaderCommand : public alinous::IBlockObject {
 public:
@@ -39,9 +40,15 @@ public:
 
 	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config) = 0;
 
+	void buildCommandId();
+
+	const BlockHeaderCommandId* getCommandId() const noexcept {
+		return this->commandId;
+	}
 
 protected:
 	uint16_t type;
+	BlockHeaderCommandId* commandId;
 };
 
 } /* namespace codablecash */

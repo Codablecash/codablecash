@@ -32,6 +32,7 @@ class IVoteTransactionIdCertificatevisitor;
 class TransactionId;
 class BlockVersion;
 class AbstractBlockHeaderCommand;
+class BlockHeaderCommandId;
 
 class BlockHeader : public alinous::IBlockObject {
 public:
@@ -112,6 +113,7 @@ public:
 	void addHeaderCommand(const AbstractBlockHeaderCommand* cmd);
 	bool hasHeaderCommnads() const noexcept;
 
+	const AbstractBlockHeaderCommand* getHeaderCommand(const BlockHeaderCommandId* commandId) const noexcept;
 	ArrayList<AbstractBlockHeaderCommand>* getHeaderCommands() const noexcept {
 		return this->commnads;
 	}

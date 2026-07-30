@@ -14,6 +14,7 @@ namespace codablecash {
 
 class BlockHeaderId;
 class UtxoId;
+class BlockHeaderCommandId;
 
 class NotifyZoneExtendRequestedTransaction : public AbstractInterChainCommunicationTansaction {
 public:
@@ -45,12 +46,24 @@ public:
 	virtual bool checkFilter(const ArrayList<BloomFilter1024> *filtersList) const;
 
 	void setHeaderInfo(uint16_t zone, uint64_t height, const BlockHeaderId* headerId);
+	void setNewShardZone(uint16_t newShardZone) noexcept;
+	void setCommandId(const BlockHeaderCommandId* commandId);
+
+	uint16_t getNewShardZone() const noexcept {
+		return this->newShardZone;
+	}
 
 private:
 	// header info
 	uint16_t zone;
 	uint64_t height;
 	BlockHeaderId* headerId;
+
+	// new shard info
+	uint16_t newShardZone;
+
+	// Header Command Info
+	BlockHeaderCommandId* commandId;
 
 	// build automatically
 	UtxoId* utxoId;

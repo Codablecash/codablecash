@@ -14,6 +14,7 @@
 namespace codablecash {
 
 class BlockHeaderId;
+class BlockHeaderCommandId;
 
 class NotifyShardExtendRequestCommandMessage : public AbstractCentralProcessorCommandMessage {
 public:
@@ -23,11 +24,13 @@ public:
 	void setNewShardZone(uint16_t newShardZone) noexcept;
 	void setRequestingZone(uint16_t requestingZone) noexcept;
 	void setHeaderInfo(uint64_t height, const BlockHeaderId* headerId) noexcept;
+	void setCommandId(const BlockHeaderCommandId* commandId);
 
 protected:
 	virtual void process(CentralProcessor* processor);
 
 private:
+	BlockHeaderCommandId* commandId;
 	uint16_t newShardZone;
 	uint16_t requestingZone;
 

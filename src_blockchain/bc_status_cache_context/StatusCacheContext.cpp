@@ -364,7 +364,7 @@ void StatusCacheContext::importRewordTransactions(const BlockHeader *header,	con
 	}
 }
 
-void StatusCacheContext::importInterChainCommunicationTransaction(	const BlockHeader *header, const AbstractInterChainCommunicationTansaction *trx, ISystemLogger* logger) {
+void StatusCacheContext::importInterChainCommunicationTransaction(const BlockHeader *header, const AbstractInterChainCommunicationTansaction *trx, ISystemLogger* logger) {
 #ifdef __DEBUG__
 	bool bl = this->trxCache->hasTransaction(trx->getTransactionId());
 	assert(bl == false);
@@ -373,6 +373,12 @@ void StatusCacheContext::importInterChainCommunicationTransaction(	const BlockHe
 	this->trxCache->putTransaction(trx);
 
 	importUtxo(trx, header);
+
+	uint8_t type = trx->getType();
+	if(type == AbstractBlockchainTransaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
+		this->numZones++;
+		// FIXME [multishard]
+	}
 }
 
 void StatusCacheContext::importSmartcontractTransaction(const BlockHeader *header, const AbstractSmartcontractTransaction *trx, ISystemLogger* logger) {

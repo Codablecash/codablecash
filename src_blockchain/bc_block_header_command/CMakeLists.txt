@@ -2,6 +2,7 @@
 
 set(__src
 	AbstractBlockHeaderCommand.cpp
+	BlockHeaderCommandId.cpp
 	NewShardZoneCommand.cpp
 	RecognizedNewShardCommand.cpp
 )

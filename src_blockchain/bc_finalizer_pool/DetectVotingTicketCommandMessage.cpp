@@ -142,7 +142,7 @@ void DetectVotingTicketCommandMessage::putTransaction(const BlockHeader *header2
 
 	// [Network] broad cast
 	{
-		P2pRequestProcessor* p2pRequestProcessor = pool->getP2pRequestProcessor(); // mnetwork key
+		P2pRequestProcessor* p2pRequestProcessor = pool->getP2pRequestProcessor(); // network key
 		BlochchainP2pManager* p2pManager = pool->getBlochchainP2pManager();
 
 		if(p2pRequestProcessor != nullptr && p2pManager != nullptr){

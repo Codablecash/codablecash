@@ -30,6 +30,7 @@
 
 #include "bc_base/BinaryUtils.h"
 
+#include "bc_block_header_command/BlockHeaderCommandId.h"
 
 namespace codablecash {
 
@@ -301,6 +302,23 @@ void BlockHeader::addHeaderCommand(const AbstractBlockHeaderCommand *cmd) {
 
 bool BlockHeader::hasHeaderCommnads() const noexcept {
 	return !this->commnads->isEmpty();
+}
+
+const AbstractBlockHeaderCommand* BlockHeader::getHeaderCommand(const BlockHeaderCommandId *commandId) const noexcept {
+	const AbstractBlockHeaderCommand* ret = nullptr;
+
+	int maxLoop = this->commnads->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractBlockHeaderCommand* command = this->commnads->get(i);
+		const BlockHeaderCommandId* id = command->getCommandId();
+
+		if(commandId->equals(id)){
+			ret = command;
+			break;
+		}
+	}
+
+	return ret;
 }
 
 } /* namespace codablecash */

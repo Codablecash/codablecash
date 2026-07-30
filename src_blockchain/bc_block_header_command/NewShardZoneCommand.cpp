@@ -22,6 +22,10 @@
 #include "bc_block/Block.h"
 
 #include "bc_base/BinaryUtils.h"
+
+#include "bc_p2p/BlochchainP2pManager.h"
+
+
 namespace codablecash {
 
 
@@ -86,13 +90,21 @@ void NewShardZoneCommand::onFinalize(const BlockHeader *header, BlockchainStatus
 		ILockinManager *lockinManager, const CodablecashSystemParam *config) {
 	uint16_t zoneSelf = statusCache->getZoneSelf();
 
-	// FIXME[multishard] create phisical store
+	// [multishard] create phisical store
 	if(zoneSelf != this->newShardZone){
+		// other chains
 		statusCache->newZone(false);
 		blockchain->addZone(this->newShardZone);
+
+		BlochchainP2pManager* p2pManager = blockchain->getBlochchainP2pManager();
+		p2pManager->incNumZones();
 	}else{
+		// new shard chain
 		statusCache->newZone(true);
 		blockchain->addZone(this->newShardZone);
+
+		BlochchainP2pManager* p2pManager = blockchain->getBlochchainP2pManager();
+		p2pManager->incNumZones();
 
 		//[multishard] generate genesis block
 		CentralProcessor* processor = blockchain->getProcessor();
@@ -116,6 +128,8 @@ void NewShardZoneCommand::onFinalize(const BlockHeader *header, BlockchainStatus
 		uint64_t height = header->getHeight();
 		const BlockHeaderId* headerId = header->getId();
 		message->setHeaderInfo(height, headerId);
+
+		message->setCommandId(this->commandId);
 
 		processor->addCommandMessage(message);
 	}

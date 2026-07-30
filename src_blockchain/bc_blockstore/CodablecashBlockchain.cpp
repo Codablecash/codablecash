@@ -338,5 +338,8 @@ ArrayList<BlockHeader>* CodablecashBlockchain::getBlockHeadersHeightAt(uint16_t 
 	return __STP_MV(headers);
 }
 
+BlochchainP2pManager* CodablecashBlockchain::getBlochchainP2pManager() const noexcept {
+	return this->processor->getBlochchainP2pManager();
+}
 
 } /* namespace codablecash */

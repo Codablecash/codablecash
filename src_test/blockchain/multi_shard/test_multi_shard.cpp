@@ -127,10 +127,18 @@ TEST(TestMultiShardGroup, case01){
 		inst->setFinalizerConfig(&fconfig);
 	}
 
+
 	// seeder
 	ArrayDebugSeeder seeder;
 
 	testnet.startGenesis(0, &seeder);
+	{
+		TestnetInstanceWrapper* inst = testnet.createInstance(0, L"second");
+
+		testnet.startInstancesFrom(0, 1, &seeder);
+		NewShardValidator shardValidator;
+		inst->setShardExtendValidator(&shardValidator);
+	}
 
 	{
 		TestnetInstanceWrapper* inst = testnet.getInstance(0, L"first");
@@ -192,7 +200,7 @@ TEST(TestMultiShardGroup, case01){
 
 		// staking ticket
 		testnet.suspendMining(0);
-		int maxLoop = 10;
+		int maxLoop = 30;
 		for(int i = 0; i != maxLoop; ++i){
 			BalanceUnit fee(1L);
 			BalanceUnit stakeAmount(100L);
@@ -271,7 +279,7 @@ TEST(TestMultiShardGroup, case01){
 		}
 	}
 
-	testnet.waitForBlockHeight(0, 0, 10);
+	testnet.waitForBlockHeight(0, 0, 12);
 	wallet->shutdownNetwork();
 }
 

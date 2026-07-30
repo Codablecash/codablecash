@@ -58,7 +58,7 @@ AddressDescriptor* AbstractAddress::toAddressDescriptor() const noexcept {
 
 	char zonech[4];
 	Mem::memset(zonech, 0, 4);
-	::sprintf(zonech, "%03d", this->zone);
+	::sprintf(zonech, "%03d", (uint8_t)this->zone);
 
 	ByteBuffer* body = getBodyPart(); __STP(body);
 	body->position(0);

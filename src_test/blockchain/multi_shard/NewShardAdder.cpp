@@ -54,6 +54,8 @@ void NewShardAdder::__addCommand(Block *block, MemPoolTransaction *memTrx, Block
 	gblock.build();
 	cmd.setGenesisblock(&gblock);
 
+	cmd.buildCommandId();
+
 	header->addHeaderCommand(&cmd);
 }
 
