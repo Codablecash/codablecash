@@ -92,7 +92,7 @@ void MultizoneTestnet::waitForBlockHeight(uint16_t zone, int index, uint64_t hei
 	TestnetInstanceWrapper* inst = zoneNet->getInstance(index);
 
 	uint64_t curHeight = inst->getHeight();
-	while(curHeight < height){
+	while(curHeight <= height){
 		Os::usleep(100 * 1000);
 		curHeight = inst->getHeight();
 	}

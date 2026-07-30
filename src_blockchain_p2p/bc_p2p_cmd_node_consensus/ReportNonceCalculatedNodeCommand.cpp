@@ -40,6 +40,7 @@
 #include "bc_network/NodeIdentifierSource.h"
 #include "bc_p2p_cmd_network/NodeNetworkInfo.h"
 
+#include "bc_block_validator/BlockHeaderValidator.h"
 
 namespace codablecash {
 
@@ -161,6 +162,11 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 		CodablecashSystemParam* config = inst->getCodablecashSystemParam();
 
 		updated = ctrl->registerBlockHeader4Limit(zone, this->header, config);
+
+		// FIXME
+		if(ctrl->getZoneSelf() == 1){
+			bool bl = zone == 1;
+		}
 	}
 
 
@@ -198,12 +204,33 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 		p2pManager->bloadCastHighPriorityAllZones(&list, &cmd, p2pRequestProcessor);
 	}
 
+	if(updated){
+		//FIXME[consensus] import header
+		uint16_t zone = this->header->getZone();
+		uint16_t zoneSelf = ctrl->getZoneSelf();
+
+		if(zone != zoneSelf){
+			MemoryPool *memPool = inst->getMemoryPool();
+			CodablecashSystemParam* config = inst->getCodablecashSystemParam();
+			const BlockHeader * header = this->header;
+			importHeader(memPool, ctrl, header, config);
+		}
+	}
+
 	return new OkPubsubResponse();
 }
 
 void ReportNonceCalculatedNodeCommand::setHeader(const BlockHeader *header) {
 	delete this->header;
 	this->header = dynamic_cast<BlockHeader*>(header->copyData());
+}
+
+bool ReportNonceCalculatedNodeCommand::importHeader(MemoryPool *memPool, BlockchainController *ctrl, const BlockHeader *header, CodablecashSystemParam *config) const {
+	// check the hashrate
+	BlockHeaderValidator validator(header, config, memPool, ctrl);
+	validator.validate();
+
+	return ctrl->addBlockHeader(header);
 }
 
 } /* namespace codablecash */

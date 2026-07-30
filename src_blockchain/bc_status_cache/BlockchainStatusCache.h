@@ -134,6 +134,10 @@ public:
 
 	RemoteUtxoRepository* getRemoteUtxoRepository(uint16_t zone) const noexcept;
 
+	int getZoneListSize() const noexcept {
+		return this->zoneListSize;
+	}
+
 private:
 	void saveConfig();
 	void loadConfig();

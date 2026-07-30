@@ -82,6 +82,7 @@
 
 #include "bc_block_header_command/AbstractBlockHeaderCommand.h"
 
+#include "bc_status_cache_extend_shard/NotifyZoneExtendRequestedTransaction.h"
 
 namespace codablecash {
 
@@ -377,6 +378,17 @@ void StatusCacheContext::importInterChainCommunicationTransaction(const BlockHea
 	uint8_t type = trx->getType();
 	if(type == AbstractBlockchainTransaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
 		this->numZones++;
+
+#ifdef __DEBUG__
+		int zoneListSize = this->statusCache->getZoneListSize();
+		assert(this->numZones <= zoneListSize);
+#endif
+
+		const NotifyZoneExtendRequestedTransaction* notifyTrx = dynamic_cast<const NotifyZoneExtendRequestedTransaction*>(trx);
+
+		const UtxoId* cutxoId = notifyTrx->getCommandIdUtxo();
+		uint64_t height = header->getHeight();
+		this->remoteUtxos->consumeRemoteUtxo(cutxoId, height);
 		// FIXME [multishard]
 	}
 }
