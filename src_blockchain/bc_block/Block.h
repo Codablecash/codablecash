@@ -29,6 +29,8 @@ class BlockHeaderId;
 class PoWNonce;
 class VoteBlockTransaction;
 class ReservedVotes;
+class AbstractBlockHeaderCommand;
+
 
 class Block {
 public:
@@ -69,6 +71,8 @@ public:
 	void setNonceGeneratedTimestamp(const SystemTimestamp* tm) const noexcept;
 
 	bool isScheduledBlock() const noexcept;
+
+	void addHeaderCommand(const AbstractBlockHeaderCommand *cmd);
 
 #ifdef __DEBUG__
 	bool checkMerkleRoot() const noexcept;

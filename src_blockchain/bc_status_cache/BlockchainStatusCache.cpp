@@ -144,6 +144,8 @@ void BlockchainStatusCache::newZone(bool headerOnly) {
 		cache->open();
 
 		this->zoneList.addElement(__STP_MV(cache));
+
+		cache->setNumRecognizedZones(nZone + 1); // the zone cache recognizes itself
 	}
 
 	this->zoneListSize = this->zoneList.size();
@@ -523,6 +525,11 @@ void BlockchainStatusCache::requestPosVote(uint16_t zone, uint64_t calculatedNon
 
 void BlockchainStatusCache::setNumZones(uint16_t numZones) noexcept {
 	this->numZones = numZones;
+}
+
+void BlockchainStatusCache::setNumRecognizedZones(uint16_t zone,uint16_t numRecognizedZones) {
+	ZoneStatusCache* cache = this->zoneList.get(zone);
+	cache->setNumRecognizedZones(numRecognizedZones);
 }
 
 void BlockchainStatusCache::setShardExtentionValidator(const AbstractShardExtentionValidator *validator) noexcept {

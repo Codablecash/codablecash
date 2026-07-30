@@ -24,7 +24,7 @@ NewShardValidator::~NewShardValidator() {
 
 }
 
-bool NewShardValidator::validate(NewShardZoneCommand *newShardCommand, IStatusCacheContext *context, BlockchainController *ctrl) {
+bool NewShardValidator::validate(AbstractBlockHeaderCommand *newShardCommand, IStatusCacheContext *context, BlockchainController *ctrl) {
 	uint16_t numZones = context->getNumZones();
 	int requestedZones = context->getRequestedNewShards();
 

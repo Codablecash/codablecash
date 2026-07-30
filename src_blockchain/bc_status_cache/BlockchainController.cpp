@@ -816,7 +816,15 @@ SystemTimestamp* BlockchainController::getPosVoteLimit(uint16_t zone, uint64_t l
 }
 
 void BlockchainController::requestPosVote(uint16_t zone, uint64_t calculatedNonceHeight) {
+	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
+
 	this->statusCache->requestPosVote(zone, calculatedNonceHeight, this->blockchain);
+}
+
+void BlockchainController::setNumRecognizedZones(uint16_t zone,uint16_t numRecognizedZones) {
+	StackWriteLock __lock(this->rwLock, __FILE__, __LINE__);
+
+	this->statusCache->setNumRecognizedZones(zone, numRecognizedZones);
 }
 
 } /* namespace codablecash */

@@ -192,17 +192,7 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 
 		ArrayList<NodeIdentifier> list;
 		list.setDeleteOnExit(true);
-		{
-			const ArrayList<NodeNetworkInfo>* history = cmd.getHistory();
-			int maxLoop = history->size();
-			for(int i = 0; i != maxLoop; ++i){
-				NodeNetworkInfo* his = history->get(i);
-				const NodeIdentifier* nodeId = his->getNodeIdentifier();
-
-				NodeIdentifier* newId = dynamic_cast<NodeIdentifier*>(nodeId->copyData());
-				list.addElement(newId);
-			}
-		}
+		cmd.makeHistoryExcludeList(&list);
 
 		// broadcast
 		p2pManager->bloadCastHighPriorityAllZones(&list, &cmd, p2pRequestProcessor);

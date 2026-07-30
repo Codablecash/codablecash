@@ -29,6 +29,11 @@ GenerateNewGenesisBlockCommandMessage::~GenerateNewGenesisBlockCommandMessage() 
 void GenerateNewGenesisBlockCommandMessage::process(CentralProcessor *processor) {
 	BlockchainController* ctrl = processor->getCtrl();
 	ctrl->addBlock(this->genesisBlock);
+
+	uint16_t zoneSelf = ctrl->getZoneSelf();
+	if(this->newShardZone == zoneSelf){
+		ctrl->setNumRecognizedZones(zoneSelf, this->newShardZone + 1);
+	}
 }
 
 void GenerateNewGenesisBlockCommandMessage::setNewShardZone(uint16_t newShardZone) noexcept {

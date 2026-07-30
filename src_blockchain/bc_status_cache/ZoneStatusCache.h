@@ -50,6 +50,8 @@ public:
 	static const constexpr wchar_t* KEY_FINALIZED_HEIGHT{L"finalizedHeight"};
 	static const constexpr wchar_t* KEY_FINALIZED_TICKET_PRICE{L"finalizedTicketPrice"};
 	static const constexpr wchar_t* KEY_REQUESTED_SHARDS{L"requestedShards"};
+	static const constexpr wchar_t* KEY_NUM_RECOGNIZING_ZONES{L"numRecognizingZones"};
+
 
 	ZoneStatusCache(const File* baseDir, uint16_t zone, bool headerOnly, ISystemLogger* logger, const CodablecashSystemParam* config);
 	ZoneStatusCache(const File* baseDir, uint16_t zone, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config);
@@ -99,6 +101,8 @@ public:
 		return this->requestedNewShards;
 	}
 
+	void setNumRecognizedZones(uint16_t num);
+
 	RemoteUtxoRepository* getRemoteUtxoRepository() const noexcept;
 
 private:
@@ -114,6 +118,8 @@ private:
 
 	uint64_t ticketPrice;
 
+
+
 	File* baseDir;
 	StatusStore* statusStore;
 	HeadBlockDetector* headBlockDetector;
@@ -123,6 +129,8 @@ private:
 	VoteManager* voteManager;
 
 	int requestedNewShards;
+	// zones
+	uint16_t numRecognizingZones;
 };
 
 } /* namespace codablecash */

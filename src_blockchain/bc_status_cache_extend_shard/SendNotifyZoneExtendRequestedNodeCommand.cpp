@@ -1,71 +1,65 @@
 /*
- * SendVoteTransactionNodeCommand.cpp
+ * SendNotifyZoneExtendRequestedNodeCommand.cpp
  *
- *  Created on: 2024/07/24
+ *  Created on: Jul 19, 2026
  *      Author: iizuka
  */
 
-#include "bc_p2p_cmd_node_consensus/SendVoteTransactionNodeCommand.h"
+#include "bc_status_cache_extend_shard/SendNotifyZoneExtendRequestedNodeCommand.h"
+#include "bc_status_cache_extend_shard/NotifyZoneExtendRequestedTransaction.h"
+
+#include "bc_status_cache/BlockchainController.h"
+
+#include "bc_status_cache_context/IStatusCacheContext.h"
+
+#include "bc_base/BinaryUtils.h"
+
+#include "bc_trx/AbstractBlockchainTransaction.h"
 
 #include "data_history_data/TransactionTransferData.h"
 
 #include "base_timestamp/SystemTimestamp.h"
 
-#include "bc_trx/AbstractBlockchainTransaction.h"
-
-#include "bc_base/BinaryUtils.h"
-
-#include "base/UnicodeString.h"
 #include "base/StackRelease.h"
 
-#include "bc/CodablecashSystemParam.h"
 #include "bc/CodablecashNodeInstance.h"
-#include "bc/ExceptionThrower.h"
-
-#include "pubsub_cmd/OkPubsubResponse.h"
-
-#include "bc_p2p/BlockchainNodeHandshake.h"
-#include "bc_p2p/BlochchainP2pManager.h"
-
-#include "bc_p2p_cmd_node/InvalidTransactionException.h"
 
 #include "bc_p2p_processor/P2pRequestProcessor.h"
 
 #include "bc_memorypool/MemoryPool.h"
 #include "bc_memorypool/MemPoolTransaction.h"
 
-#include "bc_status_cache/BlockchainController.h"
+#include "bc/ExceptionThrower.h"
 
-#include "bc_status_cache_context/IStatusCacheContext.h"
+#include "bc_p2p_cmd_node/InvalidTransactionException.h"
 
+#include "bc_p2p/BlockchainNodeHandshake.h"
+#include "bc_p2p/BlochchainP2pManager.h"
 
 #include "command_queue_cmd/NodeTransactionAcceptionQueueCommand.h"
 
 #include "bc_network/NodeIdentifierSource.h"
 #include "bc_network/NodeIdentifier.h"
 
-#include "bc_p2p_cmd_client_notify/ClientNotifyNewTransactionCommand.h"
-
 #include "bc_p2p_cmd_network/NodeNetworkInfo.h"
 
-
+#include "pubsub_cmd/OkPubsubResponse.h"
 namespace codablecash {
 
-SendVoteTransactionNodeCommand::SendVoteTransactionNodeCommand(const SendVoteTransactionNodeCommand &inst)
+SendNotifyZoneExtendRequestedNodeCommand::SendNotifyZoneExtendRequestedNodeCommand(const SendNotifyZoneExtendRequestedNodeCommand &inst)
 		: AbstractConsensusNodeCommand(inst) {
 	this->data = inst.data != nullptr ? dynamic_cast<TransactionTransferData*>(inst.data->copyData()) : nullptr;
 }
 
-SendVoteTransactionNodeCommand::SendVoteTransactionNodeCommand()
-	: AbstractConsensusNodeCommand(AbstractConsensusNodeCommand::TYPE_CONSENSUS_SEND_VOTE_TRANSACTION) {
+SendNotifyZoneExtendRequestedNodeCommand::SendNotifyZoneExtendRequestedNodeCommand() : AbstractConsensusNodeCommand(TYPE_CONSENSUS_SEND_NOTIFY_ZONE_EXTEND_REQUEST) {
 	this->data = nullptr;
 }
 
-SendVoteTransactionNodeCommand::~SendVoteTransactionNodeCommand() {
+SendNotifyZoneExtendRequestedNodeCommand::~SendNotifyZoneExtendRequestedNodeCommand() {
 	delete this->data;
 }
 
-int SendVoteTransactionNodeCommand::binarySize() const {
+int SendNotifyZoneExtendRequestedNodeCommand::binarySize() const {
 	BinaryUtils::checkNotNull(this->data);
 
 	int total = AbstractConsensusNodeCommand::binarySize();
@@ -74,14 +68,24 @@ int SendVoteTransactionNodeCommand::binarySize() const {
 	return total;
 }
 
-void SendVoteTransactionNodeCommand::toBinary(ByteBuffer *buff) const {
+void SendNotifyZoneExtendRequestedNodeCommand::toBinary(ByteBuffer *buff) const {
 	BinaryUtils::checkNotNull(this->data);
 
 	AbstractConsensusNodeCommand::toBinary(buff);
 	this->data->toBinary(buff);
 }
 
-ByteBuffer* SendVoteTransactionNodeCommand::getSignBinary() const {
+void SendNotifyZoneExtendRequestedNodeCommand::fromBinary(ByteBuffer *buff) {
+	AbstractConsensusNodeCommand::fromBinary(buff);
+
+	AbstractTransferedData* d = TransactionTransferData::createFromBinary(buff); __STP(d);
+	this->data = dynamic_cast<TransactionTransferData*>(d);
+	BinaryUtils::checkNotNull(this->data);
+
+	__STP_MV(d);
+}
+
+ByteBuffer* SendNotifyZoneExtendRequestedNodeCommand::getSignBinary() const {
 	BinaryUtils::checkNotNull(this->data);
 
 	int total = this->data->binarySize();
@@ -92,20 +96,31 @@ ByteBuffer* SendVoteTransactionNodeCommand::getSignBinary() const {
 	return buff;
 }
 
-void SendVoteTransactionNodeCommand::fromBinary(ByteBuffer *buff) {
-	AbstractConsensusNodeCommand::fromBinary(buff);
-
-	AbstractTransferedData* d = TransactionTransferData::createFromBinary(buff); __STP(d);
-	this->data = dynamic_cast<TransactionTransferData*>(d);
-	BinaryUtils::checkNotNull(this->data);
-
-	__STP_MV(d);
+IBlockObject* SendNotifyZoneExtendRequestedNodeCommand::copyData() const noexcept {
+	return new SendNotifyZoneExtendRequestedNodeCommand(*this);
 }
 
-AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(BlockchainNodeHandshake *nodeHandShake, CodablecashNodeInstance *inst, bool suspend) const {
+SystemTimestamp SendNotifyZoneExtendRequestedNodeCommand::getFirstTimestamp() const {
+	AbstractBlockchainTransaction* trx = this->data->getTransaction();
+	const SystemTimestamp* tm = trx->getTimestamp();
+
+	return *tm;
+}
+
+AbstractCommandResponse* SendNotifyZoneExtendRequestedNodeCommand::executeAsNode(BlockchainNodeHandshake *nodeHandShake, CodablecashNodeInstance *inst, bool suspend) const {
 	P2pRequestProcessor* processor = inst->getP2pRequestProcessor();
 
 	uint16_t zoneSelf = inst->getZoneSelf();
+	{
+		AbstractBlockchainTransaction* trx = this->data->getTransaction();
+		NotifyZoneExtendRequestedTransaction* extendTrx = dynamic_cast<NotifyZoneExtendRequestedTransaction*>(trx);
+		uint16_t newZone = extendTrx->getNewShardZone();
+		if(newZone == zoneSelf){
+			return new OkPubsubResponse();
+		}
+	}
+
+
 	bool alreadyHas = processor->hasHistory(this->data);
 	if(!alreadyHas){
 		BlockchainController* ctrl = inst->getController();
@@ -128,12 +143,12 @@ AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(Blockchai
 			processor->putQueue(pubsubId, &cmd);
 		}
 
+		// [multishard] review it
 		if(!suspend){
 			// bload cast
 			BlochchainP2pManager* manager = inst->getBlochchainP2pManager();
 			{
-				SendVoteTransactionNodeCommand command(*this);
-				command.setTransactionTransferData(this->data);
+				SendNotifyZoneExtendRequestedNodeCommand command(*this);
 
 				NodeIdentifierSource* nwkey = processor->getNetworkKey();
 				{
@@ -157,22 +172,13 @@ AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(Blockchai
 				// broadcast
 				manager->bloadCastHighPriorityAllZones(&list, &command, processor);
 			}
-
-			{
-				ClientNotifyNewTransactionCommand command;
-				command.setTransactionTransferData(this->data);
-				command.sign(inst->getNetworkKey());
-
-				manager->broadCastToClients(&command, processor);
-			}
 		}
 	}
 
 	return new OkPubsubResponse();
 }
 
-
-bool SendVoteTransactionNodeCommand::processTransaction(uint16_t zoneSelf, MemoryPool *memPool, BlockchainController *ctrl) const {
+bool SendNotifyZoneExtendRequestedNodeCommand::processTransaction(uint16_t zoneSelf, MemoryPool *memPool, BlockchainController *ctrl) const {
 	AbstractBlockchainTransaction* trx = this->data->getTransaction();
 
 	MemPoolTransaction* memTrx = memPool->begin(); __STP(memTrx);
@@ -182,18 +188,7 @@ bool SendVoteTransactionNodeCommand::processTransaction(uint16_t zoneSelf, Memor
 	return trx->validateOnAccept(memTrx, context);
 }
 
-IBlockObject* SendVoteTransactionNodeCommand::copyData() const noexcept {
-	return new SendVoteTransactionNodeCommand(*this);
-}
-
-SystemTimestamp SendVoteTransactionNodeCommand::getFirstTimestamp() const {
-	AbstractBlockchainTransaction* trx = this->data->getTransaction();
-	const SystemTimestamp* tm = trx->getTimestamp();
-
-	return *tm;
-}
-
-void SendVoteTransactionNodeCommand::setTransactionTransferData(const TransactionTransferData *data) noexcept {
+void SendNotifyZoneExtendRequestedNodeCommand::setTransactionTransferData(const TransactionTransferData *data) noexcept {
 	delete this->data;
 	this->data = dynamic_cast<TransactionTransferData*>(data->copyData());
 }

@@ -57,6 +57,7 @@ public:
 	// Consensus Commands
 	static const constexpr uint32_t TYPE_CONSENSUS_REPORT_NONCE_CALCULATED{350};
 	static const constexpr uint32_t TYPE_CONSENSUS_SEND_VOTE_TRANSACTION{351};
+	static const constexpr uint32_t TYPE_CONSENSUS_SEND_NOTIFY_ZONE_EXTEND_REQUEST{352};
 
 	// Client Notify Commands
 	static const constexpr uint32_t TYPE_CLIENT_NOTIFY_NEW_TRANSACTION{401};

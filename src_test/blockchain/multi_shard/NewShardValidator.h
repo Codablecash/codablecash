@@ -18,7 +18,7 @@ public:
 	NewShardValidator();
 	virtual ~NewShardValidator();
 
-	virtual bool validate(NewShardZoneCommand* newShardCommand, IStatusCacheContext* context, BlockchainController* ctrl);
+	virtual bool validate(AbstractBlockHeaderCommand* newShardCommand, IStatusCacheContext* context, BlockchainController* ctrl);
 
 	virtual AbstractShardExtentionValidator* copy() const;
 };

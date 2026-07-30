@@ -36,6 +36,7 @@ public:
 	virtual ~BlochchainP2pManager();
 
 	void init(int numZones);
+	void incNumZones();
 
 	void resetZones() noexcept;
 
@@ -89,6 +90,7 @@ private:
 
 private:
 	SysMutex* mutex;
+	int numZones;
 	ArrayList<P2pZone>* zones;
 
 	HashMap<PubSubId, BlockchainNodeHandshake> blockchainHandshakeHash;

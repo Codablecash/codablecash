@@ -42,6 +42,7 @@
 
 #include "bc_wallet_filter/BloomFilter1024.h"
 
+#include "bc_status_cache_extend_shard/NotifyZoneExtendRequestedTransaction.h"
 
 using alinous::Os;
 
@@ -102,6 +103,9 @@ AbstractBlockchainTransaction* AbstractBlockchainTransaction::createFromBinary(B
 		break;
 	case TRX_TYPE_ICC_NOP:
 		ret = new NopInterChainCommunicationTransaction();
+		break;
+	case TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED:
+		ret = new NotifyZoneExtendRequestedTransaction();
 		break;
 	default:
 		return nullptr;

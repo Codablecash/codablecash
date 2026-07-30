@@ -70,6 +70,7 @@ ZoneStatusCache::ZoneStatusCache(const File* baseDir, uint16_t zone, bool header
 
 	this->ticketPrice = config->getTicketPriceDefault(1L);
 	this->requestedNewShards = 0;
+	this->numRecognizingZones = 0;
 }
 
 ZoneStatusCache::ZoneStatusCache(const File *baseDir, uint16_t zone, ISystemLogger* logger, bool headerOnly, const CodablecashSystemParam* config) {
@@ -90,6 +91,7 @@ ZoneStatusCache::ZoneStatusCache(const File *baseDir, uint16_t zone, ISystemLogg
 
 	this->ticketPrice = 0;
 	this->requestedNewShards = 0;
+	this->numRecognizingZones = 0;
 }
 
 ZoneStatusCache::~ZoneStatusCache() {
@@ -161,6 +163,7 @@ void ZoneStatusCache::saveStatus() {
 	this->statusStore->addLongValue(KEY_FINALIZED_HEIGHT, this->finalizedHeight);
 	this->statusStore->addLongValue(KEY_FINALIZED_TICKET_PRICE, this->ticketPrice);
 	this->statusStore->addShortValue(KEY_REQUESTED_SHARDS, this->requestedNewShards);
+	this->statusStore->addShortValue(KEY_NUM_RECOGNIZING_ZONES, this->numRecognizingZones);
 }
 
 void ZoneStatusCache::loadStatus() {
@@ -172,6 +175,7 @@ void ZoneStatusCache::loadStatus() {
 	this->finalizedHeight = this->statusStore->getLongValue(KEY_FINALIZED_HEIGHT);
 	this->ticketPrice = this->statusStore->getLongValue(KEY_FINALIZED_TICKET_PRICE);
 	this->requestedNewShards = this->statusStore->getShortValue(KEY_REQUESTED_SHARDS);
+	this->numRecognizingZones = this->statusStore->getShortValue(KEY_NUM_RECOGNIZING_ZONES);
 }
 
 void ZoneStatusCache::updateBlockStatus(MemPoolTransaction* memTrx, CodablecashBlockchain *chain, const CodablecashSystemParam* config) {
@@ -382,5 +386,11 @@ SystemTimestamp* ZoneStatusCache::getPosVoteLimit(uint64_t lastHeight) {
 RemoteUtxoRepository* ZoneStatusCache::getRemoteUtxoRepository() const noexcept {
 	return this->finalizedCache->getRemoteUtxoRepository();
 }
+
+void ZoneStatusCache::setNumRecognizedZones(uint16_t num) {
+	this->numRecognizingZones = num;
+	saveStatus();
+}
+
 
 } /* namespace codablecash */

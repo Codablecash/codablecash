@@ -98,6 +98,8 @@ public:
 		return this->zoneSelf;
 	}
 
+	void setNumRecognizedZones(uint16_t zone,uint16_t numRecognizedZones);
+
 	int getRequestedNewShards(uint16_t zone) const noexcept;
 	void setNumZones(uint16_t numZones) noexcept;
 

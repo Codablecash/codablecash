@@ -17,10 +17,25 @@
 #include "base_timestamp/SystemTimestamp.h"
 
 #include "base/StackRelease.h"
+#include "base/ArrayList.h"
 
 #include "crypto/Sha256.h"
 
 #include "bc_block/BlockHeaderId.h"
+#include "bc_block/BlockHeader.h"
+
+#include "bc_status_cache_context/IStatusCacheContext.h"
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
+
+#include "bc_status_cache/BlockchainStatusCache.h"
+
+#include "bc_blockstore/CodablecashBlockchain.h"
+
+#include "bc_block_header_command/BlockHeaderCommandId.h"
+#include "bc_block_header_command/NewShardZoneCommand.h"
+
+
+using alinous::ArrayList;
 
 
 namespace codablecash {
@@ -32,6 +47,9 @@ NotifyZoneExtendRequestedTransaction::NotifyZoneExtendRequestedTransaction(const
 	this->headerId = inst.headerId != nullptr ? dynamic_cast<BlockHeaderId*>(inst.headerId->copyData()) : nullptr;
 
 	this->utxoId = inst.utxoId != nullptr ? dynamic_cast<UtxoId*>(inst.utxoId->copyData()) : nullptr;
+	this->newShardZone = inst.newShardZone;
+
+	this->commandId = inst.commandId != nullptr ? dynamic_cast<BlockHeaderCommandId*>(inst.commandId->copyData()) : nullptr;
 }
 
 NotifyZoneExtendRequestedTransaction::NotifyZoneExtendRequestedTransaction() : AbstractInterChainCommunicationTansaction() {
@@ -39,11 +57,15 @@ NotifyZoneExtendRequestedTransaction::NotifyZoneExtendRequestedTransaction() : A
 	this->height = 0;
 	this->headerId = nullptr;
 
+	this->newShardZone = 0;
+
 	this->utxoId = nullptr;
+	this->commandId = nullptr;
 }
 
 NotifyZoneExtendRequestedTransaction::~NotifyZoneExtendRequestedTransaction() {
 	delete this->headerId;
+	delete this->commandId;
 }
 
 uint8_t NotifyZoneExtendRequestedTransaction::getType() const noexcept {
@@ -54,6 +76,7 @@ int NotifyZoneExtendRequestedTransaction::binarySize() const {
 	BinaryUtils::checkNotNull(this->version);
 	BinaryUtils::checkNotNull(this->timestamp);
 	BinaryUtils::checkNotNull(this->headerId);
+	BinaryUtils::checkNotNull(this->commandId);
 
 	int total = sizeof(uint8_t);
 	total += this->version->binarySize();
@@ -63,6 +86,10 @@ int NotifyZoneExtendRequestedTransaction::binarySize() const {
 	total += sizeof(uint64_t); // height
 	total += this->headerId->binarySize();
 
+	total += sizeof(this->newShardZone);
+
+	total += this->commandId->binarySize();
+
 	return total;
 }
 
@@ -70,6 +97,7 @@ void NotifyZoneExtendRequestedTransaction::toBinary(ByteBuffer *out) const {
 	BinaryUtils::checkNotNull(this->version);
 	BinaryUtils::checkNotNull(this->timestamp);
 	BinaryUtils::checkNotNull(this->headerId);
+	BinaryUtils::checkNotNull(this->commandId);
 
 	out->put(getType());
 
@@ -79,6 +107,10 @@ void NotifyZoneExtendRequestedTransaction::toBinary(ByteBuffer *out) const {
 	out->putShort(this->zone);
 	out->putLong(this->height);
 	this->headerId->toBinary(out);
+
+	out->putShort(this->newShardZone);
+
+	this->commandId->toBinary(out);
 }
 
 void NotifyZoneExtendRequestedTransaction::fromBinary(ByteBuffer *in) {
@@ -91,16 +123,24 @@ void NotifyZoneExtendRequestedTransaction::fromBinary(ByteBuffer *in) {
 	this->zone = in->getShort();
 	this->height = in->getLong();
 	this->headerId = BlockHeaderId::fromBinary(in);
+
+	this->newShardZone = in->getShort();
+
+	this->commandId = BlockHeaderCommandId::fromBinary(in);
+
+	build();
 }
 
 void NotifyZoneExtendRequestedTransaction::build() {
 	BinaryUtils::checkNotNull(this->version);
 	BinaryUtils::checkNotNull(this->timestamp);
 	BinaryUtils::checkNotNull(this->headerId);
+	BinaryUtils::checkNotNull(this->commandId);
 
 	{
 		int capacity = sizeof(uint8_t) + this->version->binarySize() + this->timestamp->binarySize();
-		capacity += sizeof(uint16_t) + sizeof(uint64_t) + this->headerId->binarySize();
+		capacity += sizeof(uint16_t) + sizeof(uint64_t) + this->headerId->binarySize() + sizeof(this->newShardZone)
+				+ this->commandId->binarySize();
 
 		ByteBuffer* buff = ByteBuffer::allocateWithEndian(capacity, true); __STP(buff);
 		buff->put(getType());
@@ -111,6 +151,10 @@ void NotifyZoneExtendRequestedTransaction::build() {
 		buff->putShort(this->zone);
 		buff->putLong(this->height);
 		this->headerId->toBinary(buff);
+
+		buff->putShort(this->newShardZone);
+
+		this->commandId->toBinary(buff);
 
 		buff->position(0);
 		ByteBuffer* sha = Sha256::sha256(buff, true); __STP(sha);
@@ -131,7 +175,7 @@ void NotifyZoneExtendRequestedTransaction::build() {
 
 		ByteBuffer* sha = Sha256::sha256(buff, true); __STP(sha);
 
-		delete this->utxoId;
+		delete this->utxoId, this->utxoId = nullptr;
 		this->utxoId = new UtxoId((const char*)sha->array(), sha->limit());
 	}
 }
@@ -165,12 +209,49 @@ AbstractUtxoReference* NotifyZoneExtendRequestedTransaction::getUtxoReference(in
 }
 
 bool NotifyZoneExtendRequestedTransaction::validateOnAccept(MemPoolTransaction *memTrx, IStatusCacheContext *context) const {
-	// FIXME[multishard] validate;
+	bool ret = false;
 
-	return true;
+	CodablecashBlockchain* blockchain = context->getBlockChain();
+	BlockchainStatusCache* statusCache = context->getBlockchainStatusCache();
+
+	uint64_t finalizedHeight = statusCache->getFinalizedHeight(this->zone);
+
+	{
+		const BlockHeader* header = nullptr;
+
+		ArrayList<BlockHeader>* list = blockchain->getBlockHeadersHeightAt(this->zone, this->height); __STP(list);
+		list->setDeleteOnExit();
+
+		int maxLoop = list->size();
+		for(int i = 0; i != maxLoop; ++i){
+			const BlockHeader* h = list->get(i);
+			const BlockHeaderId* id = h->getId();
+			if(this->headerId->equals(id)){
+				header = h;
+			}
+		}
+
+		if(header != nullptr){
+			const AbstractBlockHeaderCommand* command = header->getHeaderCommand(this->commandId);
+			const NewShardZoneCommand* newShardZoneCommand = dynamic_cast<const NewShardZoneCommand*>(command);
+
+			// const BlockHeaderCommandId* newCommnadId = newShardZoneCommand->getCommandId();
+			uint64_t headerHeight = header->getHeight();
+
+			ret = newShardZoneCommand != nullptr && this->commandId->equals(newShardZoneCommand->getCommandId());
+		}
+	}
+
+	return ret;
 }
 
 TrxValidationResult NotifyZoneExtendRequestedTransaction::validateFinal(const BlockHeader *header, MemPoolTransaction *memTrx, IStatusCacheContext *context) const {
+	RemoteUtxoDetector* remoteDetector = context->getRemoteUtxoDetector();
+
+	if(remoteDetector->isRemoteUtxoUsed(this->utxoId)){
+		return TrxValidationResult::INVALID;
+	}
+
 	return TrxValidationResult::OK;
 }
 
@@ -184,6 +265,15 @@ void NotifyZoneExtendRequestedTransaction::setHeaderInfo(uint16_t zone, uint64_t
 
 	delete this->headerId;
 	this->headerId = dynamic_cast<BlockHeaderId*>(headerId->copyData());
+}
+
+void NotifyZoneExtendRequestedTransaction::setNewShardZone(uint16_t newShardZone) noexcept {
+	this->newShardZone = newShardZone;
+}
+
+void NotifyZoneExtendRequestedTransaction::setCommandId(const BlockHeaderCommandId *commandId) {
+	delete this->commandId;
+	this->commandId = dynamic_cast<BlockHeaderCommandId*>(commandId->copyData());
 }
 
 } /* namespace codablecash */

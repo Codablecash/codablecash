@@ -62,7 +62,6 @@ void Block::addControlTransaction(const AbstractControlTransaction *trx) noexcep
 	case AbstractBlockchainTransaction::TRX_TYPE_VOTE_BLOCK:
 		addVote(dynamic_cast<const VoteBlockTransaction*>(trx));
 		break;
-	// FIXME[multishard]add header command to register new zone
 	default:
 		this->body->addControlTransaction(trx);
 		break;
@@ -168,6 +167,10 @@ void Block::setGenesisTimestamp() {
 
 bool Block::isScheduledBlock() const noexcept {
 	return this->header->isScheduledBlock();
+}
+
+void Block::addHeaderCommand(const AbstractBlockHeaderCommand *cmd) {
+	this->header->addHeaderCommand(cmd);
 }
 
 } /* namespace codablecash */

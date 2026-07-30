@@ -45,6 +45,8 @@ public:
 		return this->history;
 	}
 
+	void makeHistoryExcludeList(ArrayList<NodeIdentifier>* list) const;
+
 protected:
 	virtual bool validateHistory(const NodeNetworkInfo* his, const SystemTimestamp* lastTm, CodablecashNodeInstance *inst) const noexcept;
 	virtual bool validateCurrentTime(const SystemTimestamp* lastTm, CodablecashNodeInstance *inst) const noexcept;

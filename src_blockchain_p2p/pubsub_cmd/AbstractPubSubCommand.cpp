@@ -54,6 +54,7 @@
 
 #include "pow_pool_cmd/PoWPoolNotifyDataChangedCommand.h"
 
+#include "bc_status_cache_extend_shard/SendNotifyZoneExtendRequestedNodeCommand.h"
 
 namespace codablecash {
 
@@ -146,6 +147,9 @@ AbstractPubSubCommand* AbstractPubSubCommand::createFromBinary(ByteBuffer *buff)
 		break;
 	case TYPE_CONSENSUS_SEND_VOTE_TRANSACTION:
 		ret = new SendVoteTransactionNodeCommand();
+		break;
+	case TYPE_CONSENSUS_SEND_NOTIFY_ZONE_EXTEND_REQUEST:
+		ret = new SendNotifyZoneExtendRequestedNodeCommand();
 		break;
 
 	case TYPE_POW_POOL_NOTIFY_DATA_CHANGED:
