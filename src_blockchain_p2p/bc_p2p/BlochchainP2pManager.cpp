@@ -329,6 +329,8 @@ ClientNodeHandshake* BlochchainP2pManager::getClientHandshakeByNodeId(const Node
 }
 
 void BlochchainP2pManager::broadCastWithinZone(uint16_t zoneSelf,	const AbstractNodeCommand *command, P2pRequestProcessor* processor) {
+	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zoneSelf >= this->numZones, L"Zone does not exists", __FILE__, __LINE__);
+
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
 	if(!this->end){
@@ -337,6 +339,8 @@ void BlochchainP2pManager::broadCastWithinZone(uint16_t zoneSelf,	const Abstract
 }
 
 void BlochchainP2pManager::bloadCastWithinZone(uint16_t zoneSelf, const NodeIdentifier *excludeNodeId, const AbstractNodeCommand *command, P2pRequestProcessor *processor) {
+	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zoneSelf >= this->numZones, L"Zone does not exists", __FILE__, __LINE__);
+
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
 	if(!this->end){
@@ -378,11 +382,22 @@ void BlochchainP2pManager::__broadCastWithinZone(uint16_t zone, const NodeIdenti
 	}
 }
 
+void BlochchainP2pManager::bloadCastHighPriorityWithinZone(uint16_t zoneSelf, const ArrayList<NodeIdentifier> *excludeNodeIds,
+		const AbstractConsensusNodeCommand *command, P2pRequestProcessor *processor) {
+	ExceptionThrower<BlockchainZoneException>::throwExceptionIfCondition(zoneSelf >= this->numZones, L"Zone does not exists", __FILE__, __LINE__);
+
+	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
+
+	if(!this->end){
+		P2pZone* p2pzone = this->zones->get(zoneSelf);
+	}
+}
+
 void BlochchainP2pManager::bloadCastHighPriorityAllZones(const ArrayList<NodeIdentifier>* excludeNodeIds, const AbstractConsensusNodeCommand *command, P2pRequestProcessor *processor) {
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
 
 	if(!this->end){
-		int maxLoop = this->numZones; // this->zones->size();
+		int maxLoop = this->zones->size();
 		for(int i = 0; i != maxLoop; ++i){
 			P2pZone* p2pzone = this->zones->get(i);
 

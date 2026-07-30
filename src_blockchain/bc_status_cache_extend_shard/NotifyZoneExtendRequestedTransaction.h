@@ -53,6 +53,10 @@ public:
 		return this->newShardZone;
 	}
 
+	const UtxoId* getCommandIdUtxo() const noexcept {
+		return this->utxoId;
+	}
+
 private:
 	// header info
 	uint16_t zone;

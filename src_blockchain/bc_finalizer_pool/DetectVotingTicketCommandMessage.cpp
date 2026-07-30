@@ -118,6 +118,8 @@ void DetectVotingTicketCommandMessage::putTransaction(const BlockHeader *header2
 
 	// set time stamp of vote transaction
 	VoteBlockTransaction* trx = new VoteBlockTransaction(); __STP(trx);
+
+	trx->setZone(header2vote->getZone());
 	trx->setTicketUtxoId(utxoId, candidate->getTicletPrice(), desc);
 	trx->setVoteBlockId(headerId);
 	trx->setVoteBlockHeight(height2Vote);
@@ -159,7 +161,12 @@ void DetectVotingTicketCommandMessage::putTransaction(const BlockHeader *header2
 
 			// broad cast
 			uint16_t zone = header2vote->getZone();
-			p2pManager->broadCastWithinZone(zone, &command, p2pRequestProcessor);
+
+			ArrayList<NodeIdentifier> list;
+			list.setDeleteOnExit(true);
+			command.makeHistoryExcludeList(&list);
+
+			p2pManager->bloadCastHighPriorityWithinZone(zone, &list, &command, p2pRequestProcessor);
 		}
 	}
 }

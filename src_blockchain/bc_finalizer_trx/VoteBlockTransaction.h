@@ -46,6 +46,11 @@ public:
 	virtual int getUtxoSize() const noexcept;
 	virtual AbstractUtxo* getUtxo(int i) const noexcept;
 
+	void setZone(uint16_t z) noexcept;
+	/*uint16_t getZone() const noexcept {
+		return this->zone;
+	}*/
+
 	void setVoterId(const NodeIdentifier* voterId) noexcept;
 	void setTicketUtxoId(const UtxoId* utxoId, const BalanceUnit amount, const AddressDescriptor* desc) noexcept;
 
@@ -78,6 +83,7 @@ private:
 	TrxValidationResult __validateFinal(const BlockHeader* header, MemPoolTransaction *memTrx, IStatusCacheContext* context, bool checkVotedHeaderId) const;
 
 private:
+	uint16_t zone;
 	NodeIdentifier* voterId;
 	TicketUtxoReference* ticketUtxoRef;
 	TicketVotedUtxo* votedUtxo;

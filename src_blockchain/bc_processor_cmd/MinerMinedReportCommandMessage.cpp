@@ -106,7 +106,9 @@ void MinerMinedReportCommandMessage::process(CentralProcessor *processor) {
 			NodeIdentifierSource* nwkey = p2pRequestProcessor->getNetworkKey();
 			command.sign(nwkey);
 
-			p2pManager->broadCastAllZones(nullptr, &command, p2pRequestProcessor);
+			const BlockHeader* header = data->getHeader();
+			uint16_t zone = header->getZone();
+			p2pManager->bloadCastWithinZone(zone, nullptr, &command, p2pRequestProcessor);
 		}
 
 		// client notify

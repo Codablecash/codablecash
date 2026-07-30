@@ -106,6 +106,7 @@ AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(Blockchai
 	P2pRequestProcessor* processor = inst->getP2pRequestProcessor();
 
 	uint16_t zoneSelf = inst->getZoneSelf();
+
 	bool alreadyHas = processor->hasHistory(this->data);
 	if(!alreadyHas){
 		BlockchainController* ctrl = inst->getController();
@@ -155,7 +156,7 @@ AbstractCommandResponse* SendVoteTransactionNodeCommand::executeAsNode(Blockchai
 				command.makeHistoryExcludeList(&list);
 
 				// broadcast
-				manager->bloadCastHighPriorityAllZones(&list, &command, processor);
+				manager->bloadCastHighPriorityWithinZone(zoneSelf, &list, &command, processor);
 			}
 
 			{

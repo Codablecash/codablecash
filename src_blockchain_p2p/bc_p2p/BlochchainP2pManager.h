@@ -58,6 +58,8 @@ public:
 	void bloadCastWithinZone(uint16_t zoneSelf, const NodeIdentifier* excludeNodeId, const AbstractNodeCommand* command, P2pRequestProcessor* processor);
 
 	void broadCastAllZones(const NodeIdentifier* excludeNodeId, const AbstractNodeCommand* command, P2pRequestProcessor* processor);
+
+	void bloadCastHighPriorityWithinZone(uint16_t zoneSelf, const ArrayList<NodeIdentifier>* excludeNodeIds, const AbstractConsensusNodeCommand* command, P2pRequestProcessor* processor);
 	void bloadCastHighPriorityAllZones(const ArrayList<NodeIdentifier>* excludeNodeIds, const AbstractConsensusNodeCommand* command, P2pRequestProcessor* processor);
 
 	void broadCastToClients(AbstractClientNotifyCommand* commnad, P2pRequestProcessor* processor);

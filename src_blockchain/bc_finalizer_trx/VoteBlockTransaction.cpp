@@ -42,6 +42,7 @@ namespace codablecash {
 
 VoteBlockTransaction::VoteBlockTransaction(const VoteBlockTransaction &inst)
 		: AbstractFinalizerTransaction(inst) {
+	this->zone = inst.zone;
 	this->voterId = inst.voterId != nullptr ? new NodeIdentifier(*inst.voterId) : nullptr;
 	this->ticketUtxoRef = inst.ticketUtxoRef != nullptr ? dynamic_cast<TicketUtxoReference*>(inst.ticketUtxoRef->copyData()) : nullptr;
 	this->votedUtxo = inst.votedUtxo != nullptr ? dynamic_cast<TicketVotedUtxo*>(inst.votedUtxo->copyData()) : nullptr;
@@ -52,6 +53,7 @@ VoteBlockTransaction::VoteBlockTransaction(const VoteBlockTransaction &inst)
 }
 
 VoteBlockTransaction::VoteBlockTransaction() : AbstractFinalizerTransaction() {
+	this->zone = 0;
 	this->voterId = nullptr;
 	this->ticketUtxoRef = nullptr;
 	this->votedUtxo = nullptr;
@@ -84,7 +86,7 @@ bool VoteBlockTransaction::validateOnAccept(MemPoolTransaction *memTrx, IStatusC
 		BlockHeaderStoreManager* headerManager = chain->getHeaderManager(zone);
 
 		BlockHeader* vheader = headerManager->getHeader(this->voteBlockHeaderId, this->voteBlockHeight); __STP(vheader);
-		if(vheader == nullptr){
+		if(vheader == nullptr && this->zone == zone){
 			return false;
 		}
 	}
@@ -163,6 +165,7 @@ int VoteBlockTransaction::binarySize() const {
 
 	int total = AbstractControlTransaction::__binarySize();
 
+	total += sizeof(uint16_t); // zone
 	total += this->voterId->binarySize();
 	total += this->ticketUtxoRef->binarySize();
 	total += this->votedUtxo->binarySize();
@@ -182,6 +185,7 @@ void VoteBlockTransaction::toBinary(ByteBuffer *out) const {
 
 	AbstractControlTransaction::__toBinary(out);
 
+	out->putShort(this->zone);
 	this->voterId->toBinary(out);
 	this->ticketUtxoRef->toBinary(out);
 	this->votedUtxo->toBinary(out);
@@ -194,6 +198,7 @@ void VoteBlockTransaction::toBinary(ByteBuffer *out) const {
 void VoteBlockTransaction::fromBinary(ByteBuffer *in) {
 	AbstractControlTransaction::__fromBinary(in);
 
+	in->putShort(this->zone);
 	this->voterId = NodeIdentifier::fromBinary(in);
 
 	AbstractUtxoReference* ref = AbstractUtxoReference::createFromBinary(in); __STP(ref);
@@ -216,6 +221,7 @@ void VoteBlockTransaction::build() {
 	setUtxoNonce();
 
 	int capacity = __binarySize();
+	capacity += sizeof(uint16_t); // zone
 	capacity += this->voterId->binarySize();
 	capacity += this->ticketUtxoRef->binarySize();
 	capacity += this->votedUtxo->binarySize();
@@ -225,6 +231,7 @@ void VoteBlockTransaction::build() {
 	ByteBuffer* buff = ByteBuffer::allocateWithEndian(capacity, true); __STP(buff);
 
 	__toBinary(buff);
+	buff->putShort(this->zone);
 	this->voterId->toBinary(buff);
 	this->ticketUtxoRef->toBinary(buff);
 	this->votedUtxo->toBinary(buff);
@@ -308,6 +315,10 @@ bool VoteBlockTransaction::verify() const noexcept {
 
 void VoteBlockTransaction::setFeeAmount(const BalanceUnit *fee) {
 	this->fee = *fee;
+}
+
+void VoteBlockTransaction::setZone(uint16_t z) noexcept {
+	this->zone = z;
 }
 
 } /* namespace codablecash */

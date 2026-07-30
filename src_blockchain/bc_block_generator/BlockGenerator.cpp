@@ -74,6 +74,8 @@
 #include "bc_status_cache_extend_shard/NotifyZoneExtendRequestedTransaction.h"
 
 #include "bc_block_header_command/RecognizedNewShardCommand.h"
+
+#include "bc_status_cache_context/RemoteUtxoDetector.h"
 namespace codablecash {
 
 BlockGenerator::BlockGenerator(uint16_t zone, CodablecashSystemParam* config, MemoryPool* memoryPool, BlockchainController* ctrl
@@ -254,7 +256,7 @@ void BlockGenerator::importInterChainCommunicationTransactions2Block(MemPoolTran
 
 			uint8_t tyxType = trx->getType();
 			if(tyxType == AbstractInterChainCommunicationTansaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
-				// [multishard] add RecognizedNewShardCommand to the header
+				// FIXME [multishard] add RecognizedNewShardCommand to the header
 				NotifyZoneExtendRequestedTransaction* notifyTrx = dynamic_cast<NotifyZoneExtendRequestedTransaction*>(trx);
 
 				RecognizedNewShardCommand command;

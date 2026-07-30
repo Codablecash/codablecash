@@ -279,7 +279,7 @@ TEST(TestMultiShardGroup, case01){
 		}
 	}
 
-	testnet.waitForBlockHeight(0, 0, 12);
+	testnet.waitForBlockHeight(0, 0, 16);
 	wallet->shutdownNetwork();
 }
 

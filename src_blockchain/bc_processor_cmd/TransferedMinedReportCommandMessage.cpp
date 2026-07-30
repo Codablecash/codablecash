@@ -103,6 +103,8 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 	const BlockHeader* header = this->data->getHeader();
 	uint16_t zone = header->getZone();
 
+	ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(zoneSelf != zone, L"The block must be within same zone.", __FILE__, __LINE__);
+
 	// [consensus]check if the block time is after PoSLimit
 	{
 		uint64_t height = header->getHeight();
@@ -112,14 +114,9 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 		ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(blockGenerated->compareTo(limit) > 0, L"The block time must be after PoSLimit", __FILE__, __LINE__);
 	}
 
-
-	bool dataAdded = false;
-	if(zoneSelf == zone){
-		NodeIdentifierSource* networkKey = requestProcessor->getNetworkKey();
-		dataAdded = importBlock(memPool, ctrl, p2pManager, networkKey, logger, config);
-	}else{
-		dataAdded = importHeader(memPool, ctrl, config);
-	}
+	// FIXME [multishard mine]
+	NodeIdentifierSource* networkKey = requestProcessor->getNetworkKey();
+	bool dataAdded = importBlock(memPool, ctrl, p2pManager, networkKey, logger, config);
 
 	// if the data contains new data, transfer it
 	if(dataAdded){
@@ -130,7 +127,7 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 
 			command.sign(networkKey);
 
-			p2pManager->broadCastAllZones(this->nodeId, &command, requestProcessor);
+			p2pManager->bloadCastWithinZone(zoneSelf, this->nodeId, &command, requestProcessor);
 		}
 
 		// client notify
@@ -145,16 +142,6 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 			p2pManager->broadCastToClients(&command, requestProcessor);
 		}
 	}
-}
-
-bool TransferedMinedReportCommandMessage::importHeader(MemoryPool* memPool, BlockchainController *ctrl, CodablecashSystemParam* config) {
-	const BlockHeader* header = this->data->getHeader();
-
-	// check the hashrate
-	BlockHeaderValidator validator(header, config, memPool, ctrl);
-	validator.validate();
-
-	return ctrl->addBlockHeader(header);
 }
 
 bool TransferedMinedReportCommandMessage::importBlock(MemoryPool* memPool, BlockchainController *ctrl, BlochchainP2pManager *p2pManager

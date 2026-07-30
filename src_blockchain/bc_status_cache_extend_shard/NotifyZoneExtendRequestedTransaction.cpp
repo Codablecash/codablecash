@@ -242,7 +242,10 @@ bool NotifyZoneExtendRequestedTransaction::validateOnAccept(MemPoolTransaction *
 		}
 	}
 
-	return ret;
+	RemoteUtxoDetector* remoteDetector = context->getRemoteUtxoDetector();
+	bool detected = remoteDetector->isRemoteUtxoUsed(this->utxoId);
+
+	return !detected && ret;
 }
 
 TrxValidationResult NotifyZoneExtendRequestedTransaction::validateFinal(const BlockHeader *header, MemPoolTransaction *memTrx, IStatusCacheContext *context) const {

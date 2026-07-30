@@ -13,6 +13,9 @@
 namespace codablecash {
 
 class BlockHeader;
+class MemoryPool;
+class BlockchainController;
+class CodablecashSystemParam;
 
 class ReportNonceCalculatedNodeCommand : public AbstractConsensusNodeCommand {
 public:
@@ -33,6 +36,9 @@ public:
 
 protected:
 	virtual AbstractCommandResponse* executeAsNode(BlockchainNodeHandshake* nodeHandShake, CodablecashNodeInstance* inst, bool suspend) const;
+
+private:
+	bool importHeader(MemoryPool* memPool, BlockchainController* ctrl, const BlockHeader* header, CodablecashSystemParam* config) const;
 
 private:
 	BlockHeader* header;
