@@ -75,7 +75,7 @@ void RemoteUtxoHeightIndex::close() {
 
 void RemoteUtxoHeightIndex::addUtxo(uint64_t height, const UtxoId *utxoId) {
 	ULongKey key(height);
-	RemoteUtxoHeightIndexData* data;
+	RemoteUtxoHeightIndexData* data = new RemoteUtxoHeightIndexData(); __STP(data);
 	data->add(utxoId);
 
 	this->btree->putData(&key, data);

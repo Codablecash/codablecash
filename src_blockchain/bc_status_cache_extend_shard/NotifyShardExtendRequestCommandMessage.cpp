@@ -90,6 +90,14 @@ void NotifyShardExtendRequestCommandMessage::process(CentralProcessor *processor
 		// add into the history
 		p2pRequestProcessor->addHistory(&data);
 
+#ifdef __DEBUG__
+		{
+			bool bl = p2pRequestProcessor->hasHistory(&data);
+			assert(bl == true);
+		}
+#endif
+
+
 		// broad cast
 		ArrayList<NodeIdentifier> list;
 		p2pManager->bloadCastHighPriorityAllZones(&list, &command, p2pRequestProcessor);

@@ -138,7 +138,7 @@ void NotifyZoneExtendRequestedTransaction::build() {
 	BinaryUtils::checkNotNull(this->commandId);
 
 	{
-		int capacity = sizeof(uint8_t) + this->version->binarySize() + this->timestamp->binarySize();
+		int capacity = sizeof(uint8_t) + this->version->binarySize() /*+ this->timestamp->binarySize()*/;
 		capacity += sizeof(uint16_t) + sizeof(uint64_t) + this->headerId->binarySize() + sizeof(this->newShardZone)
 				+ this->commandId->binarySize();
 
@@ -146,7 +146,7 @@ void NotifyZoneExtendRequestedTransaction::build() {
 		buff->put(getType());
 
 		this->version->toBinary(buff);
-		this->timestamp->toBinary(buff);
+		//this->timestamp->toBinary(buff);
 
 		buff->putShort(this->zone);
 		buff->putLong(this->height);

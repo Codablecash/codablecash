@@ -50,7 +50,7 @@ CoderResult UTF_8Converter::Decoder::decodeLoop(ByteBuffer* in, CharBuffer* out)
 				ret = CoderResult::__OVERFLOW;
 				goto END_LOOP;
 			}
-			int jchar = in->get();
+			int jchar = (signed char)in->get();
 			if(jchar < 0)
 			{
 				jchar = jchar & 0x7F;

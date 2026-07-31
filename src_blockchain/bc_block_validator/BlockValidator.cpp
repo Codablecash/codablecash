@@ -132,6 +132,7 @@ void BlockValidator::validateHeaderCommand() {
 		for(int i = 0; i != maxLoop; ++i){
 			AbstractBlockHeaderCommand* cmd = list->get(i);
 
+			// [multishard] validate
 			NewShardZoneCommand* newShardCommand = dynamic_cast<NewShardZoneCommand*>(cmd);
 			if(newShardCommand != nullptr){
 				bool res = extValidator->validate(newShardCommand, context, this->ctrl);

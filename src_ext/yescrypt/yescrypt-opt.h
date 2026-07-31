@@ -715,7 +715,7 @@ smix(uint64_t * B, size_t r, uint64_t N, uint32_t p, uint32_t t,
  *
  * Return 0 on success; or -1 on error.
  */
-static int
+int
 yescrypt_kdf(const yescrypt_shared_t * shared, yescrypt_local_t * local,
     const uint8_t * passwd, size_t passwdlen,
     const uint8_t * salt, size_t saltlen,

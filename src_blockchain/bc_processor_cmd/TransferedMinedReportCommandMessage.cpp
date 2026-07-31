@@ -114,7 +114,7 @@ void TransferedMinedReportCommandMessage::process(CentralProcessor *processor) {
 		ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(blockGenerated->compareTo(limit) > 0, L"The block time must be after PoSLimit", __FILE__, __LINE__);
 	}
 
-	// FIXME [multishard mine]
+	// [multishard mine]
 	NodeIdentifierSource* networkKey = requestProcessor->getNetworkKey();
 	bool dataAdded = importBlock(memPool, ctrl, p2pManager, networkKey, logger, config);
 

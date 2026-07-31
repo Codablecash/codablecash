@@ -162,11 +162,6 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 		CodablecashSystemParam* config = inst->getCodablecashSystemParam();
 
 		updated = ctrl->registerBlockHeader4Limit(zone, this->header, config);
-
-		// FIXME
-		if(ctrl->getZoneSelf() == 1){
-			bool bl = zone == 1;
-		}
 	}
 
 
@@ -205,7 +200,7 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 	}
 
 	if(updated){
-		//FIXME[consensus] import header
+		// [consensus] import header
 		uint16_t zone = this->header->getZone();
 		uint16_t zoneSelf = ctrl->getZoneSelf();
 
