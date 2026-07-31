@@ -46,4 +46,12 @@ IBlockObject* BlockHeaderCommandId::copyData() const noexcept {
 	return new BlockHeaderCommandId(*this);
 }
 
+BlockHeaderCommandId* BlockHeaderCommandId::makeRandomHeaderId() {
+	ByteBuffer* buff = makeRandom16Bytes(); __STP(buff);
+
+	BlockHeaderCommandId* blockHeaderId = new BlockHeaderCommandId((const char *)buff->array(), buff->capacity());
+
+	return blockHeaderId;
+}
+
 } /* namespace codablecash */

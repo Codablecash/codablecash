@@ -50,6 +50,7 @@
 
 #include "bc/CodablecashSystemParam.h"
 
+#include "bc_status_cache_extend_shard/NotifyZoneExtendRequestedTransaction.h"
 namespace codablecash {
 
 FinalizedDataCache::FinalizedDataCache(const File* baseDir) {
@@ -115,7 +116,7 @@ void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockH
 	context->beginBlock(header, lockinManager, true);
 
 	importControlTransactions(header, body, context);
-	importInterChainCommunicationTransactions(header, body);
+	importInterChainCommunicationTransactions(header, body, context);
 	importBalanceTransactions(header, body);
 	importSmartcontractTransactions(header, body);
 	importRewardBaseTransactions(header, body);
@@ -202,7 +203,7 @@ void FinalizedDataCache::importBalanceTransactions(const BlockHeader *header, co
 	}
 }
 
-void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHeader *header, const BlockBody *body) {
+void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context) {
 	const ArrayList<AbstractInterChainCommunicationTansaction>* list = body->getInterChainCommunicationTransactions();
 
 	int maxLoop = list->size();
@@ -210,6 +211,27 @@ void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHe
 		AbstractInterChainCommunicationTansaction* trx = list->get(i);
 
 		importTransactionUtxos(trx, header);
+
+		uint8_t type = trx->getType();
+		if(type == AbstractInterChainCommunicationTansaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
+			uint16_t numZones = context->getNumZones();
+			numZones++;
+			context->setNumZones(numZones);
+
+#ifdef __DEBUG__
+			BlockchainStatusCache* statusCache = context->getBlockchainStatusCache();
+			int zoneListSize = statusCache->getZoneListSize();
+			assert(numZones <= zoneListSize);
+#endif
+
+			const NotifyZoneExtendRequestedTransaction* notifyTrx = dynamic_cast<const NotifyZoneExtendRequestedTransaction*>(trx);
+
+			const UtxoId* cutxoId = notifyTrx->getCommandIdUtxo();
+			uint64_t height = header->getHeight();
+
+			RemoteUtxoDetector* remoteUtxos = context->getRemoteUtxoDetector();
+			remoteUtxos->consumeRemoteUtxo(cutxoId, height);
+		}
 	}
 }
 

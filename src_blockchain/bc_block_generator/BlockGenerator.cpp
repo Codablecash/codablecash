@@ -256,7 +256,7 @@ void BlockGenerator::importInterChainCommunicationTransactions2Block(MemPoolTran
 
 			uint8_t tyxType = trx->getType();
 			if(tyxType == AbstractInterChainCommunicationTansaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
-				// FIXME [multishard] add RecognizedNewShardCommand to the header
+				// [multishard] add RecognizedNewShardCommand to the header
 				NotifyZoneExtendRequestedTransaction* notifyTrx = dynamic_cast<NotifyZoneExtendRequestedTransaction*>(trx);
 
 				RecognizedNewShardCommand command;

@@ -22,6 +22,8 @@ public:
 	static BlockHeaderCommandId* fromBinary(ByteBuffer* in);
 
 	virtual IBlockObject* copyData() const noexcept;
+
+	static BlockHeaderCommandId* makeRandomHeaderId();
 };
 
 } /* namespace codablecash */

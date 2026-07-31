@@ -40,8 +40,8 @@ public:
 	int limit() const noexcept;
 	ByteBuffer* limit(const int limit) noexcept;
 	int capacity() const noexcept;
-	char get() noexcept(false);
-	char get(const int index) const noexcept(false);
+	signed char get() noexcept(false);
+	signed char get(const int index) const noexcept(false);
 	ByteBuffer* get(uint8_t* dest, int length) noexcept(false);
 	ByteBuffer* get(uint8_t* dest, int off, int len) noexcept(false);
 

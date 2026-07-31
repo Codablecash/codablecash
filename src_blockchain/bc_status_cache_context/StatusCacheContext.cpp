@@ -377,19 +377,13 @@ void StatusCacheContext::importInterChainCommunicationTransaction(const BlockHea
 
 	uint8_t type = trx->getType();
 	if(type == AbstractBlockchainTransaction::TRX_TYPE_ICC_ZONE_EXTEND_REQUESTED){
-		this->numZones++;
-
-#ifdef __DEBUG__
-		int zoneListSize = this->statusCache->getZoneListSize();
-		assert(this->numZones <= zoneListSize);
-#endif
-
 		const NotifyZoneExtendRequestedTransaction* notifyTrx = dynamic_cast<const NotifyZoneExtendRequestedTransaction*>(trx);
+		uint16_t newShard = notifyTrx->getNewShardZone();
+		this->numZones = newShard + 1;
 
 		const UtxoId* cutxoId = notifyTrx->getCommandIdUtxo();
 		uint64_t height = header->getHeight();
 		this->remoteUtxos->consumeRemoteUtxo(cutxoId, height);
-		// FIXME [multishard]
 	}
 }
 

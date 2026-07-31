@@ -71,7 +71,7 @@ private:
 	void importVoteBlockTransaction(const BlockHeader* header, const BlockBody* body, const VoteBlockTransaction* trx, IStatusCacheContext* context);
 
 	void importBalanceTransactions(const BlockHeader* header, const BlockBody* body);
-	void importInterChainCommunicationTransactions(const BlockHeader* header, const BlockBody* body);
+	void importInterChainCommunicationTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
 	void importSmartcontractTransactions(const BlockHeader* header, const BlockBody* body);
 
 	void importRewardBaseTransactions(const BlockHeader* header, const BlockBody* body);

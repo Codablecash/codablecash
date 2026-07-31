@@ -118,7 +118,7 @@ int ByteBuffer::capacity() const noexcept {
 	return this->cap;
 }
 
-char ByteBuffer::get() noexcept(false) {
+signed char ByteBuffer::get() noexcept(false) {
 	if(remaining() < (int)sizeof(char)){
 		throw new BufferOverflowException(L"put(char b)", __FILE__, __LINE__);
 	}
@@ -126,7 +126,7 @@ char ByteBuffer::get() noexcept(false) {
 	return data->get(this->pos++);
 }
 
-char ByteBuffer::get(const int index) const noexcept(false) {
+signed char ByteBuffer::get(const int index) const noexcept(false) {
 	if(index + (int)sizeof(char) > lim){
 		throw new BufferOverflowException(L"put(int index, uint8_t b)", __FILE__, __LINE__);
 	}
