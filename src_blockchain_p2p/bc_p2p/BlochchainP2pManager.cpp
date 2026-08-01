@@ -158,13 +158,14 @@ void BlochchainP2pManager::init(int numZones) {
 	}
 }
 
-void BlochchainP2pManager::incNumZones() {
+void BlochchainP2pManager::incNumZones(uint16_t newZone) {
 	StackUnlocker __lock(this->mutex, __FILE__, __LINE__);
-	int newZone = this->numZones;
 
-	this->numZones++;
-	P2pZone* z = new P2pZone(newZone);
-	this->zones->addElement(z);
+	if(this->numZones <= newZone){
+		this->numZones++;
+		P2pZone* z = new P2pZone(newZone);
+		this->zones->addElement(z);
+	}
 }
 
 void BlochchainP2pManager::onLoginHandshake(P2pHandshake *handshake, const LoginPubSubCommand *loginCommand, const UnicodeString* canonicalName) {

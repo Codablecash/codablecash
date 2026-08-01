@@ -83,6 +83,7 @@ public:
 	}
 
 	//void setSuspend(bool suspend);
+	bool isSuspended() const noexcept;
 	bool __isSuspended() const noexcept;
 	SynchronizedLock* getSynchrinizedLock() const noexcept;
 

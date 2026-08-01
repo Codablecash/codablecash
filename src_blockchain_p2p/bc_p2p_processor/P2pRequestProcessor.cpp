@@ -168,6 +168,14 @@ void P2pRequestProcessor::putQueue(const PubSubId *pubsubId, const AbstructNodeQ
 }
 */
 
+
+bool P2pRequestProcessor::isSuspended() const noexcept {
+	SynchronizedLock* lock = getSynchrinizedLock();
+	StackUnlocker unlocker(lock, __FILE__, __LINE__);
+
+	return __isSuspended();
+}
+
 bool P2pRequestProcessor::__isSuspended() const noexcept {
 	return this->queueProcessor->__isSuspended();
 }

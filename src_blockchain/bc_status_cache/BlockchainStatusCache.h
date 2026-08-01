@@ -62,7 +62,7 @@ public:
 	void close();
 	void initCacheStatus(CodablecashBlockchain* blockchain);
 
-	void newZone(bool headerOnly);
+	void newZone(bool headerOnly, uint16_t newShardZone);
 
 	virtual void onBlockAdded(MemPoolTransaction* memTrx, const Block* block, CodablecashBlockchain* chain);
 	virtual void postBlockAdded(const Block* block, CodablecashBlockchain* chain);

@@ -273,7 +273,7 @@ TEST(TestMultiShardGroup, case01){
 		BlockchainController* ctrl = inst->getController();
 		uint64_t h = ctrl->getHeadHeight(0);
 
-		while(h <= 6){
+		while(h < 6){
 			Os::usleep(100*1000);
 			h = ctrl->getHeadHeight(0);
 		}

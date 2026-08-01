@@ -130,26 +130,28 @@ void BlockchainStatusCache::close() {
 	this->zoneList.reset();
 }
 
-void BlockchainStatusCache::newZone(bool headerOnly) {
+void BlockchainStatusCache::newZone(bool headerOnly, uint16_t newShardZone) {
 	uint16_t nZone = this->numZones;
 
-	// init blank
-	{
-		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, headerOnly, this->logger, this->config); __STP(cache);
-		cache->initBlank();
+	if(nZone <= newShardZone){
+		// init blank
+		{
+			ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, headerOnly, this->logger, this->config); __STP(cache);
+			cache->initBlank();
+		}
+		// open and add list
+		{
+			ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, this->logger, headerOnly, this->config); __STP(cache);
+			cache->open();
+
+			this->zoneList.addElement(__STP_MV(cache));
+
+			cache->setNumRecognizedZones(nZone + 1); // the zone cache recognizes itself
+		}
+
+		this->zoneListSize = this->zoneList.size();
+		saveConfig();
 	}
-	// open and add list
-	{
-		ZoneStatusCache* cache = new ZoneStatusCache(this->baseDir, nZone, this->logger, headerOnly, this->config); __STP(cache);
-		cache->open();
-
-		this->zoneList.addElement(__STP_MV(cache));
-
-		cache->setNumRecognizedZones(nZone + 1); // the zone cache recognizes itself
-	}
-
-	this->zoneListSize = this->zoneList.size();
-	saveConfig();
 }
 
 void BlockchainStatusCache::initCacheStatus(CodablecashBlockchain *blockchain) {

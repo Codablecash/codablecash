@@ -65,6 +65,7 @@ NotifyZoneExtendRequestedTransaction::NotifyZoneExtendRequestedTransaction() : A
 
 NotifyZoneExtendRequestedTransaction::~NotifyZoneExtendRequestedTransaction() {
 	delete this->headerId;
+	delete this->utxoId;
 	delete this->commandId;
 }
 

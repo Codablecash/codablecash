@@ -14,7 +14,7 @@ class BlockchainStatusCache;
 class IStatusCacheContext;
 class BlockchainController;
 class AbstractBlockHeaderCommand;
-
+class RecognizedNewShardCommand;
 
 class AbstractShardExtentionValidator {
 public:
@@ -26,7 +26,10 @@ public:
 
 	void setStatusCache(BlockchainStatusCache* stcache) noexcept;
 
-	virtual bool validate(AbstractBlockHeaderCommand* newShardCommand, IStatusCacheContext* context, BlockchainController* ctrl) = 0;
+	virtual bool validate(AbstractBlockHeaderCommand* blockHeaderCommand, IStatusCacheContext* context, BlockchainController* ctrl) = 0;
+
+protected:
+	virtual bool validateRecognizedNewShardCommand(RecognizedNewShardCommand* recognizeNewShardCommand, IStatusCacheContext* context, BlockchainController* ctrl);
 
 private:
 	BlockchainStatusCache* statusCache;
