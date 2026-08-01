@@ -25,4 +25,10 @@ void AbstractShardExtentionValidator::setStatusCache(BlockchainStatusCache *stca
 	this->statusCache = stcache;
 }
 
+bool AbstractShardExtentionValidator::validateRecognizedNewShardCommand(RecognizedNewShardCommand *recognizeNewShardCommand, IStatusCacheContext *context, BlockchainController *ctrl) {
+	// FIXME [multishard]
+
+	return true;
+}
+
 } /* namespace codablecash */

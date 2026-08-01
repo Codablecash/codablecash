@@ -133,12 +133,9 @@ void BlockValidator::validateHeaderCommand() {
 			AbstractBlockHeaderCommand* cmd = list->get(i);
 
 			// [multishard] validate
-			NewShardZoneCommand* newShardCommand = dynamic_cast<NewShardZoneCommand*>(cmd);
-			if(newShardCommand != nullptr){
-				bool res = extValidator->validate(newShardCommand, context, this->ctrl);
-				ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(res == false
-						, L"The header command to extend new shard is wrong.", __FILE__, __LINE__);
-			}
+			bool res = extValidator->validate(cmd, context, this->ctrl);
+			ExceptionThrower<BlockValidationException>::throwExceptionIfCondition(res == false
+					, L"The header command to extend new shard is wrong.", __FILE__, __LINE__);
 		}
 	}
 }

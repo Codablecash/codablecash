@@ -81,6 +81,9 @@ public:
 	CodablecashBlockchain* getCodablecashBlockchain() const noexcept {
 		return this->blockchain;
 	}
+	/*BlockchainStatusCache* getBlockchainStatusCache() const noexcept {
+		return this->statusCache;
+	}*/
 
 	void getSyncHeaderData(uint16_t zone, uint64_t offsetHeight, int limit, IBlockDetectCallback* callback);
 

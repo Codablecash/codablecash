@@ -11,6 +11,9 @@
 
 #include "bc_status_cache_context/IStatusCacheContext.h"
 
+#include "bc_block_header_command/AbstractBlockHeaderCommand.h"
+#include "bc_block_header_command/RecognizedNewShardCommand.h"
+
 namespace codablecash {
 
 NewShardValidator::NewShardValidator(const NewShardValidator &inst) : AbstractShardExtentionValidator(inst) {
@@ -24,7 +27,14 @@ NewShardValidator::~NewShardValidator() {
 
 }
 
-bool NewShardValidator::validate(AbstractBlockHeaderCommand *newShardCommand, IStatusCacheContext *context, BlockchainController *ctrl) {
+bool NewShardValidator::validate(AbstractBlockHeaderCommand *headerCommand, IStatusCacheContext *context, BlockchainController *ctrl) {
+	uint16_t t = headerCommand->getType();
+
+	if(t == AbstractBlockHeaderCommand::RECOGNIZED_SHARD_COMMAND){
+		RecognizedNewShardCommand* rcmd = dynamic_cast<RecognizedNewShardCommand*>(headerCommand);
+		return validateRecognizedNewShardCommand(rcmd, context, ctrl);
+	}
+
 	uint16_t numZones = context->getNumZones();
 	int requestedZones = context->getRequestedNewShards();
 

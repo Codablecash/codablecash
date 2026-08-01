@@ -36,7 +36,7 @@ public:
 	virtual ~BlochchainP2pManager();
 
 	void init(int numZones);
-	void incNumZones();
+	void incNumZones(uint16_t newZone);
 
 	void resetZones() noexcept;
 

@@ -46,6 +46,10 @@ public:
 		return this->commandId;
 	}
 
+	uint16_t getType() const noexcept {
+		return this->type;
+	}
+
 protected:
 	uint16_t type;
 	BlockHeaderCommandId* commandId;

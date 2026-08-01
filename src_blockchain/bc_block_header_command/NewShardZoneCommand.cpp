@@ -12,10 +12,9 @@
 #include "bc_status_cache/BlockchainStatusCache.h"
 
 #include "bc_status_cache_extend_shard/NotifyShardExtendRequestCommandMessage.h"
+#include "bc_status_cache_extend_shard/GenerateNewGenesisBlockCommandMessage.h"
 
 #include "bc_processor/CentralProcessor.h"
-
-#include "bc_status_cache_extend_shard/GenerateNewGenesisBlockCommandMessage.h"
 
 #include "bc_block/BlockHeaderId.h"
 #include "bc_block/BlockHeader.h"
@@ -25,6 +24,7 @@
 
 #include "bc_p2p/BlochchainP2pManager.h"
 
+#include "bc_p2p_processor/P2pRequestProcessor.h"
 
 namespace codablecash {
 
@@ -88,39 +88,42 @@ void NewShardZoneCommand::setRequestingZone(uint16_t requestingZone) noexcept {
 
 void NewShardZoneCommand::onFinalize(const BlockHeader *header, BlockchainStatusCache *statusCache, CodablecashBlockchain *blockchain,
 		ILockinManager *lockinManager, const CodablecashSystemParam *config) {
+	CentralProcessor* processor = blockchain->getProcessor();
+	P2pRequestProcessor* p2pRequestProcessor = processor->getP2pRequestProcessor();
+
+	bool suspended = p2pRequestProcessor->isSuspended();
+
 	uint16_t zoneSelf = statusCache->getZoneSelf();
 
 	// [multishard] create phisical store
 	if(zoneSelf != this->newShardZone){
 		// other chains
-		statusCache->newZone(false);
+		statusCache->newZone(false, this->newShardZone);
 		blockchain->addZone(this->newShardZone);
 
 		BlochchainP2pManager* p2pManager = blockchain->getBlochchainP2pManager();
-		p2pManager->incNumZones();
+		p2pManager->incNumZones(this->newShardZone);
 	}else{
 		// new shard chain
-		statusCache->newZone(true);
+		statusCache->newZone(true, this->newShardZone);
 		blockchain->addZone(this->newShardZone);
 
 		BlochchainP2pManager* p2pManager = blockchain->getBlochchainP2pManager();
-		p2pManager->incNumZones();
+		p2pManager->incNumZones(this->newShardZone);
 
 		//[multishard] generate genesis block
-		CentralProcessor* processor = blockchain->getProcessor();
+		if(!suspended){
+			GenerateNewGenesisBlockCommandMessage* message = new GenerateNewGenesisBlockCommandMessage();
+			message->setNewShardZone(this->newShardZone);
+			message->setGenesisBlock(this->genesisBlock);
 
-		GenerateNewGenesisBlockCommandMessage* message = new GenerateNewGenesisBlockCommandMessage();
-		message->setNewShardZone(this->newShardZone);
-		message->setGenesisBlock(this->genesisBlock);
-
-		processor->addCommandMessage(message);
+			processor->addCommandMessage(message);
+		}
 	}
 
 
 	// broad cast ICC
-	if(zoneSelf == this->requestingZone){ // make inter shard communication trx
-		CentralProcessor* processor = blockchain->getProcessor();
-
+	if(!suspended && zoneSelf == this->requestingZone){ // make inter shard communication trx
 		NotifyShardExtendRequestCommandMessage* message = new NotifyShardExtendRequestCommandMessage();
 		message->setNewShardZone(this->newShardZone);
 		message->setRequestingZone(this->requestingZone);
