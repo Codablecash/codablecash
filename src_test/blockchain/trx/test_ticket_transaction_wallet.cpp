@@ -158,7 +158,7 @@ TEST(TestTicketTransactionWalletGroup, case03) {
 		HdWalletSeed* seed = HdWalletSeed::newSeed(); __STP(seed);
 		HdWallet* wallet = HdWallet::create(baseDir, seed, 0, &enc, 10); __STP(wallet);
 		WalletAccount* account = wallet->getAccount(0);
-		BalanceUnit amount(299L);
+		BalanceUnit amount(400L); // (299L);
 		GenesisTransaction* trx = account->createGenesisTransaction(amount, 5); __STP(trx);
 		account->importTransaction(trx);
 	}
@@ -200,7 +200,7 @@ TEST(TestTicketTransactionWalletGroup, caseTicket01) {
 		}
 
 		{
-			BalanceUnit amount(500L);
+			BalanceUnit amount(600L);
 			GenesisTransaction* trx = account->createGenesisTransaction(amount, 5); __STP(trx);
 			account->importTransaction(trx);
 		}

@@ -53,12 +53,23 @@ BalanceTransactionWalletHandler::~BalanceTransactionWalletHandler() {
 }
 
 BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(
-		const AddressDescriptor *dest, const BalanceUnit amount,
-		const BalanceUnit feeRate, bool feeIncluded,
+		const AddressDescriptor *dest, const BalanceUnit& amount,
+		const BalanceUnit& feeRate, bool feeIncluded,
 		const IWalletDataEncoder *encoder,
 		ITransactionBuilderContext *context) {
+	ArrayList<DestAddressPair> list;
+	list.setDeleteOnExit();
+
+	DestAddressPair* pair = new DestAddressPair(dest, &amount);
+	list.addElement(pair);
+
+	return createTransaction(&list, feeRate, feeIncluded, encoder, context);
+}
+
+BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(ArrayList<DestAddressPair>* dest, const BalanceUnit& feeRate,
+		bool feeIncluded, const IWalletDataEncoder *encoder, ITransactionBuilderContext *context) {
 	if(feeIncluded){
-		return createFeeIncludedTransaction(dest, amount, feeRate, encoder, context);
+		createFeeIncludedTransaction(dest, feeRate, encoder, context);
 	}
 
 	IUtxoCollector* collector = context->getUtxoCollector(); __STP(collector);
@@ -68,10 +79,18 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(
 
 	BalanceTransferTransaction* trx = new BalanceTransferTransaction(); __STP(trx);
 	// add output utxo
+	BalanceUnit amount(0L);
 	{
-		BalanceUtxo utxo(amount);
-		utxo.setAddress(dest);
-		trx->addBalanceUtxo(&utxo);
+		int maxLoop = dest->size();
+		for(int i = 0; i != maxLoop; ++i){
+			DestAddressPair* d = dest->get(i);
+
+			BalanceUtxo utxo(*d->getAmount());
+			utxo.setAddress(d->getDest());
+			trx->addBalanceUtxo(&utxo);
+
+			amount += *d->getAmount();
+		}
 	}
 
 	trx->build();
@@ -83,10 +102,13 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(
 	trx->sign(musigProvidor, &utxoFinder);
 
 	return __STP_MV(trx);
+	// FIXME
 }
 
-void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction* trx, BalanceUnit amount, const BalanceUnit feeRate
+void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction* trx, BalanceUnit& amount, const BalanceUnit& feeRate
 		, IUtxoCollector *collector, ArrayUtxoFinder *utxoFinder, HdWalleMuSigSignerProvidor *musigProvidor, const IWalletDataEncoder* encoder) {
+	int destUtxoSize = trx->getUtxoSize();
+
 	int binSize = trx->binarySize();
 	BalanceUnit fee = BalanceUnit(binSize) * feeRate;
 
@@ -121,7 +143,7 @@ void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction
 
 		// add exchange address
 		if(totalIn.compareTo(&required) > 0){
-			if(trx->getUtxoSize() == 1){ // FIXME utxo size
+			if(trx->getUtxoSize() == destUtxoSize){ // FIXME utxo size
 				// add
 				ChangeAddressStore* changeAddresses = this->account->getChangeAddresses();
 				AddressDescriptor* changeDesc = changeAddresses->getNextChangeAddress(encoder); __STP(changeDesc);
@@ -169,10 +191,8 @@ void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction
 
 
 
-BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTransaction(
-		const AddressDescriptor *dest, const BalanceUnit amount,
-		const BalanceUnit feeRate, const IWalletDataEncoder *encoder,
-		ITransactionBuilderContext *context) {
+BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTransaction(ArrayList<DestAddressPair>* dest, const BalanceUnit& feeRate,
+		const IWalletDataEncoder *encoder, ITransactionBuilderContext *context) {
 	IUtxoCollector* collector = context->getUtxoCollector(); __STP(collector);
 	ArrayUtxoFinder utxoFinder;
 
@@ -180,10 +200,18 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTr
 
 	BalanceTransferTransaction* trx = new BalanceTransferTransaction(); __STP(trx);
 	// add output utxo
+	BalanceUnit amount(0L);
 	{
-		BalanceUtxo utxo(amount);
-		utxo.setAddress(dest);
-		trx->addBalanceUtxo(&utxo);
+		int maxLoop = dest->size();
+		for(int i = 0; i != maxLoop; ++i){
+			DestAddressPair* d = dest->get(i);
+
+			BalanceUtxo utxo(*d->getAmount());
+			utxo.setAddress(d->getDest());
+			trx->addBalanceUtxo(&utxo);
+
+			amount += *d->getAmount();
+		}
 	}
 
 	BalanceUnit totalIn = utxoFinder.getTotalAmount();
@@ -205,9 +233,7 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTr
 
 		totalIn = utxoFinder.getTotalAmount();
 	}
-
 	ExceptionThrower<BalanceShortageException>::throwExceptionIfCondition(totalIn.compareTo(&amount) < 0, L"Wallet don't have enough balance.", __FILE__, __LINE__);
-
 
 	// set exchange
 	if(totalIn.compareTo(&amount) > 0){
@@ -219,7 +245,6 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTr
 		utxo.setAddress(changeDesc);
 		trx->addBalanceUtxo(&utxo);
 	}
-
 
 	// calc fee
 	{
@@ -242,6 +267,8 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createFeeIncludedTr
 
 	return __STP_MV(trx);
 }
+
+
 
 void BalanceTransactionWalletHandler::importTransaction(const AbstractBlockchainTransaction *__trx) {
 	const BalanceTransferTransaction* trx = dynamic_cast<const BalanceTransferTransaction*>(__trx);
@@ -280,6 +307,16 @@ void BalanceTransactionWalletHandler::importTransaction(const AbstractBlockchain
 	if(imported){
 		trxRepo->importTransaction(trx);
 	}
+}
+
+DestAddressPair::DestAddressPair(const AddressDescriptor *dest, const BalanceUnit *amount) {
+	this->dest = dynamic_cast<AddressDescriptor*>(dest->copyData());
+	this->amount = dynamic_cast<BalanceUnit*>(amount->copyData());
+}
+
+DestAddressPair::~DestAddressPair() {
+	delete this->dest;
+	delete this->amount;
 }
 
 } /* namespace codablecash */

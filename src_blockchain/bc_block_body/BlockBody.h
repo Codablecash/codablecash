@@ -115,7 +115,7 @@ public:
 
 private:
 	void resetMerkle() noexcept;
-
+	void buildMerleTree();
 private:
 	MerkleTree* tree;
 	BlockMerkleRoot* merkleRoot;

@@ -77,10 +77,10 @@ public:
 	}
 
 	GenesisTransaction* createGenesisTransaction(const BalanceUnit amount, int pos);
-	BalanceTransferTransaction* createBalanceTransferTransaction(const AddressDescriptor* dest, const BalanceUnit amount
-			, const BalanceUnit feeRate, bool feeIncluded, const IWalletDataEncoder* encoder);
-	BalanceTransferTransaction* createBalanceTransferTransaction(const AddressDescriptor* dest, const BalanceUnit amount
-			, const BalanceUnit feeRate, bool feeIncluded, const IWalletDataEncoder* encoder, ITransactionBuilderContext* context);
+	BalanceTransferTransaction* createBalanceTransferTransaction(const AddressDescriptor* dest, const BalanceUnit& amount
+			, const BalanceUnit& feeRate, bool feeIncluded, const IWalletDataEncoder* encoder);
+	BalanceTransferTransaction* createBalanceTransferTransaction(const AddressDescriptor* dest, const BalanceUnit& amount
+			, const BalanceUnit& feeRate, bool feeIncluded, const IWalletDataEncoder* encoder, ITransactionBuilderContext* context);
 
 	RegisterVotePoolTransaction* createRegisterVotePoolTransaction(const NodeIdentifierSource *source
 			, const BalanceUnit& feeRate, const AddressDescriptor* addressDesc, const IWalletDataEncoder* encoder);
