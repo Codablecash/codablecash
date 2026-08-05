@@ -24,6 +24,7 @@ class CodablecashBlockchain;
 class CodablecashSystemParam;
 class ILockinManager;
 class BlockHeaderCommandId;
+class BlockBody;
 
 class AbstractBlockHeaderCommand : public alinous::IBlockObject {
 public:
@@ -39,6 +40,8 @@ public:
 	virtual void fromBinary(ByteBuffer* in) = 0;
 
 	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config) = 0;
+
+	virtual void buildHeaderCommandCertificetes(BlockBody *body){};
 
 	void buildCommandId();
 

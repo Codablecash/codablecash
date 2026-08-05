@@ -102,7 +102,10 @@ void BlockBody::addBlockRewordTransaction(const AbstractBlockRewordTransaction *
 
 void BlockBody::build() {
 	resetMerkle();
+	buildMerleTree();
+}
 
+void BlockBody::buildMerleTree() {
 	this->tree = new MerkleTree();
 	this->tree->addElement(this->nonce);
 

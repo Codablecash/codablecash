@@ -206,14 +206,14 @@ GenesisTransaction* WalletAccount::createGenesisTransaction(const BalanceUnit am
 }
 
 BalanceTransferTransaction* WalletAccount::createBalanceTransferTransaction(
-				const AddressDescriptor *dest, const BalanceUnit amount, const BalanceUnit feeRate, bool feeIncluded, const IWalletDataEncoder* encoder) {
+				const AddressDescriptor *dest, const BalanceUnit& amount, const BalanceUnit& feeRate, bool feeIncluded, const IWalletDataEncoder* encoder) {
 	HdWalletAccountTrxBuilderContext context(this, encoder);
 
 	return createBalanceTransferTransaction(dest, amount, feeRate, feeIncluded, encoder, &context);
 }
 
 BalanceTransferTransaction* WalletAccount::createBalanceTransferTransaction(
-		const AddressDescriptor *dest, const BalanceUnit amount, const BalanceUnit feeRate, bool feeIncluded, const IWalletDataEncoder *encoder,
+		const AddressDescriptor *dest, const BalanceUnit& amount, const BalanceUnit& feeRate, bool feeIncluded, const IWalletDataEncoder *encoder,
 		ITransactionBuilderContext *context) {
 	BalanceTransactionWalletHandler handler(this);
 

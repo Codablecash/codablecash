@@ -87,6 +87,8 @@ void Block::build() {
 	const BlockMerkleRoot* merkleRoot = this->body->getMerkleRoot();
 
 	this->header->setMerkleRoot(merkleRoot);
+	this->header->buildHeaderCommandCertificetes(this->body);
+
 	this->header->buildHeaderId();
 }
 

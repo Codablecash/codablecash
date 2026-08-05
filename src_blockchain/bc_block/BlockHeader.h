@@ -33,6 +33,7 @@ class TransactionId;
 class BlockVersion;
 class AbstractBlockHeaderCommand;
 class BlockHeaderCommandId;
+class BlockBody;
 
 class BlockHeader : public alinous::IBlockObject {
 public:
@@ -117,6 +118,8 @@ public:
 	ArrayList<AbstractBlockHeaderCommand>* getHeaderCommands() const noexcept {
 		return this->commnads;
 	}
+
+	void buildHeaderCommandCertificetes(BlockBody* body);
 
 private:
 	BlockVersion* version;

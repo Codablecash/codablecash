@@ -321,4 +321,12 @@ const AbstractBlockHeaderCommand* BlockHeader::getHeaderCommand(const BlockHeade
 	return ret;
 }
 
+void BlockHeader::buildHeaderCommandCertificetes(BlockBody *body) {
+	int maxLoop = this->commnads->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractBlockHeaderCommand* command = this->commnads->get(i);
+		command->buildHeaderCommandCertificetes(body);
+	}
+}
+
 } /* namespace codablecash */

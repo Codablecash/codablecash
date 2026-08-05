@@ -139,7 +139,7 @@ AbstractCommandResponse* ReportNonceCalculatedNodeCommand::executeAsNode(Blockch
 	}
 
 	// [consensus] validate Pos and header time
-	{
+	if(!suspend){
 		uint16_t zone = this->header->getZone();
 		uint64_t lastHeight = this->header->getHeight() - 1;
 		SystemTimestamp* limitTm = ctrl->getPosVoteLimit(zone, lastHeight); __STP(limitTm);

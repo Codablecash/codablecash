@@ -13,6 +13,7 @@
 namespace codablecash {
 
 class NotifyZoneExtendRequestedTransaction;
+class MerkleCertificate;
 
 class RecognizedNewShardCommand : public AbstractBlockHeaderCommand {
 public:
@@ -28,10 +29,21 @@ public:
 
 	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config);
 
+	virtual void buildHeaderCommandCertificetes(BlockBody *body);
+
 	void setTransaction(const NotifyZoneExtendRequestedTransaction* trx);
+	NotifyZoneExtendRequestedTransaction* getTransaction() const noexcept {
+		return this->trx;
+	}
+
+	void setCertificate(const MerkleCertificate* certificate);
+	MerkleCertificate* getCertificate() const noexcept {
+		return this->certificate;
+	}
 
 private:
 	NotifyZoneExtendRequestedTransaction* trx;
+	MerkleCertificate* certificate;
 
 };
 
