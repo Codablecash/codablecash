@@ -37,10 +37,10 @@ BlockHeadElement::~BlockHeadElement() {
 	delete this->header;
 }
 
-void BlockHeadElement::importVotes(const VotePart *vorts) noexcept {
+void BlockHeadElement::importVotes(const VotePart *votes) noexcept {
 	const BlockHeaderId* id = this->header->getId();
 
-	const HashMap<BlockHeaderId, VotedHeaderIdGroup>* map = vorts->getMap();
+	const HashMap<BlockHeaderId, VotedHeaderIdGroup>* map = votes->getMap();
 
 	Iterator<BlockHeaderId>* it = map->keySet()->iterator(); __STP(it);
 	while(it->hasNext()){

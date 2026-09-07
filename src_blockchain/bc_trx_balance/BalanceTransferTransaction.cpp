@@ -12,8 +12,10 @@
 #include "bc_trx_balance/BalanceUtxoReference.h"
 
 #include "bc_trx/TransactionId.h"
+#include "bc_trx/TransactionVersion.h"
 
 #include "bc_base/BinaryUtils.h"
+#include "bc_base/AddressDescriptor.h"
 
 #include "base/StackRelease.h"
 
@@ -26,9 +28,6 @@
 #include "ecda/Secp256k1CompressedPoint.h"
 #include "ecda/Secp256k1Point.h"
 
-#include "bc_base/AddressDescriptor.h"
-
-#include "bc_trx/TransactionVersion.h"
 
 namespace codablecash {
 

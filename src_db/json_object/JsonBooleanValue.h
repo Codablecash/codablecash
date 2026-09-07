@@ -39,6 +39,8 @@ public:
 
 	virtual AbstractFunctionExtArguments* toFunctionExtArgument() const;
 
+	virtual UnicodeString* toString() const;
+
 private:
 	bool value;
 };

@@ -56,7 +56,7 @@ IBlockObject* TransactionTransferData::copyData() const noexcept {
 	return new TransactionTransferData(*this);
 }
 
-void TransactionTransferData::setTransaction(	const AbstractBlockchainTransaction *trx) noexcept {
+void TransactionTransferData::setTransaction(const AbstractBlockchainTransaction *trx) noexcept {
 	delete this->trx;
 	this->trx = dynamic_cast<AbstractBlockchainTransaction*>(trx->copyData());
 }

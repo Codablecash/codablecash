@@ -63,7 +63,7 @@ protected:
 protected:
 	uint16_t zone;
 	HdWalletSeed* encryptedSeed;
-	uint64_t adressSerial;
+	uint64_t addressSerial;
 
 	ArrayList<AddressAndPrivateKey>* list;
 	StatusStore* store;

@@ -35,8 +35,8 @@ AddressDescriptor* ChangeAddressStore::getNextChangeAddress(const IWalletDataEnc
 		this->currentIndex = 0;
 	}
 
-	if(this->currentIndex >= this->adressSerial && this->list->size() < this->numAddressInThisGroup){
-		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, this->adressSerial++);
+	if(this->currentIndex >= this->addressSerial && this->list->size() < this->numAddressInThisGroup){
+		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, this->addressSerial++);
 		this->list->addElement(pair);
 		save();
 	}
@@ -57,7 +57,7 @@ void ChangeAddressStore::load(const IWalletDataEncoder *encoder) {
 	this->currentIndex = this->store->getLongValue(KEY_CURRENT_INDEX);
 	this->numAddressInThisGroup = this->store->getLongValue(KEY_NUM_GROUP);
 
-	for(int i = 0; i != this->adressSerial; ++i){
+	for(int i = 0; i != this->addressSerial; ++i){
 		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, i);
 
 		this->list->addElement(pair);

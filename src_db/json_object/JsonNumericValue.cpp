@@ -13,6 +13,7 @@
 
 #include "engine/sc_analyze/AnalyzedType.h"
 
+#include "base/Integer.h"
 
 namespace codablecash {
 
@@ -60,6 +61,10 @@ void JsonNumericValue::fromBinary(ByteBuffer *in) {
 
 AbstractFunctionExtArguments* JsonNumericValue::toFunctionExtArgument() const {
 	return new NumericArgument(this->value, AnalyzedType::TYPE_INT);
+}
+
+UnicodeString* JsonNumericValue::toString() const {
+	return Integer::toString(this->value, 10);
 }
 
 } /* namespace codablecash */

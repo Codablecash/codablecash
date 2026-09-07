@@ -35,7 +35,7 @@ namespace codablecash {
 
 AbstractAddressStore::AbstractAddressStore(uint16_t zone, const File* baseDir, const wchar_t* storeName) {
 	this->encryptedSeed = nullptr;
-	this->adressSerial = 0;
+	this->addressSerial = 0;
 	this->zone = zone;
 
 	this->list = new ArrayList<AddressAndPrivateKey>();
@@ -136,7 +136,7 @@ void AbstractAddressStore::__save() {
 		this->store->addBinaryValue(KEY_ENCRYPTED_SEED, buff->array(), buff->limit());
 	}
 
-	this->store->addLongValue(KEY_ADDRESS_SERIAL, this->adressSerial);
+	this->store->addLongValue(KEY_ADDRESS_SERIAL, this->addressSerial);
 }
 
 void AbstractAddressStore::__load() {
@@ -148,7 +148,7 @@ void AbstractAddressStore::__load() {
 		this->encryptedSeed = new HdWalletSeed((const char*)buff->array(), buff->limit());
 	}
 
-	this->adressSerial = this->store->getLongValue(KEY_ADDRESS_SERIAL);
+	this->addressSerial = this->store->getLongValue(KEY_ADDRESS_SERIAL);
 }
 
 } /* namespace codablecash */

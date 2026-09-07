@@ -32,12 +32,7 @@ HdWallet::HdWallet(const File* baseDir) {
 }
 
 HdWallet::~HdWallet() {
-	delete this->store;
-
-	this->accounts->deleteElements();
-	delete this->accounts;
-
-	delete this->encodedSeed;
+	close();
 
 	delete this->baseDir;
 }
@@ -97,6 +92,21 @@ void HdWallet::load(const IWalletDataEncoder *encoder) {
 	}
 
 	this->defaultZone = this->store->getShortValue(KEY_DEFAULT_ZONE);
+}
+
+void HdWallet::close() {
+	if(this->store != nullptr){
+		delete this->store, this->store = nullptr;
+	}
+
+	if(this->accounts != nullptr){
+		this->accounts->deleteElements();
+		delete this->accounts, this->accounts = nullptr;
+	}
+
+	if(this->encodedSeed != nullptr){
+		delete this->encodedSeed, this->encodedSeed = nullptr;
+	}
 }
 
 HdWalletSeed* HdWallet::getRootSeed(const IWalletDataEncoder* encoder) const {

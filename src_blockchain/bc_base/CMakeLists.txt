@@ -3,6 +3,7 @@
 set(__src
 	Abstract32BytesId.cpp
 	AbstractAddress.cpp
+	AddressCheckDigitException.cpp
 	AddressDescriptor.cpp
 	BalanceAddress.cpp
 	BalanceUnit.cpp

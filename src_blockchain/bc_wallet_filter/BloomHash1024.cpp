@@ -43,6 +43,11 @@ BloomHash1024::~BloomHash1024() {
 
 }
 
+/**
+ * make flag
+ * @param base
+ * @param pos
+ */
 void BloomHash1024::setBits(uint16_t base, int pos) noexcept {
 	uint16_t val = base >> 8;
 	val = val << (pos * NUM_EXTRA_BITS);

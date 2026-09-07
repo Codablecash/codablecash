@@ -29,7 +29,7 @@ public:
 		this->nullElement = nullptr;
 	}
 	virtual ~VMemHashMapKeySet(){
-		typename VMemHashMapRawArray<K, V>::Iterator it = this->list->iterator();
+		typename VMemHashMapRawArray<K, V>::InternalIterator it = this->list->iterator();
 		while(it.hasNext()){
 			VMemHashMapInternalElement<K, V>* element = it.next();
 
@@ -219,7 +219,7 @@ public:
 
 		}
 	private:
-		typename VMemHashMapRawArray<K, V>::Iterator internalIt;
+		typename VMemHashMapRawArray<K, V>::InternalIterator internalIt;
 		bool outputNull;
 		VMemHashMapInternalElement<K, V>* nullElement;
 	};

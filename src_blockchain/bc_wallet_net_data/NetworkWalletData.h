@@ -57,8 +57,11 @@ public:
 
 	void close() noexcept;
 
+	void openHdWallet(const IWalletDataEncoder *encoder);
 	void createHdWallet(const HdWalletSeed* seed, uint16_t defaultZone, const IWalletDataEncoder* encoder, int defaultMaxAddress);
-	void createBlank();
+
+	void openData();
+	void createBlankData();
 
 	HdWallet* getHdWallet() const noexcept {
 		return this->hdWallet;
@@ -79,6 +82,7 @@ public:
 	}
 
 	void __saveStatus();
+	void __loadStatus();
 
 	virtual BlockHeaderStoreManager* getHeaderManager(uint16_t zone) const noexcept;
 	virtual BlockBodyStoreManager* getBlockBodyStoreManager(uint16_t zone) const noexcept;

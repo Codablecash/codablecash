@@ -125,7 +125,10 @@ endmacro(handle_sub)
 #[[ =========================================================================================== ]]#
 
 set(srcmain
-	AlinousStore.cpp
+	Codablecash.cpp
+)
+set(srcsim
+	CodableSim.cpp
 )
 
 include_directories(${PROJECT_SOURCE_DIR}/src/)
@@ -138,6 +141,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_db/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_modular/)
 include_directories(${PROJECT_SOURCE_DIR}/src_smartcontract_vm/)
+include_directories(${PROJECT_SOURCE_DIR}/src_simnet/)
 include_directories(${PROJECT_SOURCE_DIR}/src_test/)
 
 add_subdirectory(src)
@@ -149,13 +153,17 @@ add_subdirectory(src_smartcontract)
 add_subdirectory(src_smartcontract_db)
 add_subdirectory(src_smartcontract_modular)
 add_subdirectory(src_smartcontract_vm)
+add_subdirectory(src_simnet)
 
 
-add_library(codablecashlib STATIC ${top_src} ${top_src_blockchain} ${top_src_blockchain_p2p} ${top_src_db} ${top_src_gen} ${top_src_smartcontract} ${top_src_smartcontract_db} ${top_src_smartcontract_modular} ${top_src_smartcontract_vm})
+add_library(codablecashlib STATIC ${top_src} ${top_src_blockchain} ${top_src_blockchain_p2p} ${top_src_db} ${top_src_gen} ${top_src_smartcontract} ${top_src_smartcontract_db} ${top_src_smartcontract_modular} ${top_src_smartcontract_vm} ${top_src_simnet})
 target_link_libraries(codablecashlib extlib pthread gmp)
 
 add_executable(codablecash ${srcmain})
 target_link_libraries(codablecash codablecashlib extlib pthread gmp)
+
+add_executable(codablesim ${srcsim})
+target_link_libraries(codablesim codablecashlib extlib pthread gmp)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "ReleaseTest")
 	#
@@ -202,7 +210,7 @@ add_custom_target(valgrind
 add_custom_target(valgrindp
 	COMMAND valgrind --leak-check=full
 		--xml=yes --xml-file=testall.%p.valgrind.xml --main-stacksize=83886080 --max-threads=1000 --fair-sched=yes
-		./testall -g TestMultiShardGroup
+		./testall -g TestSimnetClientGroup
 	
 	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 	)

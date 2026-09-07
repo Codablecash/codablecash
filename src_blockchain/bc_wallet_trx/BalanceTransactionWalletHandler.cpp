@@ -69,7 +69,7 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(
 BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(ArrayList<DestAddressPair>* dest, const BalanceUnit& feeRate,
 		bool feeIncluded, const IWalletDataEncoder *encoder, ITransactionBuilderContext *context) {
 	if(feeIncluded){
-		createFeeIncludedTransaction(dest, feeRate, encoder, context);
+		return createFeeIncludedTransaction(dest, feeRate, encoder, context);
 	}
 
 	IUtxoCollector* collector = context->getUtxoCollector(); __STP(collector);

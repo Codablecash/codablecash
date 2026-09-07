@@ -57,7 +57,7 @@ BlockHeaderStoreCacheElement* BlockHeaderStoreCache::getHeaderStoreCacheElement(
 		cache->create();
 	}
 
-	cache->init(); // open
+	cache->open(); // open
 
 	this->list->add(0, cache);
 

@@ -165,7 +165,7 @@ VariableBlock* VariableBlockHeader::allocMaxFragment(uint64_t size) {
 	return allocMaxFragment(range, size);
 }
 
-VariableBlock* VariableBlockHeader::allocMaxFragment(const LongRange *range,	uint64_t size) {
+VariableBlock* VariableBlockHeader::allocMaxFragment(const LongRange *range, uint64_t size) {
 	uint64_t maxAvailable = availableWithRange(range);
 	if(size > maxAvailable){
 		return allocateAll(range);

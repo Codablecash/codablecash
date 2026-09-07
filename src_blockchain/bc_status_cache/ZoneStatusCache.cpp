@@ -232,7 +232,7 @@ void ZoneStatusCache::finalizeUpdateCacheData(uint64_t finalizingHeight, const B
 
 			BlockBody* body = bodyManager->getBlockBody(root, height); __STP(body);
 
-			this->finalizedCache->importBlockData(finalizingHeight, header, body, context);
+			this->finalizedCache->importBlockData(finalizingHeight, header, body, context, config);
 
 			height++;
 		}

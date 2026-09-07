@@ -30,7 +30,7 @@ public:
 		return this->header;
 	}
 
-	void importVotes(const VotePart* vorts) noexcept;
+	void importVotes(const VotePart* votes) noexcept;
 
 	void hasTransactionInMemoryPool() noexcept;
 	void hasNoTransactionInMemoryPool() noexcept;

@@ -12,6 +12,8 @@
 
 #include "bc_base/BinaryUtils.h"
 
+#include "base/UnicodeString.h"
+#include "base/StackRelease.h"
 
 namespace codablecash {
 
@@ -106,6 +108,25 @@ void JsonArrayObject::fromBinary(ByteBuffer *in) {
 
 		this->list->addElement(obj);
 	}
+}
+
+UnicodeString* JsonArrayObject::toString() const {
+	UnicodeString* str = new UnicodeString(L"[");
+
+	int maxLoop = this->list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = this->list->get(i);
+
+		if(i != 0){
+			str->append(L", ");
+		}
+
+		UnicodeString* inner = obj->toString(); __STP(inner);
+		str->append(inner);
+	}
+
+	str->append(L"]");
+	return str;
 }
 
 } /* namespace codablecash */

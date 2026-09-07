@@ -18,6 +18,8 @@
 #include "ipconnect/IServerSocket.h"
 
 #include "bc_p2p_info/P2pNodeRecord.h"
+
+
 namespace codablecash {
 
 MiningConfig::MiningConfig(const MiningConfig &inst) {

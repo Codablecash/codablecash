@@ -105,7 +105,7 @@ void FinalizedDataCache::close() {
 	}
 }
 
-void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context) {
+void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context, const CodablecashSystemParam* config) {
 	BlockchainStatusCache* statusCache = context->getBlockchainStatusCache();
 	uint16_t zone = context->getZone();
 
@@ -115,10 +115,10 @@ void FinalizedDataCache::importBlockData(uint64_t finalizingHeight, const BlockH
 
 	context->beginBlock(header, lockinManager, true);
 
-	importControlTransactions(header, body, context);
-	importInterChainCommunicationTransactions(header, body, context);
-	importBalanceTransactions(header, body);
-	importSmartcontractTransactions(header, body);
+	importControlTransactions(header, body, context, lockinManager, config);
+	importInterChainCommunicationTransactions(header, body, context, lockinManager, config);
+	importBalanceTransactions(header, body, context, lockinManager, config);
+	importSmartcontractTransactions(header, body, context, lockinManager, config);
 	importRewardBaseTransactions(header, body);
 
 	// register lockin actions on Finalize @endBlock();
@@ -143,8 +143,12 @@ void FinalizedDataCache::importRewardBaseTransactions(const BlockHeader *header,
 	}
 }
 
-void FinalizedDataCache::importControlTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context) {
+void FinalizedDataCache::importControlTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context
+		, LockinManager* lockinManager, const CodablecashSystemParam* config) {
 	const ArrayList<AbstractControlTransaction>* list = body->getControlTransactions();
+
+	BlockchainStatusCache* cache = context->getBlockchainStatusCache();
+	CodablecashBlockchain* blockchain = context->getBlockChain();
 
 	int maxLoop = list->size();
 	for(int i = 0; i != maxLoop; ++i){
@@ -172,6 +176,8 @@ void FinalizedDataCache::importControlTransactions(const BlockHeader *header, co
 		else if(type == AbstractBlockchainTransaction::TRX_TYPE_REVOKE_MISS_VOTED_TICKET){
 			// do nothing
 		}
+
+		trx->onFinalize(header, cache, blockchain, lockinManager, config);
 	}
 }
 
@@ -192,7 +198,10 @@ void FinalizedDataCache::importVoteBlockTransaction(const BlockHeader *header,
 	context->registerVote(header, trx);
 }
 
-void FinalizedDataCache::importBalanceTransactions(const BlockHeader *header, const BlockBody *body) {
+void FinalizedDataCache::importBalanceTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config) {
+	BlockchainStatusCache* cache = context->getBlockchainStatusCache();
+	CodablecashBlockchain* blockchain = context->getBlockChain();
+
 	const ArrayList<AbstractBalanceTransaction>* list = body->getBalanceTransactions();
 
 	int maxLoop = list->size();
@@ -200,10 +209,15 @@ void FinalizedDataCache::importBalanceTransactions(const BlockHeader *header, co
 		AbstractBalanceTransaction* trx = list->get(i);
 
 		importTransactionUtxos(trx, header);
+
+		trx->onFinalize(header, cache, blockchain, lockinManager, config);
 	}
 }
 
-void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context) {
+void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config) {
+	BlockchainStatusCache* cache = context->getBlockchainStatusCache();
+	CodablecashBlockchain* blockchain = context->getBlockChain();
+
 	const ArrayList<AbstractInterChainCommunicationTansaction>* list = body->getInterChainCommunicationTransactions();
 
 	int maxLoop = list->size();
@@ -232,10 +246,15 @@ void FinalizedDataCache::importInterChainCommunicationTransactions(const BlockHe
 			RemoteUtxoDetector* remoteUtxos = context->getRemoteUtxoDetector();
 			remoteUtxos->consumeRemoteUtxo(cutxoId, height);
 		}
+
+		trx->onFinalize(header, cache, blockchain, lockinManager, config);
 	}
 }
 
-void FinalizedDataCache::importSmartcontractTransactions(const BlockHeader *header, const BlockBody *body) {
+void FinalizedDataCache::importSmartcontractTransactions(const BlockHeader *header, const BlockBody *body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config) {
+	BlockchainStatusCache* cache = context->getBlockchainStatusCache();
+	CodablecashBlockchain* blockchain = context->getBlockChain();
+
 	const ArrayList<AbstractSmartcontractTransaction>* list = body->getSmartcontractTransactions();
 
 	int maxLoop = list->size();
@@ -243,6 +262,8 @@ void FinalizedDataCache::importSmartcontractTransactions(const BlockHeader *head
 		AbstractSmartcontractTransaction* trx = list->get(i);
 
 		importTransactionUtxos(trx, header);
+
+		trx->onFinalize(header, cache, blockchain, lockinManager, config);
 	}
 }
 
@@ -273,6 +294,10 @@ void FinalizedDataCache::importTransactionUtxos(const AbstractBlockchainTransact
 		int maxLoop = trx->getUtxoSize();
 		for(int i = 0; i != maxLoop; ++i){
 			AbstractUtxo* utxo = trx->getUtxo(i);
+
+			if(utxo->isRemote()){
+				continue;
+			}
 
 #ifdef __DEBUG__
 			{

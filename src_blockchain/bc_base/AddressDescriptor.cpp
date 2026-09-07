@@ -17,6 +17,11 @@
 
 #include <cstdio>
 
+#include "bc/ExceptionThrower.h"
+
+#include "bc_base/AddressCheckDigitException.h"
+
+#include "base/Integer.h"
 using namespace alinous;
 
 namespace codablecash {
@@ -95,7 +100,14 @@ void AddressDescriptor::importCstring(const char *cstr) {
 	UnicodeString str(bodycstr);
 	this->body = Base58::decode(&str);
 
+	// check checkdigits
+	char __checkDigit[2];
+	Mem::memcpy(__checkDigit, cstr + AddressDescriptor::PREFIX_LENGTH + AddressDescriptor::ZONE_LENGTH + bodylength, AddressDescriptor::CHECKDIGIT_LENGTH);
+
 	makeCheckDigit();
+
+	int cmp = Mem::memcmp(this->checkDigit, __checkDigit, AddressDescriptor::CHECKDIGIT_LENGTH);
+	ExceptionThrower<AddressCheckDigitException>::throwExceptionIfCondition(cmp != 0, L"Check digit error.", __FILE__, __LINE__);
 }
 
 void AddressDescriptor::makeCheckDigit() {
@@ -165,6 +177,16 @@ AddressDescriptor* AddressDescriptor::createFromBinary(ByteBuffer *in) {
 
 IBlockObject* AddressDescriptor::copyData() const noexcept {
 	return new AddressDescriptor(*this);
+}
+
+uint16_t AddressDescriptor::getZone() const noexcept {
+	char buff[4]{};
+
+	Mem::memcpy(buff, this->prefix, 3);
+	UnicodeString str(buff);
+
+	uint16_t zone = Integer::parseInt(&str, 16);
+	return zone;
 }
 
 } /* namespace codablecash */

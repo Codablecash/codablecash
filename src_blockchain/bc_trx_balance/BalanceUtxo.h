@@ -23,9 +23,7 @@ public:
 	explicit BalanceUtxo(BalanceUnit amount);
 	virtual ~BalanceUtxo();
 
-	virtual uint8_t getType() const noexcept {
-		return AbstractUtxo::TRX_UTXO_BALANCE;
-	}
+	virtual uint8_t getType() const noexcept;
 
 	virtual const AddressDescriptor* getAddress() const noexcept {
 		return this->addressDesc;
@@ -37,8 +35,6 @@ public:
 	virtual void toBinary(ByteBuffer* out) const;
 	virtual void fromBinary(ByteBuffer* in);
 
-	int tmpBinarySize() const;
-
 	virtual IBlockObject* copyData() const noexcept;
 
 	virtual void build();
@@ -49,7 +45,7 @@ public:
 
 	void discountFee(const BalanceUnit& feeRemain);
 
-private:
+protected:
 	AddressDescriptor* addressDesc;
 	BalanceUnit amount;
 };

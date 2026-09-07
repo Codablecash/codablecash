@@ -27,7 +27,7 @@ public:
 	virtual void save();
 	virtual void load(const IWalletDataEncoder *encoder);
 
-	void exportAddress2Filger(BloomFilter1024* filter);
+	void exportAddress2Filter(BloomFilter1024* filter);
 
 private:
 	int maxAddress;

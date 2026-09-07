@@ -32,6 +32,7 @@ class VoterStatusCacheContext;
 class RemoteUtxoRepository;
 class CodablecashSystemParam;
 class BlockchainSoftwareVersion;
+class LockinManager;
 
 class FinalizedDataCache {
 public:
@@ -45,7 +46,7 @@ public:
 	void open();
 	void close();
 
-	void importBlockData(uint64_t finalizingHeight, const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
+	void importBlockData(uint64_t finalizingHeight, const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context, const CodablecashSystemParam* config);
 	void writeBackVoterEntries(IStatusCacheContext* context);
 	void writeBackVoterStatus(IStatusCacheContext* context);
 	void writeBackRemoteUtxo(uint64_t finalizingHeight, IStatusCacheContext* context, const CodablecashSystemParam* config, const BlockchainSoftwareVersion* version);
@@ -65,14 +66,14 @@ public:
 	}
 
 private:
-	void importControlTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
+	void importControlTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config);
 	void importRegisterVotePoolTransaction(const BlockHeader* header, const BlockBody* body, const RegisterVotePoolTransaction* trx, IStatusCacheContext* context);
 	void importRegisterTicketTransaction(const BlockHeader* header, const BlockBody* body, const RegisterTicketTransaction* trx, IStatusCacheContext* context);
 	void importVoteBlockTransaction(const BlockHeader* header, const BlockBody* body, const VoteBlockTransaction* trx, IStatusCacheContext* context);
 
-	void importBalanceTransactions(const BlockHeader* header, const BlockBody* body);
-	void importInterChainCommunicationTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context);
-	void importSmartcontractTransactions(const BlockHeader* header, const BlockBody* body);
+	void importBalanceTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config);
+	void importInterChainCommunicationTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config);
+	void importSmartcontractTransactions(const BlockHeader* header, const BlockBody* body, IStatusCacheContext* context, LockinManager* lockinManager, const CodablecashSystemParam* config);
 
 	void importRewardBaseTransactions(const BlockHeader* header, const BlockBody* body);
 

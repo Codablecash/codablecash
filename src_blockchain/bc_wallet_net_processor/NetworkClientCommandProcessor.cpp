@@ -62,14 +62,16 @@ NetworkClientCommandProcessor::~NetworkClientCommandProcessor() {
 }
 
 void NetworkClientCommandProcessor::init() {
-	const File* baseDir = networkWallet->getBaseDir();
+	if(this->queueProcessor == nullptr && this->pendingQueue == nullptr){
+		const File* baseDir = networkWallet->getBaseDir();
 
-	File* dir = baseDir->get(PROCESSER_DIR); __STP(dir);
-	dir->deleteDir();
-	dir->mkdirs();
+		File* dir = baseDir->get(PROCESSER_DIR); __STP(dir);
+		dir->deleteDir();
+		dir->mkdirs();
 
-	this->queueProcessor = new ClientCommandsQueueProcessor(this->networkWallet, dir, this->logger);
-	this->pendingQueue = new PendingClientCommandsQueue(dir);
+		this->queueProcessor = new ClientCommandsQueueProcessor(this->networkWallet, dir, this->logger);
+		this->pendingQueue = new PendingClientCommandsQueue(dir);
+	}
 }
 
 

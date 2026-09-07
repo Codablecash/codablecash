@@ -78,4 +78,8 @@ AbstractFunctionExtArguments* JsonStringValue::toFunctionExtArgument() const {
 	return new StringArgument(this->value);
 }
 
+UnicodeString* JsonStringValue::toString() const {
+	return new UnicodeString(this->value);
+}
+
 } /* namespace codablecash */

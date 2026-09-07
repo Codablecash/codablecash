@@ -10,8 +10,11 @@
 
 #include <cstdint>
 
+#include "base/ArrayList.h"
+
 namespace alinous {
 class File;
+class UnicodeString;
 }
 using namespace alinous;
 

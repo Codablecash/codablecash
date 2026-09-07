@@ -226,7 +226,7 @@ void StatusStore::write() {
 int StatusStore::binarySize() const {
 	int total = 0;
 
-	total += sizeof(int);
+	total += sizeof(uint32_t);
 
 	Iterator<UnicodeString>* it = this->map.keySet()->iterator(); __STP(it);
 	while(it->hasNext()){

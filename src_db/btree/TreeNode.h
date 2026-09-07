@@ -26,7 +26,7 @@ private:
 	TreeNode();
 public:
 	TreeNode(const TreeNode& inst);
-	explicit TreeNode(int numChildren, AbstractBtreeKey* key, bool reaf);
+	explicit TreeNode(int numChildren, AbstractBtreeKey* key, bool leaf);
 	explicit TreeNode(bool isroot, int numChildren, AbstractBtreeKey* key, bool reaf);
 	virtual ~TreeNode();
 

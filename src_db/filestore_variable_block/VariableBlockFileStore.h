@@ -25,7 +25,7 @@ public:
 	virtual ~VariableBlockFileStore();
 
 	virtual void createStore(bool del, uint64_t defaultSize, uint64_t blockSize) noexcept(false);
-	void createStore(bool del, uint64_t defaultSize, uint64_t blockSize, uint64_t extendBlocks) noexcept(false);
+	void createStore(bool del, uint64_t defaultSize, uint64_t blockUnitSize, uint64_t extendBlocks) noexcept(false);
 
 	virtual void open(bool sync) noexcept(false);
 	virtual void close() noexcept;
