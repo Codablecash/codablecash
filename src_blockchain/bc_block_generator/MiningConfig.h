@@ -20,6 +20,7 @@ class AddressDescriptor;
 class AbstractPoWCalculator;
 class NetworkPoWPool;
 class PoWManager;
+class JsonObject;
 
 class MiningConfig {
 public:
@@ -42,6 +43,9 @@ public:
 	void setPort(int port);
 
 	AbstractPoWCalculator* getPoWCalculator(PoWManager* powManager) const noexcept;
+
+	JsonObject* toJsonObject() const;
+	static MiningConfig* fromJson(const JsonObject* configObj);
 
 private:
 	void initNetworkPool(NetworkPoWPool* pool) const;

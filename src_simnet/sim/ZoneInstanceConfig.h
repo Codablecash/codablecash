@@ -18,6 +18,7 @@ namespace codablecash {
 class GenesisBalanceConfig;
 class MiningConfig;
 class FinalizerConfig;
+class JsonObject;
 
 class ZoneInstanceConfig {
 public:
@@ -29,14 +30,19 @@ public:
 	void setMiningConfig(const MiningConfig* minerConfig);
 	void setFinalizerConfig(const FinalizerConfig* fconfig);
 	void setName(const UnicodeString* name);
+	void setProtocol(int protocol);
 	void setPort(int port);
 
+	JsonObject* toJsonObject() const;
+	static ZoneInstanceConfig* fromJson(const JsonObject* jobj);
+
 private:
+	int protocol;
+	UnicodeString* name;
+	int port;
 	GenesisBalanceConfig* genConfig;
 	MiningConfig* minerConfig;
 	FinalizerConfig* fconfig;
-	UnicodeString* name;
-	int port;
 };
 
 } /* namespace codablecash */

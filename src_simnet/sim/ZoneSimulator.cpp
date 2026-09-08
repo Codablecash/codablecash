@@ -14,7 +14,7 @@
 #include "json_object/JsonArrayObject.h"
 #include "json_object/JsonValuePair.h"
 #include "json_object/JsonStringValue.h"
-
+#include "json_object/JsonNumericValue.h"
 
 namespace codablecash {
 
@@ -44,6 +44,13 @@ void ZoneSimulator::shutdown() {
 
 JsonObject* ZoneSimulator::makeJsonSettingObject() {
 	JsonObject* obj = new JsonObject(); __STP(obj);
+
+	{
+		JsonValuePair* pair = new JsonValuePair();
+		pair->setKey(new JsonStringValue(L"zone"));
+		pair->setValue(new JsonNumericValue(this->zone));
+		obj->add(pair);
+	}
 
 	JsonArrayObject* instArray = new JsonArrayObject();
 	{

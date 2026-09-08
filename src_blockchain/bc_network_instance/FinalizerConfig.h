@@ -11,6 +11,7 @@
 namespace codablecash {
 
 class NodeIdentifierSource;
+class JsonObject;
 
 class FinalizerConfig {
 public:
@@ -22,6 +23,9 @@ public:
 	const NodeIdentifierSource* getVoterSource() const noexcept {
 		return this->voterSource;
 	}
+
+	JsonObject* toJsonObject() const;
+	static FinalizerConfig* fromJson(const JsonObject* configObj);
 
 private:
 	NodeIdentifierSource* voterSource;

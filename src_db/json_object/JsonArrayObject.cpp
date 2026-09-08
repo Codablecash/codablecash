@@ -118,7 +118,7 @@ UnicodeString* JsonArrayObject::toString() const {
 		AbstractJsonObject* obj = this->list->get(i);
 
 		if(i != 0){
-			str->append(L", ");
+			str->append(L",");
 		}
 
 		UnicodeString* inner = obj->toString(); __STP(inner);

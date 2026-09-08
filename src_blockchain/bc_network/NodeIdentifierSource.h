@@ -20,6 +20,7 @@ namespace codablecash {
 
 class IKeyPair;
 class NodeIdentifier;
+class JsonObject;
 
 class NodeIdentifierSource : public IBlockObject {
 public:
@@ -37,6 +38,9 @@ public:
 	virtual IBlockObject* copyData() const noexcept;
 
 	const BigInteger* getSecretKey() const noexcept;
+
+	JsonObject* toJsonObject() const;
+	static NodeIdentifierSource* fromJson(const JsonObject* configObj);
 
 private:
 	IKeyPair* pair;

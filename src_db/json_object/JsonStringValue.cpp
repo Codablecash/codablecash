@@ -25,6 +25,10 @@ JsonStringValue::JsonStringValue() {
 	this->value = nullptr;
 }
 
+JsonStringValue::JsonStringValue(const UnicodeString *str) {
+	this->value = new UnicodeString(str);
+}
+
 JsonStringValue::JsonStringValue(const wchar_t *str) {
 	this->value = new UnicodeString(str);
 }
@@ -79,7 +83,11 @@ AbstractFunctionExtArguments* JsonStringValue::toFunctionExtArgument() const {
 }
 
 UnicodeString* JsonStringValue::toString() const {
-	return new UnicodeString(this->value);
+	UnicodeString* ret = new UnicodeString(L"\"");
+	ret->append(this->value);
+	ret->append(L"\"");
+
+	return ret;
 }
 
 } /* namespace codablecash */
