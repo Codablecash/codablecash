@@ -25,6 +25,10 @@ JsonStringValue::JsonStringValue() {
 	this->value = nullptr;
 }
 
+JsonStringValue::JsonStringValue(const UnicodeString *str) {
+	this->value = new UnicodeString(str);
+}
+
 JsonStringValue::JsonStringValue(const wchar_t *str) {
 	this->value = new UnicodeString(str);
 }
@@ -76,6 +80,14 @@ void JsonStringValue::fromBinary(ByteBuffer *in) {
 
 AbstractFunctionExtArguments* JsonStringValue::toFunctionExtArgument() const {
 	return new StringArgument(this->value);
+}
+
+UnicodeString* JsonStringValue::toString() const {
+	UnicodeString* ret = new UnicodeString(L"\"");
+	ret->append(this->value);
+	ret->append(L"\"");
+
+	return ret;
 }
 
 } /* namespace codablecash */

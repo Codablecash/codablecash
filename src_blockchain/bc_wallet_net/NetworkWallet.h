@@ -40,6 +40,7 @@ public:
 	virtual ~NetworkWallet();
 
 	void init();
+	void resetComamndQueue();
 
 	void closeData() noexcept;
 
@@ -47,8 +48,12 @@ public:
 			, const CodablecashSystemParam *config, const WalletConfig* walletConfig);
 	static NetworkWallet* resotreWallet(const File* dir, const UnicodeString* pass, uint16_t zone, const HdWalletSeed* rootSeed, int defaultMaxAddress, ISystemLogger* logger
 			, const CodablecashSystemParam *config, const WalletConfig* walletConfig);
+	static NetworkWallet* openWallet(const File* dir, const UnicodeString* pass, ISystemLogger* logger
+			, const CodablecashSystemParam *config, const WalletConfig* walletConfig);
 
 	void createData();
+	void openData();
+
 	HdWalletSeed* getRootSeed(const IWalletDataEncoder* encoder) const;
 
 	void setStakingSourceId(const NodeIdentifierSource* source, const IWalletDataEncoder* encoder);
@@ -89,6 +94,7 @@ public:
 private:
 	void setNetworkSeeder(INetworkSeeder *seeder) noexcept;
 	void doCreateWallet(const IWalletDataEncoder* encoder, const HdWalletSeed* seed, uint16_t zone, int defaultMaxAddress);
+	void doOpeneWallet(const IWalletDataEncoder *encoder);
 
 private:
 	File* baseDir;

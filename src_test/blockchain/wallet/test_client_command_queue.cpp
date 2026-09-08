@@ -53,31 +53,67 @@ TEST(TestClientCommandQueueGroup, case01) {
 	DebugCodablecashSystemParamSetup::setupConfig02(param);
 
 	WalletConfig walletConfig;
-	NetworkWallet* wallet = NetworkWallet::createNewWallet(baseDir, &pass, 0, 10, logger, &param, &walletConfig); __STP(wallet);
+	{
+		NetworkWallet* wallet = NetworkWallet::createNewWallet(baseDir, &pass, 0, 10, logger, &param, &walletConfig); __STP(wallet);
 
-	NetworkClientCommandProcessor* processor  = wallet->getNetworkClientCommandProcessor();
+		NetworkClientCommandProcessor* processor  = wallet->getNetworkClientCommandProcessor();
 
-	processor->startProcessors(false);
+		processor->startProcessors(false);
 
-	int maxLoop = 1;
-	for(int i = 0; i != maxLoop; ++i) {
-		ClientNewTransactionCommand cmd;
-		TransactionTransferData data;
+		int maxLoop = 1;
+		for(int i = 0; i != maxLoop; ++i) {
+			ClientNewTransactionCommand cmd;
+			TransactionTransferData data;
 
-		BalanceUnit amount(1L);
-		Coinbase coinbase;
-		coinbase.setAmount(&amount);
+			BalanceUnit amount(1L);
+			Coinbase coinbase;
+			coinbase.setAmount(&amount);
 
-		CoinbaseTransaction trx;
-		trx.setCoinbase(&coinbase);
-		trx.setHeight(1);
+			CoinbaseTransaction trx;
+			trx.setCoinbase(&coinbase);
+			trx.setHeight(1);
 
-		trx.build();
+			trx.build();
 
-		data.setTransaction(&trx);
-		cmd.setData(&data);
+			data.setTransaction(&trx);
+			cmd.setData(&data);
 
-		processor->addClientCommand(&cmd);
+			processor->addClientCommand(&cmd);
+		}
+
+		wallet->shutdownNetwork();
+		wallet->closeData();
+	}
+	{
+		NetworkWallet* wallet = NetworkWallet::openWallet(baseDir, &pass, logger, &param, &walletConfig); __STP(wallet);
+
+		NetworkClientCommandProcessor* processor  = wallet->getNetworkClientCommandProcessor();
+
+		processor->startProcessors(false);
+
+		int maxLoop = 1;
+		for(int i = 0; i != maxLoop; ++i) {
+			ClientNewTransactionCommand cmd;
+			TransactionTransferData data;
+
+			BalanceUnit amount(1L);
+			Coinbase coinbase;
+			coinbase.setAmount(&amount);
+
+			CoinbaseTransaction trx;
+			trx.setCoinbase(&coinbase);
+			trx.setHeight(1);
+
+			trx.build();
+
+			data.setTransaction(&trx);
+			cmd.setData(&data);
+
+			processor->addClientCommand(&cmd);
+		}
+
+		wallet->shutdownNetwork();
+		wallet->closeData();
 	}
 }
 

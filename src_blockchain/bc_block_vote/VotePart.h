@@ -46,6 +46,7 @@ public:
 	void visitVoteTransactionIdCertificate(IVoteTransactionIdCertificatevisitor* visitor) const;
 
 private:
+	ArrayList<BlockHeaderId>* list;
 	HashMap<BlockHeaderId, VotedHeaderIdGroup>* map;
 };
 

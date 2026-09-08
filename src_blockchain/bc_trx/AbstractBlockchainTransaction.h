@@ -31,6 +31,10 @@ class IAddressChecker;
 class MerkleTree;
 class UtxoId;
 class TransactionVersion;
+class BlockchainStatusCache;
+class CodablecashBlockchain;
+class ILockinManager;
+class CodablecashSystemParam;
 
 enum class TrxValidationResult
 {
@@ -93,6 +97,8 @@ public:
 	virtual bool validateOnAccept(MemPoolTransaction *memTrx, IStatusCacheContext* context) const = 0;
 	virtual TrxValidationResult validateFinal(const BlockHeader* header, MemPoolTransaction *memTrx, IStatusCacheContext* context) const = 0;
 	virtual TrxValidationResult validateReported(const BlockHeader* header, IStatusCacheContext* context) const;
+
+	virtual void onFinalize(const BlockHeader *header, BlockchainStatusCache* statusCache, CodablecashBlockchain* blockchain, ILockinManager *lockinManager, const CodablecashSystemParam* config);
 
 
 	virtual bool checkFilter(const ArrayList<BloomFilter1024> *filtersList) const;

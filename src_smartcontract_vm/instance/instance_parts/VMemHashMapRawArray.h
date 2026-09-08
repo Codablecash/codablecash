@@ -163,13 +163,13 @@ public:
 		numElements = 0;
 	}
 
-	class Iterator {
+	class InternalIterator {
 	public:
 		int hashCode;
 		int index;
 		VMemList<VMemHashMapInternalElement<K, V>, typename VMemHashMapInternalElement<K, V>::ValueCompare>** arrays;
 		const VMemRawBitSet* bitset;
-		Iterator(VMemList<VMemHashMapInternalElement<K, V>, typename VMemHashMapInternalElement<K, V>::ValueCompare>** ptr, VMemRawBitSet* bitset)
+		InternalIterator(VMemList<VMemHashMapInternalElement<K, V>, typename VMemHashMapInternalElement<K, V>::ValueCompare>** ptr, VMemRawBitSet* bitset)
 			: hashCode(0), index(0), arrays(ptr), bitset(bitset) {}
 
 		bool hasNext() const {
@@ -208,8 +208,8 @@ public:
 		}
 	};
 
-	Iterator iterator() {
-		return Iterator(arrays, &bitset);
+	InternalIterator iterator() {
+		return InternalIterator(arrays, &bitset);
 	}
 
 private:

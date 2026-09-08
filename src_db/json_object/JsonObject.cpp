@@ -144,4 +144,23 @@ void JsonObject::fromBinary(ByteBuffer *in) {
 	}
 }
 
+UnicodeString* JsonObject::toString() const {
+	UnicodeString* str = new UnicodeString(L"{\n");
+
+	int maxLoop = this->list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		AbstractJsonObject* obj = this->list->get(i);
+
+		if(i != 0){
+			str->append(L",\n");
+		}
+
+		UnicodeString* inner = obj->toString(); __STP(inner);
+		str->append(inner);
+	}
+
+	str->append(L"}\n");
+	return str;
+}
+
 } /* namespace codablecash */

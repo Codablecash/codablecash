@@ -29,7 +29,7 @@ public:
 	}
 
 	virtual ~HashMapKeySet() noexcept {
-		typename HashMapRawArray<K, V>::Iterator it = this->list->iterator();
+		typename HashMapRawArray<K, V>::InternalIterator it = this->list->iterator();
 		while(it.hasNext()){
 			HashMapInternalElement<K, V>* element = it.next();
 
@@ -171,7 +171,7 @@ public:
 		}
 
 	private:
-		typename HashMapRawArray<K, V>::Iterator internalIt;
+		typename HashMapRawArray<K, V>::InternalIterator internalIt;
 		bool outputNull;
 		HashMapInternalElement<K, V>* nullElement;
 	};

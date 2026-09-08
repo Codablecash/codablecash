@@ -27,7 +27,7 @@ ReceivingAddressStore::~ReceivingAddressStore() {
 void ReceivingAddressStore::init(const IWalletDataEncoder *encoder) {
 	int maxLoop = this->maxAddress;
 	for(int i = 0; i != maxLoop; ++i){
-		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, this->adressSerial++);
+		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, this->addressSerial++);
 
 		this->list->addElement(pair);
 	}
@@ -47,14 +47,14 @@ void ReceivingAddressStore::load(const IWalletDataEncoder *encoder) {
 
 	this->maxAddress = this->store->getShortValue(KEY_MAX_ADDRESS);
 
-	for(int i = 0; i != this->adressSerial; ++i){
+	for(int i = 0; i != this->addressSerial; ++i){
 		AddressAndPrivateKey* pair = createNewAddressAndPrivateKey(encoder, i);
 
 		this->list->addElement(pair);
 	}
 }
 
-void ReceivingAddressStore::exportAddress2Filger(BloomFilter1024 *filter) {
+void ReceivingAddressStore::exportAddress2Filter(BloomFilter1024 *filter) {
 	int maxLoop = this->list->size();
 	for(int i = 0; i != maxLoop; ++i){
 		AddressAndPrivateKey* addressKey = this->list->get(i);

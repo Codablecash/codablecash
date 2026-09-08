@@ -26,7 +26,7 @@ public:
 	void wait();
 	void notifyAll();
 	void notify();
-	int tryLock();
+	//int tryLock();
 
 	static uint64_t getObjectSize() noexcept;
 

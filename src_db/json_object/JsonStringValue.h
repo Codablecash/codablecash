@@ -22,6 +22,7 @@ class JsonStringValue : public AbstractJsonValue {
 public:
 	JsonStringValue(const JsonStringValue& inst);
 	JsonStringValue();
+	explicit JsonStringValue(const UnicodeString* str);
 	explicit JsonStringValue(const wchar_t* str);
 	virtual ~JsonStringValue();
 
@@ -42,6 +43,8 @@ public:
 	virtual void fromBinary(ByteBuffer *in);
 
 	virtual AbstractFunctionExtArguments* toFunctionExtArgument() const;
+
+	virtual UnicodeString* toString() const;
 
 private:
 	UnicodeString* value;

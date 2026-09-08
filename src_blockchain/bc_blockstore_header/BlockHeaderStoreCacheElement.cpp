@@ -42,7 +42,7 @@ BlockHeaderStoreCacheElement::~BlockHeaderStoreCacheElement() {
 	delete this->cacheManager;
 }
 
-void BlockHeaderStoreCacheElement::init() {
+void BlockHeaderStoreCacheElement::open() {
 	this->store = new BlockHeaderStore(this->index, this->baseDir, this->cacheManager);
 	this->heightIndex = new BlockHeaderHeightIndex(this->index, this->baseDir, this->cacheManager);
 

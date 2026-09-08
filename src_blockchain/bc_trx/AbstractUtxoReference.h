@@ -29,6 +29,8 @@ public:
 	static const constexpr uint8_t UTXO_REF_TYPE_COINBASE{4};
 	static const constexpr uint8_t UTXO_REF_TYPE_STAKEBASE{5};
 
+	static const constexpr uint8_t UTXO_REF_TYPE_REMOTE{6};
+
 
 	AbstractUtxoReference(const AbstractUtxoReference& inst);
 	AbstractUtxoReference();

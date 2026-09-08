@@ -67,8 +67,14 @@ void NetworkWallet::init() {
 	this->clientCommandProcessor->init();
 }
 
+void NetworkWallet::resetComamndQueue() {
+	this->clientCommandProcessor->init();
+	this->clientCommandProcessor->createBlank();
+}
+
 void NetworkWallet::closeData() noexcept {
 	if(this->walletData != nullptr){
+		this->walletData->close();
 		delete this->walletData;
 		this->walletData = nullptr;
 	}
@@ -88,10 +94,9 @@ NetworkWallet* NetworkWallet::createNewWallet(const File *dir, const UnicodeStri
 	return __STP_MV(wallet);
 }
 
-
-
 void NetworkWallet::doCreateWallet(const IWalletDataEncoder *encoder, const HdWalletSeed *seed, uint16_t zone, int defaultMaxAddress) {
 	this->walletData->createHdWallet(seed, zone, encoder, defaultMaxAddress);
+	this->init();
 }
 
 HdWalletSeed* NetworkWallet::getRootSeed(const IWalletDataEncoder* encoder) const {
@@ -110,6 +115,23 @@ NetworkWallet* NetworkWallet::resotreWallet(const File *dir, const UnicodeString
 	wallet->createData();
 
 	return __STP_MV(wallet);
+}
+
+NetworkWallet* NetworkWallet::openWallet(const File *dir, const UnicodeString *pass,
+		ISystemLogger *logger, const CodablecashSystemParam *config, const WalletConfig *walletConfig) {
+	NetworkWallet* wallet = new NetworkWallet(dir, logger, config, walletConfig); __STP(wallet);
+	wallet->resetComamndQueue();
+
+	PasswordEncoder enc(pass);
+	wallet->doOpeneWallet(&enc);
+	wallet->openData();
+
+	return __STP_MV(wallet);
+}
+
+void NetworkWallet::doOpeneWallet(const IWalletDataEncoder *encoder) {
+	this->walletData->openHdWallet(encoder);
+	this->resetComamndQueue();
 }
 
 void NetworkWallet::setNetworkSeeder(INetworkSeeder *seeder) noexcept {
@@ -132,9 +154,13 @@ AddressDescriptor* NetworkWallet::getAddressDescriptor(int accountIndex, int add
 }
 
 void NetworkWallet::createData() {
-	this->walletData->createBlank();
+	this->walletData->createBlankData();
 
 	this->clientCommandProcessor->createBlank();
+}
+
+void NetworkWallet::openData() {
+	this->walletData->openData();
 }
 
 void NetworkWallet::initNetwork(INetworkSeeder *seeder, const IWalletDataEncoder* encoder) {

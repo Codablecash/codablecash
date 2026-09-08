@@ -119,7 +119,6 @@ private:
 	uint64_t ticketPrice;
 
 
-
 	File* baseDir;
 	StatusStore* statusStore;
 	HeadBlockDetector* headBlockDetector;

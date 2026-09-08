@@ -50,11 +50,18 @@ void JsonHandler::loadFile(const File* file, int buffSize) {
 	this->tokenizer = new JsonTokenizer(jsonStringStream);
 }
 
+void JsonHandler::loadString(const UnicodeString *str) {
+	// create tokenizer
+	JsonStringStream* jsonStringStream = new JsonStringStream(str);
+	this->tokenizer = new JsonTokenizer(jsonStringStream);
+}
+
 AbstractJsonObject* JsonHandler::parse() {
 	JsonParser parser(this->tokenizer);
 
 	AbstractJsonObject* object = parser.parse();
 	return object;
 }
+
 
 } /* namespace codablecash */

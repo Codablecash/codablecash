@@ -39,6 +39,8 @@ public:
 	};
 };
 
+
+
 template <typename K, typename V>
 class HashMapRawArray {
 public:
@@ -107,13 +109,13 @@ public:
 		bitset.clear();
 		numElements = 0;
 	}
-	class Iterator {
+	class InternalIterator {
 	public:
 		int hashCode;
 		int index;
 		ArrayList<HashMapInternalElement<K, V>, typename HashMapInternalElement<K, V>::ValueCompare>** arrays;
 		const RawBitSet* bitset;
-		Iterator(ArrayList<HashMapInternalElement<K, V>, typename HashMapInternalElement<K, V>::ValueCompare>** ptr, RawBitSet* bitset) throw()
+		InternalIterator(ArrayList<HashMapInternalElement<K, V>, typename HashMapInternalElement<K, V>::ValueCompare>** ptr, RawBitSet* bitset) throw()
 			: hashCode(0), index(0), arrays(ptr), bitset(bitset) {}
 		bool hasNext() const throw() {
 			ArrayList<HashMapInternalElement<K, V>, typename HashMapInternalElement<K, V>::ValueCompare>* current = arrays[hashCode];
@@ -151,8 +153,8 @@ public:
 		}
 	};
 
-	Iterator iterator() throw() {
-		return Iterator(arrays, &bitset);
+	InternalIterator iterator() throw() {
+		return InternalIterator(arrays, &bitset);
 	}
 private:
 	int getHash(const HashMapInternalElement<K, V>* ptr) const throw() {

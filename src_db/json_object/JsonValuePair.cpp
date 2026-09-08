@@ -14,6 +14,8 @@
 #include "base_io/ByteBuffer.h"
 
 #include "base/StackRelease.h"
+#include "base/UnicodeString.h"
+
 namespace codablecash {
 
 JsonValuePair::JsonValuePair(const JsonValuePair& inst) {
@@ -85,6 +87,20 @@ void JsonValuePair::fromBinary(ByteBuffer *in) {
 
 	this->value = createFromBinary(in);
 	BinaryUtils::checkNotNull(this->value);
+}
+
+UnicodeString* JsonValuePair::toString() const {
+	UnicodeString* str = new UnicodeString(L""); __STP(str);
+
+	UnicodeString* kstr = this->key->toString(); __STP(kstr);
+	str->append(kstr);
+
+	str->append(L" : ");
+
+	UnicodeString* vstr = this->value->toString(); __STP(vstr);
+	str->append(vstr);
+
+	return __STP_MV(str);
 }
 
 } /* namespace codablecash */

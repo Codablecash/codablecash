@@ -23,10 +23,10 @@ public:
 		return JSON_TYPE_NUMERIC_VALUE;
 	}
 
-	void setValue(int v) {
+	void setValue(int64_t v) {
 		this->value = v;
 	}
-	int getValue() const noexcept {
+	int64_t getValue() const noexcept {
 		return this->value;
 	}
 
@@ -39,8 +39,10 @@ public:
 
 	virtual AbstractFunctionExtArguments* toFunctionExtArgument() const;
 
+	virtual UnicodeString* toString() const;
+
 private:
-	int value;
+	int64_t value;
 };
 
 } /* namespace codablecash */

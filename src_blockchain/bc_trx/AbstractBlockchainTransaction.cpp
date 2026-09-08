@@ -297,4 +297,9 @@ bool AbstractBlockchainTransaction::checkFilteredAddress(const IAddressChecker *
 	return ret;
 }
 
+void AbstractBlockchainTransaction::onFinalize(const BlockHeader *header,
+		BlockchainStatusCache *statusCache, CodablecashBlockchain *blockchain,
+		ILockinManager *lockinManager, const CodablecashSystemParam *config) {
+}
+
 } /* namespace codablecash */

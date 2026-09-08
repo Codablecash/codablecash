@@ -65,7 +65,6 @@ void LongRangeList::removeRange(const LongRange* range) noexcept {
 			delete r;
 		}
 	}
-
 }
 
 

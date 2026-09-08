@@ -11,6 +11,7 @@
 
 namespace alinous {
 class ByteBuffer;
+class UnicodeString;
 }
 using namespace alinous;
 
@@ -36,6 +37,8 @@ public:
 	virtual void toBinary(ByteBuffer *out) const = 0;
 	virtual void fromBinary(ByteBuffer *in) = 0;
 	static AbstractJsonObject* createFromBinary(ByteBuffer* in);
+
+	virtual UnicodeString* toString() const = 0;
 };
 
 } /* namespace codablecash */

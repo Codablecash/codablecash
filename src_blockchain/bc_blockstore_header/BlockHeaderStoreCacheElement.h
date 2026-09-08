@@ -31,7 +31,7 @@ public:
 	BlockHeaderStoreCacheElement(const File* baseDir, uint64_t index);
 	virtual ~BlockHeaderStoreCacheElement();
 
-	void init();
+	void open();
 
 	bool exist() const noexcept;
 	void create();

@@ -21,6 +21,9 @@
 
 #include "base/StackRelease.h"
 
+#include "bc_trx_icc/RemoteBalanceUtxo.h"
+
+
 namespace codablecash {
 
 AbstractUtxo::AbstractUtxo(const AbstractUtxo &inst) {
@@ -50,6 +53,9 @@ AbstractUtxo* AbstractUtxo::createFromBinary(ByteBuffer *in) {
 		break;
 	case AbstractUtxo::TRX_UTXO_VOTED_TICKET:
 		ret = new TicketVotedUtxo();
+		break;
+	case AbstractUtxo::TRX_UTXO_REMOTE_BALANCE:
+		ret = new RemoteBalanceUtxo();
 		break;
 	case AbstractUtxo::TRX_UTXO_REMOVED_DUMMY:
 		ret = new RemovedDummyUtxo();

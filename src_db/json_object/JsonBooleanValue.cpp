@@ -7,9 +7,12 @@
 
 #include "json_object/JsonBooleanValue.h"
 
+#include "base/UnicodeString.h"
+
 #include "base_io/ByteBuffer.h"
 
 #include "ext_arguments/BoolArgument.h"
+
 
 namespace codablecash {
 
@@ -54,6 +57,13 @@ void JsonBooleanValue::fromBinary(ByteBuffer *in) {
 
 AbstractFunctionExtArguments* JsonBooleanValue::toFunctionExtArgument() const {
 	return new BoolArgument(this->value);
+}
+
+UnicodeString* JsonBooleanValue::toString() const {
+	if(this->value == true){
+		return new UnicodeString(L"true");
+	}
+	return new UnicodeString(L"false");
 }
 
 } /* namespace codablecash */

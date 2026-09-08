@@ -38,17 +38,13 @@ BalanceUtxo::~BalanceUtxo() {
 	delete this->addressDesc;
 }
 
+uint8_t BalanceUtxo::getType() const noexcept {
+	return AbstractUtxo::TRX_UTXO_BALANCE;
+}
+
 void BalanceUtxo::setAddress(const AddressDescriptor *desc) noexcept {
 	delete this->addressDesc;
 	this->addressDesc = new AddressDescriptor(*desc);
-}
-
-int BalanceUtxo::tmpBinarySize() const {
-	int total = sizeof(uint8_t);
-
-
-
-	return total;
 }
 
 int BalanceUtxo::binarySize() const {

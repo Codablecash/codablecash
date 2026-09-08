@@ -50,6 +50,7 @@ void TransactionGroupDataStore::initBlank() {
 	config.nodeNumber = 8;
 	config.defaultSize = 1024;
 	config.blockSize = 32;
+
 	btree.create(&config);
 }
 
@@ -64,8 +65,8 @@ void TransactionGroupDataStore::open() {
 	BtreeOpenConfig opconf;
 	opconf.numDataBuffer = 256;
 	opconf.numNodeBuffer = 512;
-	this->headerGroupStore->open(&opconf);
 
+	this->headerGroupStore->open(&opconf);
 }
 
 void TransactionGroupDataStore::close() noexcept {

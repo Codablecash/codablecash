@@ -57,6 +57,7 @@ public:
 
 	void save();
 	void load(const IWalletDataEncoder* encoder);
+	void close();
 
 	ArrayList<BloomFilter1024>* getBloomFilters(const IWalletDataEncoder* encoder) const noexcept;
 

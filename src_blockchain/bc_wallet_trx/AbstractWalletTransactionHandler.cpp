@@ -61,7 +61,7 @@ void AbstractWalletTransactionHandler::__importTransaction(const AbstractBlockch
 
 		const AddressDescriptor* addressDesc = utxo->getAddress();
 
-		if(this->account->hasAddress(addressDesc)){
+		if(!utxo->isRemote() && this->account->hasAddress(addressDesc)){
 			trxRepo->importUtxo(utxo);
 			imported = true;
 		}

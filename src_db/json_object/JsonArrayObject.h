@@ -39,6 +39,8 @@ public:
 	virtual void toBinary(ByteBuffer *out) const;
 	virtual void fromBinary(ByteBuffer *in);
 
+	virtual UnicodeString* toString() const;
+
 private:
 	ArrayList<AbstractJsonObject>* list;
 };

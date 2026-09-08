@@ -40,6 +40,7 @@ void Stakebase::toBinary(ByteBuffer *out) const {
 
 void Stakebase::fromBinary(ByteBuffer *in) {
 	this->amount = BalanceUnit::fromBinary(in);
+	BinaryUtils::checkNotNull(this->amount);
 }
 
 IBlockObject* Stakebase::copyData() const noexcept {

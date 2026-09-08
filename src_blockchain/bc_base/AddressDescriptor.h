@@ -40,15 +40,17 @@ public:
 
 	int compareTo(const AddressDescriptor* other) const noexcept;
 
+	uint16_t getZone() const noexcept;
+
 private:
 	void makeCheckDigit();
 	void importCstring(const char* cstr);
 private:
-	char prefix[2];
-	char zone[3];
+	char prefix[2]; // utf base
+	char zone[3]; // utf base radix 16
 	ByteBuffer* body;
 
-	char checkDigit[2];
+	char checkDigit[2];// utf base radix 10
 };
 
 } /* namespace codablecash */

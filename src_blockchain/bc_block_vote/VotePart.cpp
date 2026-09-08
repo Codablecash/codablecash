@@ -17,6 +17,7 @@
 namespace codablecash {
 
 VotePart::VotePart() {
+	this->list = new ArrayList<BlockHeaderId>();
 	this->map = new HashMap<BlockHeaderId, VotedHeaderIdGroup>();
 }
 
@@ -30,6 +31,9 @@ VotePart::~VotePart() {
 	}
 
 	delete this->map;
+
+	this->list->deleteElements();
+	delete this->list;
 }
 
 void VotePart::addVote(const VoteBlockTransaction *trx) noexcept {
@@ -38,6 +42,8 @@ void VotePart::addVote(const VoteBlockTransaction *trx) noexcept {
 	VotedHeaderIdGroup* group = this->map->get(headerId);
 	if(group == nullptr){
 		group = new VotedHeaderIdGroup(headerId);
+
+		this->list->addElement(dynamic_cast<BlockHeaderId*>(headerId->copyData()));
 		this->map->put(headerId, group);
 	}
 
@@ -48,9 +54,9 @@ void VotePart::addVote(const VoteBlockTransaction *trx) noexcept {
 int VotePart::binarySize() const {
 	int total = sizeof(uint8_t);
 
-	Iterator<BlockHeaderId>* it = this->map->keySet()->iterator(); __STP(it);
-	while(it->hasNext()){
-		const BlockHeaderId* headerId = it->next();
+	int maxLoop = this->list->size();
+	for(int i = 0; i != maxLoop; ++i){
+		const BlockHeaderId* headerId = this->list->get(i);
 		VotedHeaderIdGroup* group = this->map->get(headerId);
 
 		total += group->binarySize();
@@ -60,12 +66,11 @@ int VotePart::binarySize() const {
 }
 
 void VotePart::toBinary(ByteBuffer *out) const {
-	int size = this->map->size();
-	out->put(size);
+	int maxLoop = this->list->size();
+	out->put(maxLoop);
 
-	Iterator<BlockHeaderId>* it = this->map->keySet()->iterator(); __STP(it);
-	while(it->hasNext()){
-		const BlockHeaderId* headerId = it->next();
+	for(int i = 0; i != maxLoop; ++i){
+		const BlockHeaderId* headerId = this->list->get(i);
 		VotedHeaderIdGroup* group = this->map->get(headerId);
 
 		group->toBinary(out);
@@ -81,6 +86,7 @@ VotePart* VotePart::createFromBinary(ByteBuffer *in) {
 		VotedHeaderIdGroup* group = VotedHeaderIdGroup::createFromBinary(in);
 		const BlockHeaderId* headerId = group->getBlockHeaderId();
 
+		part->list->addElement(dynamic_cast<BlockHeaderId*>(headerId->copyData()));
 		part->map->put(headerId, group);
 	}
 

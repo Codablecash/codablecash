@@ -24,6 +24,7 @@ public:
 	static const constexpr uint8_t TRX_UTXO_TICKET{2};
 	static const constexpr uint8_t TRX_UTXO_VOTED_TICKET{3};
 
+	static const constexpr uint8_t TRX_UTXO_REMOTE_BALANCE{4};
 
 	static const constexpr uint8_t TRX_UTXO_REMOVED_DUMMY{100};
 
@@ -40,6 +41,8 @@ public:
 
 	virtual const AddressDescriptor* getAddress() const noexcept = 0;
 	virtual BalanceUnit getAmount() const noexcept = 0;
+
+	virtual bool isRemote() const noexcept {return false;}
 
 	bool equals(const AbstractUtxo* other) const noexcept;
 

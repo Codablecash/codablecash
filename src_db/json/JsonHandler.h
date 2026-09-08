@@ -10,6 +10,7 @@
 
 namespace alinous {
 class File;
+class UnicodeString;
 }
 using namespace alinous;
 
@@ -25,6 +26,8 @@ public:
 	virtual ~JsonHandler();
 
 	void loadFile(const File* file, int buffSize);
+	void loadString(const UnicodeString* str);
+
 	AbstractJsonObject* parse();
 
 	JsonTokenizer* getTokenizer() const noexcept {

@@ -15,6 +15,7 @@
 namespace codablecash {
 
 class AddressDescriptor;
+class JsonObject;
 
 class GenesisBalance {
 public:
@@ -31,6 +32,9 @@ public:
 		return this->addressDesc;
 	}
 
+	JsonObject* toJsonObject() const;
+	static GenesisBalance* fromJson(const JsonObject* balanceObj);
+
 private:
 	BalanceUnit amount;
 	AddressDescriptor* addressDesc;
@@ -43,10 +47,14 @@ public:
 	virtual ~GenesisBalanceConfig();
 
 	void addBalance(const BalanceUnit amount, const AddressDescriptor* desc) noexcept;
+	void addBalance(const GenesisBalance* balance);
 
 	const ArrayList<GenesisBalance>* getList() const noexcept {
 		return this->list;
 	}
+
+	JsonObject* toJsonObject() const;
+	static GenesisBalanceConfig* fromJson(const JsonObject* configObj);
 
 private:
 	ArrayList<GenesisBalance>* list;

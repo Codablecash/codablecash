@@ -69,7 +69,7 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(
 BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(ArrayList<DestAddressPair>* dest, const BalanceUnit& feeRate,
 		bool feeIncluded, const IWalletDataEncoder *encoder, ITransactionBuilderContext *context) {
 	if(feeIncluded){
-		createFeeIncludedTransaction(dest, feeRate, encoder, context);
+		return createFeeIncludedTransaction(dest, feeRate, encoder, context);
 	}
 
 	IUtxoCollector* collector = context->getUtxoCollector(); __STP(collector);
@@ -102,7 +102,6 @@ BalanceTransferTransaction* BalanceTransactionWalletHandler::createTransaction(A
 	trx->sign(musigProvidor, &utxoFinder);
 
 	return __STP_MV(trx);
-	// FIXME
 }
 
 void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction* trx, BalanceUnit& amount, const BalanceUnit& feeRate
@@ -143,7 +142,7 @@ void BalanceTransactionWalletHandler::collectUtxoRefs(BalanceTransferTransaction
 
 		// add exchange address
 		if(totalIn.compareTo(&required) > 0){
-			if(trx->getUtxoSize() == destUtxoSize){ // FIXME utxo size
+			if(trx->getUtxoSize() == destUtxoSize){ // utxo size
 				// add
 				ChangeAddressStore* changeAddresses = this->account->getChangeAddresses();
 				AddressDescriptor* changeDesc = changeAddresses->getNextChangeAddress(encoder); __STP(changeDesc);

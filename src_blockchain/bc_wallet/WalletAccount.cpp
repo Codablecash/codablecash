@@ -388,7 +388,7 @@ void WalletAccount::createBloomFilter(const IWalletDataEncoder* encoder) {
 
 	this->bloomFilter = new BloomFilter1024();
 
-	this->receivingAddresses->exportAddress2Filger(this->bloomFilter);
+	this->receivingAddresses->exportAddress2Filter(this->bloomFilter);
 	this->changeAddresses->exportAddress2Filter(this->bloomFilter, encoder);
 }
 

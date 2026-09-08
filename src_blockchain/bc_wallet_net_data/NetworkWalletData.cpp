@@ -58,7 +58,7 @@ NetworkWalletData::NetworkWalletData(const File* baseDir, ISystemLogger* logger,
 
 	this->hdWallet = nullptr;
 	this->headerManager = nullptr;
-	this->detector = nullptr;
+	this->detector = new HeadBlockDetector(this->logger);
 
 	this->transactionGroupData = new TransactionGroupDataStore(this->baseDir);
 
@@ -77,8 +77,6 @@ NetworkWalletData::NetworkWalletData(const File* baseDir, ISystemLogger* logger,
 NetworkWalletData::~NetworkWalletData() {
 	close();
 
-	delete this->hdWallet;
-
 	delete this->mempool;
 
 	delete this->headerManager;
@@ -90,6 +88,30 @@ NetworkWalletData::~NetworkWalletData() {
 	delete this->managementAccounts;
 
 	delete this->gateLock;
+}
+
+
+void NetworkWalletData::openHdWallet(const IWalletDataEncoder *encoder) {
+	StackWriteLock __lock(this->gateLock, __FILE__, __LINE__);
+
+	__initStatusStore();
+	__loadStatus();
+
+	delete this->hdWallet;
+	File* hdbase = this->baseDir->get(L"hd"); __STP(hdbase);
+	this->hdWallet = HdWallet::loadWallet(hdbase, encoder);
+}
+
+void NetworkWalletData::openData() {
+	StackWriteLock __lock(this->gateLock, __FILE__, __LINE__);
+
+	this->headerManager = new BlockHeaderStoreManager(this->baseDir, CodablecashBlockchain::DEFAULT_SECTION_LIMIT);
+
+	this->transactionGroupData->open();
+	this->mempool->open();
+
+	__initStatusStore();
+	__loadStatus();
 }
 
 void NetworkWalletData::close() noexcept {
@@ -112,6 +134,11 @@ void NetworkWalletData::close() noexcept {
 		delete this->statusStore;
 		this->statusStore = nullptr;
 	}
+
+	if(this->hdWallet != nullptr){
+		this->hdWallet->close();
+		delete this->hdWallet; this->hdWallet = nullptr;
+	}
 }
 
 void NetworkWalletData::createHdWallet(const HdWalletSeed *seed, uint16_t defaultZone, const IWalletDataEncoder *encoder, int defaultMaxAddress) {
@@ -129,11 +156,10 @@ void NetworkWalletData::createHdWallet(const HdWalletSeed *seed, uint16_t defaul
 	__saveStatus();
 }
 
-void NetworkWalletData::createBlank() {
+void NetworkWalletData::createBlankData() {
 	StackWriteLock __lock(this->gateLock, __FILE__, __LINE__);
 
 	this->headerManager = new BlockHeaderStoreManager(this->baseDir, CodablecashBlockchain::DEFAULT_SECTION_LIMIT);
-	this->detector = new HeadBlockDetector(this->logger);
 
 	this->transactionGroupData->initBlank();
 	this->transactionGroupData->open();
@@ -373,6 +399,11 @@ void NetworkWalletData::updateHeadDetection() {
 void NetworkWalletData::__saveStatus() {
 	this->statusStore->addShortValue(KEY_ZONE, this->zone);
 	this->statusStore->addLongValue(KEY_FINALIZED_HEIGHT, this->finalizedHeight);
+}
+
+void NetworkWalletData::__loadStatus() {
+	this->zone = this->statusStore->getShortValue(KEY_ZONE);
+	this->finalizedHeight = this->statusStore->getLongValue(KEY_FINALIZED_HEIGHT);
 }
 
 BlockHeaderStoreManager* NetworkWalletData::getHeaderManager(uint16_t zone) const noexcept {
